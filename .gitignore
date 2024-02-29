@@ -40,3 +40,5 @@ debug/
 target/
 **/*.rs.bk
 *.pdb
+.cargo/
+.env
