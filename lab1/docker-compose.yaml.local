@@ -2,7 +2,7 @@ version: '3.9'
 
 services:
   server:
-    image: tonujet/data_in_cloud:latest
+    build: .
     container_name: server
     environment:
       - SERVER_HOST
