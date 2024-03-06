@@ -1,6 +1,12 @@
 # ia11-vorobey-ant
 
 ## lab1
+
+ - [x] Soft delete
+ - [x] Unit tests
+ - [x] Integration tests
+ 
+
 To run server use ``` sudo docker compose up ```. This option will run server image from remote registry. The reason why I did so is because rust compilation and linking can last up to ten minutes. If you still want to build rust server localy you also can switch to [docker-compose.yaml.local](lab1/docker-compose.yaml.local)
 
 
