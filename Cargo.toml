@@ -1,17 +1,19 @@
 [package]
-name = "lab1"
+name = "ia-11-vorobei-ant"
 version = "0.1.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [workspace]
-members = [".", "db/entity", "db/migration", "db/repo"]
+members = [".", "db/postgres/entity", "db/postgres/migration", "db/mongo/collection", "db/repo", "db/mongo/schema"]
 
 [dependencies]
-entity = { path = "db/entity" }
-migration = { path = "db/migration" }
+entity = { path = "db/postgres/entity" }
+migration = { path = "db/postgres/migration" }
 repo = {path = "db/repo"}
+schema = {path = "db/mongo/schema"}
+collection = {path = "db/mongo/collection"}
 
 axum = { version = "0.7.4", features = ["macros"] }
 tokio = { version = "1.36.0", features = ["full"] }
@@ -27,6 +29,7 @@ http-body-util = "0.1.0"
 axum-test = "14.3.1"
 dotenv = "0.15.0"
 strum = { version = "0.26.1", features = ["derive"] }
+mongodb = "2.8.2"
 
 [dev-dependencies]
 #sea-orm = {version = "0.12", features = ["mock"]}

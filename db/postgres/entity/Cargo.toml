@@ -9,3 +9,5 @@ edition = "2021"
 sea-orm = { version = "0.12" }
 home = "=0.5.5"
 serde = { version = "1.0.197", features = ["derive"] }
+mongodb = { version = "2.8.2" }
+chrono = { version = "0.4.37", features = ["serde"] }
