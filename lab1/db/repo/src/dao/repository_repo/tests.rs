@@ -6,7 +6,7 @@ use crate::utils::repository::repository_test_helper;
 use super::RepositoryRepo;
 use super::RepositoryRepoTrait;
 
-pub async fn get_mock_repo() -> impl RepositoryRepoTrait {
+pub async fn get_stub_repo() -> impl RepositoryRepoTrait {
     repository_test_helper::get_test_model();
     let alive_repo_dto = repository_test_helper::get_test_model();
 
@@ -28,24 +28,32 @@ pub async fn get_mock_repo() -> impl RepositoryRepoTrait {
 #[tokio::test]
 #[serial]
 async fn it_should_not_update_deleted_repo() {
-    let repository_repo = get_mock_repo().await;
+    let repository_repo = get_stub_repo().await;
     let create_repo = repository_test_helper::get_test_create_dto();
 
     let repo = repository_repo.create(create_repo).await.unwrap();
     let repo = repository_repo.delete(repo.id).await.unwrap();
     let update_repo = repository_test_helper::get_test_update_dto();
-
     let repo = repository_repo.update(repo.id, update_repo).await;
-    assert!(repo.is_err());
+
+    assert!(
+        repo.is_err(),
+        "Status code of update non-existing repository is not equal to the desired"
+    );
 }
 
 #[tokio::test]
 #[serial]
 async fn it_should_not_delete_deleted_repo() {
-    let repository_repo = get_mock_repo().await;
+    let repository_repo = get_stub_repo().await;
     let create_repo = repository_test_helper::get_test_create_dto();
+
     let repo = repository_repo.create(create_repo).await.unwrap();
     let repo = repository_repo.delete(repo.id).await.unwrap();
     let repo = repository_repo.delete(repo.id).await;
-    assert!(repo.is_err());
+
+    assert!(
+        repo.is_err(),
+        "Status code of deletion non-existing repository is not equal to the desired"
+    );
 }
