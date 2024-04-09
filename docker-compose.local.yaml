@@ -17,6 +17,10 @@ services:
       - MONGO_DB_HOST=mongo_db
       - MONGO_DB_NAME
       - MONGO_DB_PORT
+      - AWS_ACCESS_KEY
+      - AWS_SECRET_ACCESS_KEY
+      - AWS_BUCKET_NAME
+      - AWS_BUCKET_REGION
     ports:
       - 80:${SERVER_PORT}
     env_file:
