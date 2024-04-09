@@ -16,7 +16,7 @@ impl Setup {
 
 impl Setup {
     pub async fn new() -> Self {
-        let state = ia_11_vorobei_ant::web::state::create_test_state()
+        let state = ia_11_vorobei_ant::web::state::AppState::build_test()
             .await
             .unwrap();
         let app = ia_11_vorobei_ant::web::app(state);
