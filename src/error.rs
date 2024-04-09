@@ -15,9 +15,12 @@ pub enum InternalError {
     #[error(transparent)]
     StartServerIssue(#[from] Error),
 
+    #[error(transparent)]
+    StoreIssue(#[from] object_store::Error),
+
     #[error("Missing environment variable: {0}")]
     ConfigMissingEnv(&'static str),
-
+    
     #[error("Can not parse {0}")]
     ConfigParseImpossible(&'static str),
 }

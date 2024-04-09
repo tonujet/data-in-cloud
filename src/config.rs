@@ -20,9 +20,10 @@ trait ConfigLoader {
 
 #[allow(non_snake_case)]
 pub struct Config {
+    pub SERVER: ServerConfig,
     pub SQL_DB: SqlDbConfig,
     pub MONGO_DB: MongoDbConfig,
-    pub SERVER: ServerConfig,
+    pub AWS: AwsConfig,
 }
 
 impl ConfigLoader for Config {
@@ -32,6 +33,7 @@ impl ConfigLoader for Config {
             SQL_DB: SqlDbConfig::load()?,
             MONGO_DB: MongoDbConfig::load()?,
             SERVER: ServerConfig::load()?,
+            AWS: AwsConfig::load()?,
         })
     }
 }
@@ -82,6 +84,25 @@ impl ConfigLoader for MongoDbConfig {
             TEST_URL: "".to_string(),
         })
         
+    }
+}
+
+#[allow(non_snake_case)]
+pub struct AwsConfig {
+    pub ACCESS_KEY: String, 
+    pub SECRET_ACCESS_KEY: String,
+    pub BUCKET_NAME: String,
+    pub BUCKET_REGION: String,
+} 
+
+impl ConfigLoader for AwsConfig {
+    fn load() -> InternalResult<Self> where Self: Sized {
+        Ok(Self{
+            ACCESS_KEY: get_env("AWS_ACCESS_KEY")?,
+            SECRET_ACCESS_KEY: get_env("AWS_SECRET_ACCESS_KEY")?,
+            BUCKET_NAME: get_env("AWS_BUCKET_NAME")?,
+            BUCKET_REGION: get_env("AWS_BUCKET_REGION")?,
+        })
     }
 }
 
