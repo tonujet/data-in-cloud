@@ -33,5 +33,19 @@ pub enum RepoError {
     MongoExecution(#[from] mongodb::error::Error),
 
     #[error("{0}")]
-    InternalError(&'static str),
+    Internal(&'static str),
+
+
+    #[error("{0}")]
+    InternalConcrete(String),
+
+
+    #[error("{} already has connection with {}", .0.as_ref(), .1.as_ref())]
+    AlreadyConnected(Entity, Entity),
+
+    #[error("{} is not yet connection with {}", .0.as_ref(), .1.as_ref())]
+    NotYetConnected(Entity, Entity),
+
+    #[error(transparent)]
+    ObjectStore(#[from] object_store::Error),
 }
