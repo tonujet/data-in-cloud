@@ -6,12 +6,14 @@ use super::state::*;
 
 mod repository_controller;
 mod user_controller;
+mod user_repo_controller;
 
 pub fn api_routes(state: AppState) -> Router {
     let router: Router<()> = Router::new();
     let api_router = Router::new()
         .nest("/repos", repository_controller::routes(state.clone()))
-        .nest("/users", user_controller::routes(state));
+        .nest("/users", user_controller::routes(state.clone()))
+        .nest("/users", user_repo_controller::routes(state.clone()));
     router.nest("/apiV1", api_router)
 }
 
