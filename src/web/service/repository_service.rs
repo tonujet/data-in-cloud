@@ -21,15 +21,15 @@ impl ServiceTrait<CreateUpdateRepoDto, CreateUpdateRepoDto, RepoDto, Uuid> for R
         Ok(self.repo.create(repo_dto).await?)
     }
 
-    async fn update(&self, id: Uuid, repo_dto: CreateUpdateRepoDto) -> ApiResult<RepoDto> {
+    async fn update(&self, id: &Uuid, repo_dto: CreateUpdateRepoDto) -> ApiResult<RepoDto> {
         Ok(self.repo.update(id, repo_dto).await?)
     }
 
-    async fn delete(&self, id: Uuid) -> ApiResult<RepoDto> {
+    async fn delete(&self, id: &Uuid) -> ApiResult<RepoDto> {
         Ok(self.repo.delete(id).await?)
     }
 
-    async fn get(&self, id: Uuid) -> ApiResult<RepoDto> {
+    async fn get(&self, id: &Uuid) -> ApiResult<RepoDto> {
         Ok(self.repo.get(id).await?)
     }
 

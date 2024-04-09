@@ -1,4 +1,3 @@
-use std::sync::{Arc, Mutex};
 use mongodb::bson::doc;
 use mongodb::options::{CreateCollectionOptions, CreateIndexOptions, IndexOptions, ValidationAction, ValidationLevel};
 use mongodb::IndexModel;

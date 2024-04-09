@@ -24,7 +24,7 @@ async fn list_all_not_deleted_users_success() {
 
     for (i, id) in ids.into_iter().enumerate() {
         if i % 2 == 0 {
-            let deleted = repo.delete(id).await;
+            let deleted = repo.delete(&id).await;
             assert!(deleted.is_ok());
             counter -= 1;
         }
@@ -41,7 +41,7 @@ async fn get_deleted_user_failure() {
     let repo = user_test_helper::get_mock_repo();
     let created_dto = run_create_dto1(&repo).await;
 
-    let deleted_dto = repo.delete(created_dto.id.unwrap()).await;
+    let deleted_dto = repo.delete(&created_dto.id.unwrap()).await;
     assert!(deleted_dto.is_ok());
 
     let doc = repo

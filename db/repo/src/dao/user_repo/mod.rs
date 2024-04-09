@@ -17,7 +17,7 @@ use super::{RepoTrait, UserRepoTrait};
 use super::{CreateUserDto, UserDto};
 use super::error::{
     Entity,
-    RepoError::{DeletedWithObjectId, InternalError, Uniqueness}, RepoResult
+    RepoError::{DeletedWithObjectId, Internal, Uniqueness}, RepoResult
 };
 
 #[cfg(test)]
@@ -36,7 +36,7 @@ impl UserRepo {
             .collection
             .find_one(Some(document), None)
             .await?
-            .ok_or(InternalError("Can not find user"))?;
+            .ok_or(Internal("Can not find user"))?;
         if user.deleted {
             Err(DeletedWithObjectId(user.id.unwrap(), Entity::User))?
         }
@@ -96,7 +96,7 @@ impl RepoTrait<CreateUserDto, UpdateUserDto, UserDto, ObjectId> for UserRepo {
         Ok(user.into())
     }
 
-    async fn update(&self, id: ObjectId, dto: UpdateUserDto) -> RepoResult<UserDto> {
+    async fn update(&self, id: &ObjectId, dto: UpdateUserDto) -> RepoResult<UserDto> {
         let user = self.get_user(doc! {"_id": id}).await?;
         self.validate_update_uniqueness(&user, &dto).await?;
         let UpdateUserDto {
@@ -118,7 +118,7 @@ impl RepoTrait<CreateUserDto, UpdateUserDto, UserDto, ObjectId> for UserRepo {
         Ok(user.into())
     }
 
-    async fn delete(&self, id: ObjectId) -> RepoResult<UserDto> {
+    async fn delete(&self, id: &ObjectId) -> RepoResult<UserDto> {
         let filter = doc! {"_id": id};
         let user = self.get_user(filter.clone()).await?;
         let update = doc! {"$set": doc! {
@@ -128,7 +128,7 @@ impl RepoTrait<CreateUserDto, UpdateUserDto, UserDto, ObjectId> for UserRepo {
         Ok(user.into())
     }
 
-    async fn get(&self, id: ObjectId) -> RepoResult<UserDto> {
+    async fn get(&self, id: &ObjectId) -> RepoResult<UserDto> {
         let user = self.get_user(doc! {"_id": id}).await?;
         Ok(user.into())
     }

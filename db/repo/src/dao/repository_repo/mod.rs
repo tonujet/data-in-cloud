@@ -25,14 +25,14 @@ impl RepositoryRepo {
         Self { conn }
     }
 
-    async fn get_repo_model(&self, id: Uuid) -> RepoResult<Model> {
-        Repository::find_by_id(id)
+    async fn get_repo_model(&self, id: &Uuid) -> RepoResult<Model> {
+        Repository::find_by_id(*id)
             .one(&self.conn)
             .await?
-            .ok_or(RepoError::NotFoundWithUuid(id, Entity::Repository))
+            .ok_or(RepoError::NotFoundWithUuid(*id, Entity::Repository))
     }
 
-    async fn get_active_repo_model(&self, id: Uuid) -> RepoResult<repository::ActiveModel> {
+    async fn get_active_repo_model(&self, id: &Uuid) -> RepoResult<repository::ActiveModel> {
         let repo = self.get_repo_model(id).await?;
         self.is_repo_deleted(&repo)?;
         let repo: repository::ActiveModel = repo.into();
@@ -66,7 +66,7 @@ impl RepoTrait<CreateUpdateRepoDto, CreateUpdateRepoDto, RepoDto, Uuid> for Repo
         Ok(repo.into())
     }
 
-    async fn update(&self, id: Uuid, repo_dto: CreateUpdateRepoDto) -> RepoResult<RepoDto> {
+    async fn update(&self, id: &Uuid, repo_dto: CreateUpdateRepoDto) -> RepoResult<RepoDto> {
         let mut repo = self.get_active_repo_model(id).await?;
 
         let CreateUpdateRepoDto {
@@ -83,14 +83,14 @@ impl RepoTrait<CreateUpdateRepoDto, CreateUpdateRepoDto, RepoDto, Uuid> for Repo
         Ok(repo.into())
     }
 
-    async fn delete(&self, id: Uuid) -> RepoResult<RepoDto> {
+    async fn delete(&self, id: &Uuid) -> RepoResult<RepoDto> {
         let mut repo = self.get_active_repo_model(id).await?;
         repo.deleted = Set(true);
         let repo = repo.update(&self.conn).await?;
         Ok(repo.into())
     }
 
-    async fn get(&self, id: Uuid) -> RepoResult<RepoDto> {
+    async fn get(&self, id: &Uuid) -> RepoResult<RepoDto> {
         let repo = self.get_repo_model(id).await?;
         self.is_repo_deleted(&repo)?;
         Ok(repo.into())

@@ -31,7 +31,6 @@ pub trait Scheme {
     fn get_validation_options(&self) -> CreateCollectionOptions;
     fn get_indexes(&self) -> Vec<(IndexModel, impl Into<Option<CreateIndexOptions>>)>;
 
-    #[warn(async_fn_in_trait)]
     async fn get_collection(&self, db: &Database) -> SchemeResult<Collection<Self::Entity>> {
         let name = self.get_collection_name();
         let ops = self.get_validation_options();

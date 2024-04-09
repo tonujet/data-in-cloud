@@ -5,7 +5,7 @@ use entity::{repository, RepositoryType};
 use crate::dto::repository_dto::{CreateUpdateRepoDto, RepoDto};
 
 
-pub fn get_test_create_dto() -> CreateUpdateRepoDto {
+pub fn get_create_dto() -> CreateUpdateRepoDto {
     CreateUpdateRepoDto {
         title: "CreateTest".to_string(),
         description: None,
@@ -13,7 +13,7 @@ pub fn get_test_create_dto() -> CreateUpdateRepoDto {
     }
 }
 
-pub fn get_test_invalid_create_update_dto() -> CreateUpdateRepoDto {
+pub fn get_invalid_create_update_dto() -> CreateUpdateRepoDto {
     CreateUpdateRepoDto {
         title: "1".to_string(),
         description: Some("22".to_string()),
@@ -21,7 +21,7 @@ pub fn get_test_invalid_create_update_dto() -> CreateUpdateRepoDto {
     }
 }
 
-pub fn get_test_response_from_invalid_dto() -> Value {
+pub fn get_response_from_invalid_dto() -> Value {
     json!({
         "error_name": "ValidationError",
         "message": {
@@ -53,7 +53,7 @@ pub fn get_test_response_from_invalid_dto() -> Value {
     })
 }
 
-pub fn get_test_create_dtos() -> Vec<CreateUpdateRepoDto> {
+pub fn get_create_dtos() -> Vec<CreateUpdateRepoDto> {
     let create_dto1 = CreateUpdateRepoDto {
         title: "Test1".to_string(),
         description: None,
@@ -89,7 +89,7 @@ pub fn get_test_create_dtos() -> Vec<CreateUpdateRepoDto> {
     ]
 }
 
-pub fn get_test_response_from_create_dto() -> RepoDto {
+pub fn get_response_from_create_dto() -> RepoDto {
     RepoDto {
         id: Default::default(),
         title: "CreateTest".to_string(),
@@ -101,7 +101,7 @@ pub fn get_test_response_from_create_dto() -> RepoDto {
     }
 }
 
-pub fn get_test_response_from_create_dtos() -> Vec<RepoDto> {
+pub fn get_response_from_create_dtos() -> Vec<RepoDto> {
     let response_dto1 = RepoDto {
         id: Default::default(),
         title: "Test1".to_string(),
@@ -160,7 +160,7 @@ pub fn get_test_response_from_create_dtos() -> Vec<RepoDto> {
     ]
 }
 
-pub fn get_test_response_from_update_dto() -> RepoDto {
+pub fn get_response_from_update_dto() -> RepoDto {
     RepoDto {
         id: Default::default(),
         title: "UpdateTest".to_string(),
@@ -172,7 +172,7 @@ pub fn get_test_response_from_update_dto() -> RepoDto {
     }
 }
 
-pub fn get_test_update_dto() -> CreateUpdateRepoDto {
+pub fn get_update_dto() -> CreateUpdateRepoDto {
     CreateUpdateRepoDto {
         title: "UpdateTest".to_string(),
         description: Some("Updated Description".to_string()),
@@ -180,7 +180,7 @@ pub fn get_test_update_dto() -> CreateUpdateRepoDto {
     }
 }
 
-pub fn get_test_model() -> repository::Model{
+pub fn get_model() -> repository::Model{
     repository::Model {
         id: Uuid::new_v4(),
         title: "CreateTest".to_string(),

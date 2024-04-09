@@ -30,15 +30,15 @@ impl ServiceTrait<CreateUserDto, UpdateUserDto, UserDto, ObjectId> for UserServi
         Ok(self.repo.create(dto).await?)
     }
 
-    async fn update(&self, id: ObjectId, dto: UpdateUserDto) -> ApiResult<UserDto> {
+    async fn update(&self, id: &ObjectId, dto: UpdateUserDto) -> ApiResult<UserDto> {
         Ok(self.repo.update(id, dto).await?)
     }
 
-    async fn delete(&self, id: ObjectId) -> ApiResult<UserDto> {
+    async fn delete(&self, id: &ObjectId) -> ApiResult<UserDto> {
         Ok(self.repo.delete(id).await?)
     }
 
-    async fn get(&self, id: ObjectId) -> ApiResult<UserDto> {
+    async fn get(&self, id: &ObjectId) -> ApiResult<UserDto> {
         Ok(self.repo.get(id).await?)
     }
 

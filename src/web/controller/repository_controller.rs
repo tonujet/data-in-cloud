@@ -31,7 +31,7 @@ async fn update_repo(
     Path(id): Path<Uuid>,
     repo_dto: ValidationWrapper<CreateUpdateRepoDto>,
 ) -> ApiResult<Json<RepoDto>> {
-    let repo = state.service.update(id, repo_dto.0).await?;
+    let repo = state.service.update(&id, repo_dto.0).await?;
     Ok(Json(repo))
 }
 
@@ -47,7 +47,7 @@ async fn get_repo(
     State(state): State<RepoState>,
     Path(id): Path<Uuid>,
 ) -> ApiResult<Json<RepoDto>> {
-    let repo = state.service.get(id).await?;
+    let repo = state.service.get(&id).await?;
     Ok(Json(repo))
 }
 
@@ -55,6 +55,6 @@ async fn delete_repo(
     State(state): State<RepoState>,
     Path(id): Path<Uuid>,
 ) -> ApiResult<Json<RepoDto>> {
-    let repo = state.service.delete(id).await?;
+    let repo = state.service.delete(&id).await?;
     Ok(Json(repo))
 }
