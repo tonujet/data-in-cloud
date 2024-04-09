@@ -40,7 +40,10 @@ impl IntoResponse for ApiError {
             }
 
             Self::Repository(ref err) => match err {
-                RepoError::SqlExecution(_) | RepoError::MongoExecution(_) => self.to_internal_error(),
+                RepoError::SqlExecution(_) | RepoError::MongoExecution(_) | RepoError::ObjectStore(_) => {
+                    eprintln!("{err}");
+                    self.to_internal_error()
+                },
                 _ => self.to_response(StatusCode::CONFLICT, self.to_string()),
             },
         };
