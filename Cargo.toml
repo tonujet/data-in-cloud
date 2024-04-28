@@ -31,6 +31,7 @@ dotenv = "0.15.0"
 strum = { version = "0.26.1", features = ["derive"] }
 mongodb = "2.8.2"
 
+
 [dev-dependencies]
 #sea-orm = {version = "0.12", features = ["mock"]}
 tower = "0.4.13"
