@@ -11,7 +11,7 @@ use crate::web::dto::user_repo_dto::{UserMultipleRepo, UserSingleRepo};
 
 use super::error::ApiResult;
 
-pub mod repository_service;
+pub mod repo_service;
 pub mod user_repo_service;
 pub mod user_service;
 

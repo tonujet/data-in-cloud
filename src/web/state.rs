@@ -18,7 +18,7 @@ use crate::error::InternalResult;
 use crate::web::service::user_repo_service::UserRepoService;
 use crate::web::service::user_service::UserService;
 
-use super::service::repository_service::RepositoryService;
+use super::service::repo_service::RepositoryService;
 use super::service::{RepoServiceTrait, UserRepoServiceTrait, UserServiceTrait};
 
 #[derive(Clone)]
