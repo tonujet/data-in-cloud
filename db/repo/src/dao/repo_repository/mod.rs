@@ -10,17 +10,17 @@ use entity::{repository, repository::Entity as Repository};
 
 use super::error::{Entity, RepoError, RepoResult};
 use super::DtoList;
-use super::RepoTrait;
-use super::{CreateUpdateRepoDto, RepoDto, RepositoryRepoTrait};
+use super::RepositoryTrait;
+use super::{CreateUpdateRepoDto, RepoDto, RepoRepositoryTrait};
 
 #[cfg(test)]
 mod tests;
 
-pub struct RepositoryRepo {
+pub struct RepoRepository {
     conn: DbConn,
 }
 
-impl RepositoryRepo {
+impl RepoRepository {
     pub fn new(conn: DbConn) -> Self {
         Self { conn }
     }
@@ -47,10 +47,10 @@ impl RepositoryRepo {
     }
 }
 
-impl RepositoryRepoTrait for RepositoryRepo {}
+impl RepoRepositoryTrait for RepoRepository {}
 
 #[async_trait]
-impl RepoTrait<CreateUpdateRepoDto, CreateUpdateRepoDto, RepoDto, Uuid> for RepositoryRepo {
+impl RepositoryTrait<CreateUpdateRepoDto, CreateUpdateRepoDto, RepoDto, Uuid> for RepoRepository {
     async fn create(&self, repo_dto: CreateUpdateRepoDto) -> RepoResult<RepoDto> {
         let repo = repository::ActiveModel {
             id: Set(Uuid::new_v4()),

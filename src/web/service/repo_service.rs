@@ -3,7 +3,7 @@ use std::sync::Arc;
 use async_trait::async_trait;
 use uuid::Uuid;
 
-use repo::dao::RepositoryRepoTrait;
+use repo::dao::RepoRepositoryTrait;
 
 use super::{ApiResult, RepoServiceTrait};
 use super::DtoList;
@@ -12,7 +12,7 @@ use super::{CreateUpdateRepoDto, RepoDto};
 
 #[derive(Clone)]
 pub struct RepositoryService {
-    repo: Arc<dyn RepositoryRepoTrait>,
+    repo: Arc<dyn RepoRepositoryTrait>,
 }
 
 #[async_trait]
@@ -46,7 +46,7 @@ impl RepoServiceTrait for RepositoryService{}
 
 
 impl RepositoryService {
-    pub fn new(repo: Arc<dyn RepositoryRepoTrait>) -> Self {
+    pub fn new(repo: Arc<dyn RepoRepositoryTrait>) -> Self {
         Self { repo }
     }
 }

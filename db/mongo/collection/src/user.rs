@@ -2,11 +2,13 @@ use std::sync::{Arc, Mutex};
 
 use async_trait::async_trait;
 use chrono::{DateTime, Local};
-use futures_util::TryStreamExt;
-use mongodb::{bson, Collection, Cursor};
+use mongodb::{Collection, Cursor};
 use mongodb::bson::Document;
 use mongodb::bson::oid::ObjectId;
-use mongodb::options::{AggregateOptions, CountOptions, FindOneOptions, InsertOneOptions, UpdateModifications, UpdateOptions};
+use mongodb::options::{
+    AggregateOptions, CountOptions, FindOneOptions, InsertOneOptions, UpdateModifications,
+    UpdateOptions,
+};
 use serde::{Deserialize, Serialize};
 
 use crate::MongoCollection;
@@ -32,9 +34,8 @@ impl User {
         password: String,
         age: u8,
         is_public: bool,
-        created: DateTime<Local>,
-        updated: DateTime<Local>,
     ) -> Self {
+        let now = Local::now();
         Self {
             id: None,
             deleted: false,
@@ -43,12 +44,11 @@ impl User {
             password,
             age,
             is_public,
-            created,
-            updated,
+            created: now,
+            updated: now,
         }
     }
 }
-
 
 #[derive(Clone)]
 pub struct UserCollection {
@@ -57,69 +57,10 @@ pub struct UserCollection {
 
 #[async_trait]
 impl MongoCollection<User> for UserCollection {
-    async fn find_one(
-        &self,
-        filter: Option<Document>,
-        options: Option<FindOneOptions>,
-    ) -> mongodb::error::Result<Option<User>> {
-        self.collection.find_one(filter, options).await
-    }
-
-    async fn insert_one(
-        &self,
-        doc: User,
-        options: Option<InsertOneOptions>,
-    ) -> mongodb::error::Result<ObjectId> {
-        self.collection
-            .insert_one(doc, options)
-            .await
-            .map(|res| res.inserted_id.as_object_id().unwrap())
-    }
-
-    async fn update_one(
-        &self,
-        query: Document,
-        update: UpdateModifications,
-        options: Option<UpdateOptions>,
-    ) -> mongodb::error::Result<()> {
-        self.collection
-            .update_one(query, update, options)
-            .await
-            .map(|_d| ())
-    }
-
-    async fn aggregate(
-        &self,
-        pipeline: Vec<Document>,
-        options: Option<AggregateOptions>,
-    ) -> mongodb::error::Result<Cursor<Document>> {
-        self.collection.aggregate(pipeline, options).await
-    }
-
-    async fn count_documents(
-        &self,
-        filter: Option<Document>,
-        options: Option<CountOptions>,
-    ) -> mongodb::error::Result<u64> {
-        self.collection.count_documents(filter, options).await
-    }
-
-    async fn aggregate_and_collect(
-        &self,
-        pipeline: Vec<Document>,
-        options: Option<AggregateOptions>,
-    ) -> mongodb::error::Result<Vec<User>> {
-        Ok(self
-            .aggregate(pipeline, options)
-            .await?
-            .try_collect::<Vec<_>>()
-            .await?
-            .into_iter()
-            .map(|d| bson::from_document::<User>(d).unwrap())
-            .collect())
+    fn get_collection(&self) -> Option<&Collection<User>> {
+        Some(&self.collection)
     }
 }
-
 
 pub struct TestUserCollection {
     users: Arc<Mutex<Vec<User>>>,
@@ -287,4 +228,3 @@ impl MongoCollection<User> for TestUserCollection {
         Ok(users)
     }
 }
-

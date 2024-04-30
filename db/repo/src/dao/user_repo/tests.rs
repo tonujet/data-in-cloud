@@ -1,13 +1,10 @@
 use mongodb::bson::doc;
-
 use collection::user::User;
-
 use crate::dao::error::RepoResult;
-use crate::dao::RepoTrait;
-use crate::dao::user_repo::UserRepo;
+use crate::dao::RepositoryTrait;
+use crate::dao::user_repo::UserRepository;
 use crate::dto::user_dto::UserDto;
 use crate::utils::user::user_test_helper;
-
 
 #[tokio::test]
 async fn list_all_not_deleted_users_success() {
@@ -40,16 +37,15 @@ async fn list_all_not_deleted_users_success() {
 async fn get_deleted_user_failure() {
     let repo = user_test_helper::get_mock_repo();
     let created_dto = run_create_dto1(&repo).await;
-    
-    
+
     let deleted_dto = repo.delete(&created_dto.id.unwrap()).await;
     let deleted_dto = deleted_dto.unwrap();
     assert_eq!(deleted_dto, created_dto);
-    
+
     let doc = repo
         .get_user(doc! {"_id": deleted_dto.id.unwrap()})
         .await;
-    
+
     assert!(doc.is_err())
 }
 
@@ -95,7 +91,7 @@ async fn analyze_responses_to_uniqueness_success() {
     let email_res = repo.get_user(doc! {key_field: created_dto.email}).await;
     let reses = vec![(email_res, key_field)];
     let analized = repo.analyze_reses_to_uniqueness(reses);
-    
+
     assert!(analized.is_err())
 }
 
@@ -135,14 +131,15 @@ async fn validate_update_uniqueness_failure() {
     assert!(validated.is_err())
 }
 
-async fn run_create_dto1(repo: &UserRepo) -> UserDto {
+
+async fn run_create_dto1(repo: &UserRepository) -> UserDto {
     let create_dto = user_test_helper::get_create_dto1();
     let created_dto = repo.create(create_dto).await;
     assert!(created_dto.is_ok());
     created_dto.unwrap()
 }
 
-async fn run_create_dto2(repo: &UserRepo) -> UserDto {
+async fn run_create_dto2(repo: &UserRepository) -> UserDto {
     let create_dto = user_test_helper::get_create_dto2();
     let created_dto = repo.create(create_dto).await;
     assert!(created_dto.is_ok());

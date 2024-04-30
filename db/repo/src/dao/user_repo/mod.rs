@@ -13,7 +13,7 @@ use crate::dto::{
     user_dto::UpdateUserDto
 };
 
-use super::{RepoTrait, UserRepoTrait};
+use super::{RepositoryTrait, UserRepositoryTrait};
 use super::{CreateUserDto, UserDto};
 use super::error::{
     Entity,
@@ -24,13 +24,13 @@ use super::error::{
 mod tests;
 
 #[derive(Clone)]
-pub struct UserRepo {
-    pub collection: Arc<dyn MongoCollection<User>>
+pub struct UserRepository {
+    pub collection: Arc<dyn MongoCollection<User>>,
 }
 
-impl UserRepoTrait for UserRepo {}
+impl UserRepositoryTrait for UserRepository {}
 
-impl UserRepo {
+impl UserRepository {
     async fn get_user(&self, document: Document) -> RepoResult<User> {
         let user = self
             .collection
@@ -51,7 +51,7 @@ impl UserRepo {
     ) -> RepoResult<()> {
         let email_res = self.get_user(doc! {"email": email}).await;
         let username_res = self.get_user(doc! {"username": username}).await;
-        
+
         let reses = vec![(email_res, "email"), (username_res, "username")];
         Ok(self.analyze_reses_to_uniqueness(reses)?)
     }
@@ -87,7 +87,7 @@ impl UserRepo {
 }
 
 #[async_trait]
-impl RepoTrait<CreateUserDto, UpdateUserDto, UserDto, ObjectId> for UserRepo {
+impl RepositoryTrait<CreateUserDto, UpdateUserDto, UserDto, ObjectId> for UserRepository {
     async fn create(&self, dto: CreateUserDto) -> RepoResult<UserDto> {
         self.validate_create_uniqueness(&dto).await?;
         let user = User::from(dto);
@@ -113,7 +113,9 @@ impl RepoTrait<CreateUserDto, UpdateUserDto, UserDto, ObjectId> for UserRepo {
             "updated": Local::now().to_rfc3339()
         }};
 
-        self.collection.update_one(filter, update.into(), None).await?;
+        self.collection
+            .update_one(filter, update.into(), None)
+            .await?;
         let user = self.get_user(doc! {"_id": id}).await?;
         Ok(user.into())
     }
@@ -124,7 +126,9 @@ impl RepoTrait<CreateUserDto, UpdateUserDto, UserDto, ObjectId> for UserRepo {
         let update = doc! {"$set": doc! {
             "deleted": true,
         }};
-        self.collection.update_one(filter, update.into(), None).await?;
+        self.collection
+            .update_one(filter, update.into(), None)
+            .await?;
         Ok(user.into())
     }
 
@@ -133,11 +137,7 @@ impl RepoTrait<CreateUserDto, UpdateUserDto, UserDto, ObjectId> for UserRepo {
         Ok(user.into())
     }
 
-    async fn list(
-        &self,
-        take: Option<u64>,
-        offset: Option<u64>,
-    ) -> RepoResult<DtoList<UserDto>> {
+    async fn list(&self, take: Option<u64>, offset: Option<u64>) -> RepoResult<DtoList<UserDto>> {
         let mut pipeline = vec![
             doc! {"$match": doc!{"deleted": false}},
             doc! {"$skip" : offset.unwrap_or(0) as u32},
@@ -147,7 +147,13 @@ impl RepoTrait<CreateUserDto, UpdateUserDto, UserDto, ObjectId> for UserRepo {
             pipeline.push(doc! {"$limit" : take as u32})
         }
 
-        let dtos = self.collection.aggregate_and_collect(pipeline, None).await?.into_iter().map(|u| u.into()).collect();
+        let dtos = self
+            .collection
+            .aggregate_and_collect(pipeline, None)
+            .await?
+            .into_iter()
+            .map(|u| u.into())
+            .collect();
 
         let count = self
             .collection

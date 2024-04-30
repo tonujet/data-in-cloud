@@ -3,7 +3,7 @@ use async_trait::async_trait;
 
 use mongodb::bson::oid::ObjectId;
 
-use repo::dao::UserRepoTrait;
+use repo::dao::UserRepositoryTrait;
 use repo::dto::user_dto::{CreateUserDto, UpdateUserDto, UserDto};
 use repo::dto::DtoList;
 
@@ -11,11 +11,11 @@ use crate::web::error::ApiResult;
 use crate::web::service::{ServiceTrait, UserServiceTrait};
 
 pub struct UserService {
-    repo: Arc<dyn UserRepoTrait>,
+    repo: Arc<dyn UserRepositoryTrait>,
 }
 
 impl UserService {
-    pub(crate) fn new(repo: Arc<dyn UserRepoTrait>) -> Self {
+    pub fn new(repo: Arc<dyn UserRepositoryTrait>) -> Self {
         UserService {
             repo
         }

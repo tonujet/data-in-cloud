@@ -4,20 +4,20 @@ use mongodb::bson::oid::ObjectId;
 use object_store::memory::InMemory;
 use uuid::Uuid;
 
-use crate::dao::user_repository_repo::UserRepositoryRepo;
-use crate::dto::repository_dto::CreateUpdateRepoDto;
+use crate::dao::user_repo_repository::UserRepoRepository;
+use crate::dto::repo_dto::CreateUpdateRepoDto;
 use crate::dto::user_dto::CreateUserDto;
 use crate::utils::repository::repository_test_helper;
 use crate::utils::user::user_test_helper;
 
-pub fn get_mock_repo() -> UserRepositoryRepo {
+pub fn get_mock_repo() -> UserRepoRepository {
     let store = Arc::new(InMemory::new());
-    let repo = UserRepositoryRepo::new(store);
+    let repo = UserRepoRepository::new(store);
     repo
 }
 
 
-pub fn get_mock_repo_with_starter() -> (UserRepositoryRepo, ObjectId, Uuid) {
+pub fn get_mock_repo_with_starter() -> (UserRepoRepository, ObjectId, Uuid) {
     let repo = get_mock_repo();
     let user_id = ObjectId::new();
     let repo_id = Uuid::new_v4();

@@ -2,12 +2,12 @@ use sea_orm::DatabaseBackend;
 use serial_test::serial;
 
 use crate::utils::repository::repository_test_helper;
-use crate::dao::RepoTrait;
+use crate::dao::RepositoryTrait;
 
-use super::RepositoryRepo;
-use super::RepositoryRepoTrait;
+use super::RepoRepository;
+use super::RepoRepositoryTrait;
 
-pub async fn get_stub_repo() -> impl RepositoryRepoTrait {
+pub async fn get_stub_repo() -> impl RepoRepositoryTrait {
     repository_test_helper::get_model();
     let alive_repo_dto = repository_test_helper::get_model();
 
@@ -23,7 +23,7 @@ pub async fn get_stub_repo() -> impl RepositoryRepoTrait {
         ])
         .into_connection();
 
-    RepositoryRepo::new(conn)
+    RepoRepository::new(conn)
 }
 
 #[tokio::test]

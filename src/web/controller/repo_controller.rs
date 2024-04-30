@@ -3,8 +3,8 @@ use axum::routing::{post, put};
 use axum::{Json, Router};
 use uuid::Uuid;
 
-use repo::dto::repository_dto::CreateUpdateRepoDto;
-use repo::dto::{repository_dto::RepoDto, DtoList};
+use repo::dto::repo_dto::CreateUpdateRepoDto;
+use repo::dto::{repo_dto::RepoDto, DtoList};
 use crate::web::utils::validation::ValidationWrapper;
 
 
