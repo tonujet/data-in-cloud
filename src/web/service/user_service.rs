@@ -19,7 +19,7 @@ pub struct UserService {
 
 impl UserService {
     pub fn new(repo: Arc<dyn UserRepositoryTrait>, user_repo_info_service: Arc<dyn UserRepoInfoServiceTrait>) -> Self {
-        UserService {
+        Self {
             repo,
             user_repo_info_service
         }

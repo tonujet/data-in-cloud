@@ -15,6 +15,12 @@ pub struct RepositoryService {
     repo: Arc<dyn RepoRepositoryTrait>,
 }
 
+impl RepositoryService {
+    pub fn new(repo: Arc<dyn RepoRepositoryTrait>) -> Self {
+        Self { repo }
+    }
+}
+
 #[async_trait]
 impl ServiceTrait<CreateUpdateRepoDto, CreateUpdateRepoDto, RepoDto, Uuid> for RepositoryService {
     async fn create(&self, repo_dto: CreateUpdateRepoDto) -> ApiResult<RepoDto> {
@@ -45,8 +51,4 @@ impl ServiceTrait<CreateUpdateRepoDto, CreateUpdateRepoDto, RepoDto, Uuid> for R
 impl RepoServiceTrait for RepositoryService{}
 
 
-impl RepositoryService {
-    pub fn new(repo: Arc<dyn RepoRepositoryTrait>) -> Self {
-        Self { repo }
-    }
-}
+

@@ -30,7 +30,7 @@ pub trait ServiceTrait<C, U, R, I>: Send + Sync {
 
 #[async_trait]
 pub trait UserServiceTrait: ServiceTrait<CreateUserDto, UpdateUserDto, UserDto, ObjectId> {
-    async fn list_user_repos_info(&self, id: ObjectId, page: Option<u64>, offset: Option<u64>) -> ApiResult<DtoList<UserRepoInfoDto>>; 
+    async fn list_user_repos_info(&self, id: ObjectId, page: Option<u64>, offset: Option<u64>) -> ApiResult<DtoList<UserRepoInfoDto>>;
 }
 
 pub trait RepoServiceTrait:

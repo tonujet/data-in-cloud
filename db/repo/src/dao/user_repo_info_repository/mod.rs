@@ -17,7 +17,15 @@ use crate::dto::DtoList;
 mod tests;
 
 pub struct UserRepoInfoRepository {
-    pub collection: Arc<dyn MongoCollection<UserRepoInfo>>,
+    collection: Arc<dyn MongoCollection<UserRepoInfo>>,
+}
+
+impl UserRepoInfoRepository {
+    pub fn new(collection: Arc<dyn MongoCollection<UserRepoInfo>>) -> Self {
+        Self {
+            collection
+        }
+    }
 }
 
 #[async_trait]

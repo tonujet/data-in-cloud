@@ -25,8 +25,17 @@ mod tests;
 
 #[derive(Clone)]
 pub struct UserRepository {
-    pub collection: Arc<dyn MongoCollection<User>>,
+    collection: Arc<dyn MongoCollection<User>>,
 }
+
+impl UserRepository {
+    pub fn new(collection: Arc<dyn MongoCollection<User>>) -> Self {
+        Self {
+            collection
+        }
+    }
+}
+
 
 impl UserRepositoryTrait for UserRepository {}
 

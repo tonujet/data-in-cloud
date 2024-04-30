@@ -23,7 +23,7 @@ pub trait Receiver<M>: Send + Sync {
 
 #[async_trait]
 pub trait Subscriber<C, O> {
-    async fn init(conn: C, options: O) -> MBrokerResult<Self>
+    async fn init(conn: C, options: &O) -> MBrokerResult<Self>
     where
         Self: Sized;
     async fn close(&self) -> MBrokerResult<()>;
