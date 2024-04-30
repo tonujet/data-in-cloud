@@ -31,7 +31,7 @@ pub trait RabbitMQSubscriber: Subscriber<Connection, RabbitMQOptions> {
         Ok(self.get_channel().await.close().await?)
     }
 
-    async fn init(conn: Connection, options: RabbitMQOptions) -> MBrokerResult<(Channel, String)>
+    async fn init(conn: Connection, options: &RabbitMQOptions) -> MBrokerResult<(Channel, String)>
     where
         Self: Sized,
     {
@@ -39,7 +39,7 @@ pub trait RabbitMQSubscriber: Subscriber<Connection, RabbitMQOptions> {
         ch.register_callback(DefaultChannelCallback).await?;
 
         let q_args = QueueDeclareArguments::default()
-            .queue(String::from(options.queue_name))
+            .queue(options.queue_name.to_string())
             .durable(options.durable)
             .finish();
 
@@ -50,7 +50,7 @@ pub trait RabbitMQSubscriber: Subscriber<Connection, RabbitMQOptions> {
 
 #[async_trait]
 impl Subscriber<Connection, RabbitMQOptions> for RabbitMQPublisher {
-    async fn init(conn: Connection, options: RabbitMQOptions) -> MBrokerResult<Self> {
+    async fn init(conn: Connection, options: &RabbitMQOptions) -> MBrokerResult<Self> {
         let params = <Self as RabbitMQSubscriber>::init(conn, options).await?;
         Ok(Self {
             channel: Mutex::new(Some(params.0)),
@@ -94,7 +94,7 @@ where
 pub struct RabbitMQReceiver {
     channel: Mutex<Option<Channel>>,
     receiver: Mutex<UnboundedReceiver<ConsumerMessage>>,
-    queue_name: String,
+    _queue_name: String,
 }
 
 #[async_trait]
@@ -106,8 +106,8 @@ impl RabbitMQSubscriber for RabbitMQReceiver {
 
 #[async_trait]
 impl Subscriber<Connection, RabbitMQOptions> for RabbitMQReceiver {
-    async fn init(conn: Connection, options: RabbitMQOptions) -> MBrokerResult<Self>
-    where
+    async fn init(conn: Connection, options: &RabbitMQOptions) -> MBrokerResult<Self>
+    where 
         Self: Sized,
     {
         let (ch, queue_name) = <Self as RabbitMQSubscriber>::init(conn, options).await?;

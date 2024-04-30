@@ -52,7 +52,15 @@ impl User {
 
 #[derive(Clone)]
 pub struct UserCollection {
-    pub collection: Collection<User>,
+    collection: Collection<User>,
+}
+
+impl UserCollection {
+    pub fn new(collection: Collection<User>) -> Self {
+        Self {
+            collection
+        }
+    }
 }
 
 #[async_trait]

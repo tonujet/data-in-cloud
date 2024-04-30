@@ -18,7 +18,7 @@ pub async fn main() -> error::InternalResult<()> {
     let rabbitmq_conn = message_broker::connection::get_rabbitmq_connection().await?;
 
     let state = AppState::build(sql_conn, nosql_conn, rabbitmq_conn).await?;
-    runtime::run_detached_tasks(state.clone());
+    runtime::run_detached_tasks(&state);
     web::start_server(state).await?;
     Ok(())
 }

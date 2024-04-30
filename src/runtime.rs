@@ -1,7 +1,8 @@
+use std::sync::Arc;
 use crate::web::state::AppState;
 
-pub fn run_detached_tasks(state: AppState) {
-    let user_repo_info_receiver = state.user_repo_info_state.receiver;
+pub fn run_detached_tasks(state: &AppState) {
+    let user_repo_info_receiver = Arc::clone(&state.user_repo_info_state.receiver);
 
     tokio::spawn(async move {
         loop {
