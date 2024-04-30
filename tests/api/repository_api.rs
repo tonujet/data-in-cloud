@@ -3,7 +3,7 @@ use axum_test::TestServer;
 use serde_json::Value;
 use serial_test::serial;
 
-use repo::dto::{DtoList, repository_dto::RepoDto};
+use repo::dto::{DtoList, repo_dto::RepoDto};
 use repo::utils::repository::repository_test_helper;
 
 use super::common::Setup;

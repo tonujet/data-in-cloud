@@ -4,7 +4,8 @@ use serial_test::serial;
 
 use ia_11_vorobei_ant::web::dto::user_repo_dto::{UserMultipleRepo, UserSingleRepo};
 use repo::dto::DtoList;
-use repo::dto::repository_dto::RepoDto;
+use repo::dto::repo_dto::RepoDto;
+use repo::dto::user_dto::UserDto;
 use repo::utils::repository::repository_test_helper;
 use repo::utils::user_repo::user_repo_test_helper;
 
@@ -17,10 +18,10 @@ async fn add_pair_success() {
     let UserSingleRepo {user, repo} = create_user_and_repo(&setup.client).await;
     let expected_code = StatusCode::OK;
     let expected_body = UserSingleRepo::new(user.clone(), repo.clone());
-    
+
     let endpoint = format!("/api/v1/users/{}/repos/{}", user.id.unwrap(), repo.id);
     let res = setup.client.post(&endpoint).await;
-    
+
     assert_eq!(res.status_code(), expected_code);
     assert_eq!(res.json::<UserSingleRepo>(), expected_body);
 }
@@ -46,7 +47,7 @@ async fn delete_pair_success() {
     let UserSingleRepo {user, repo}  = create_user_and_repo(&setup.client).await;
     let expected_code = StatusCode::OK;
     let expected_body = UserSingleRepo::new(user.clone(), repo.clone());
-    
+
     let endpoint = format!("/api/v1/users/{}/repos/{}", user.id.unwrap(), repo.id);
     setup.client.post(&endpoint).await;
     let res = setup.client.delete(&endpoint).await;
@@ -76,7 +77,7 @@ async fn list_all_pairs_success() {
     let setup = Setup::new().await;
     let user_multiple_repos: UserMultipleRepo = create_connected_user_and_repos(&setup.client).await;
     let expected_code = StatusCode::OK;
-    
+
     let endpoint = format!("/api/v1/users/{}/repos", user_multiple_repos.user.id.unwrap());
     let res = setup.client.get(&endpoint).await;
 
@@ -94,7 +95,7 @@ async fn list_pairs_with_pagination_success() {
     let expected_code = StatusCode::OK;
     let repos_len = repos.dtos.len() as u64;
     let expected_body = UserMultipleRepo::new(user.clone(), DtoList::new(repos.dtos.into_iter().skip(offset).take(take).collect(), repos_len, Some(take as u64), Some(offset as u64)));
-    
+
     let endpoint = format!("/api/v1/users/{}/repos", user.id.unwrap());
     let res = setup
         .client
