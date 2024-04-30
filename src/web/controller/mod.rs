@@ -7,13 +7,15 @@ use super::state::*;
 mod repo_controller;
 mod user_controller;
 mod user_repo_controller;
+mod user_repo_info_controller;
 
 pub fn api_routes(state: AppState) -> Router {
     let router: Router<()> = Router::new();
     let api_router = Router::new()
         .nest("/repos", repo_controller::routes(state.clone()))
         .nest("/users", user_controller::routes(state.clone()))
-        .nest("/users", user_repo_controller::routes(state.clone()));
+        .nest("/users", user_repo_controller::routes(state.clone()))
+        .nest("/user_repo_info", user_repo_info_controller::routes(state.clone()));
     router.nest("/api/v1", api_router)
 }
 
