@@ -6,33 +6,35 @@ use object_store::aws::AmazonS3Builder;
 use object_store::memory::InMemory;
 use object_store::ObjectStore;
 
-use collection::MongoCollection;
 use collection::user::{TestUserCollection, User, UserCollection};
 use collection::user_repo_info::{
     TestUserRepoInfoCollection, UserRepoInfo, UserRepoInfoCollection,
 };
-use repo::dao::{
-    RepoRepositoryTrait, UserRepoInfoRepositoryTrait, UserRepoRepositoryTrait, UserRepositoryTrait,
-};
+use collection::MongoCollection;
 use repo::dao::repo_repository::RepoRepository;
 use repo::dao::user_repo::UserRepository;
 use repo::dao::user_repo_info_repository::UserRepoInfoRepository;
 use repo::dao::user_repo_repository::UserRepoRepository;
-use repo::dto::user_repo_info_dto::{CreateUserRepoInfoDto, UserRepoInfoDto};
+use repo::dao::{
+    RepoRepositoryTrait, UserRepoInfoRepositoryTrait, UserRepoRepositoryTrait, UserRepositoryTrait,
+};
+use repo::dto::user_repo_info_dto::CreateUserRepoInfoDto;
 
 use crate::config::config;
 use crate::error::InternalResult;
 use crate::message_broker;
 use crate::message_broker::rabbitmq::{RabbitMQOptions, RabbitMQPublisher, RabbitMQReceiver};
 use crate::message_broker::Subscriber;
-use crate::web::service::{RepoServiceTrait, UserRepoInfoReceiverTrait, UserRepoInfoServiceTrait, UserRepoServiceTrait, UserServiceTrait};
 use crate::web::service::user_repo_info_receiver::UserRepoInfoReceiver;
 use crate::web::service::user_repo_info_service::UserRepoInfoService;
 use crate::web::service::user_repo_service::UserRepoService;
 use crate::web::service::user_service::UserService;
+use crate::web::service::{
+    RepoServiceTrait, UserRepoInfoReceiverTrait, UserRepoInfoServiceTrait, UserRepoServiceTrait,
+    UserServiceTrait,
+};
 
 use super::service::repo_service::RepositoryService;
-
 
 #[derive(Clone)]
 pub struct AppState {
@@ -52,11 +54,11 @@ impl AppState {
         rabbitmq_conn: amqprs::connection::Connection,
     ) -> InternalResult<AppState> {
         let repo_state = RepoState::build(sql_conn.clone()).await?;
-        let user_state = UserState::build(nosql_conn.clone()).await?;
-        let user_repo_state =
-            UserRepoState::build(&user_state, &repo_state, rabbitmq_conn.clone()).await?;
         let user_repo_info_state =
             UserRepoInfoState::build(nosql_conn.clone(), rabbitmq_conn.clone()).await?;
+        let user_state = UserState::build(nosql_conn.clone(), user_repo_info_state.clone()).await?;
+        let user_repo_state =
+            UserRepoState::build(&user_state, &repo_state, rabbitmq_conn.clone()).await?;
         Ok(AppState {
             _sql_conn: Some(sql_conn),
             _nosql_conn: Some(nosql_conn),
@@ -72,10 +74,10 @@ impl AppState {
         rabbitmq_conn: amqprs::connection::Connection,
     ) -> InternalResult<AppState> {
         let sql_conn = crate::db::init_test_sql_database().await;
-        let repo_state = RepoState::build(sql_conn.clone()).await?;
-        let user_state = UserState::build_test().await?;
-        let user_repo_state = UserRepoState::build_test(&user_state, &repo_state).await?;
         let user_repo_info_state = UserRepoInfoState::build_test(rabbitmq_conn).await?;
+        let repo_state = RepoState::build(sql_conn.clone()).await?;
+        let user_state = UserState::build_test(user_repo_info_state.clone()).await?;
+        let user_repo_state = UserRepoState::build_test(&user_state, &repo_state).await?;
         Ok(AppState {
             _sql_conn: Some(sql_conn),
             _nosql_conn: None,
@@ -119,7 +121,10 @@ pub struct UserState {
 }
 
 impl UserState {
-    async fn build(conn: mongodb::Database) -> InternalResult<Self> {
+    async fn build(
+        conn: mongodb::Database,
+        user_repo_info_state: UserRepoInfoState,
+    ) -> InternalResult<Self> {
         let user_mongo_collection: Collection<User> = schema::get_collection(&conn).await?;
         let user_collection: Arc<dyn MongoCollection<User>> = Arc::new(UserCollection {
             collection: user_mongo_collection,
@@ -127,17 +132,23 @@ impl UserState {
         let user_repo: Arc<dyn UserRepositoryTrait> = Arc::new(UserRepository {
             collection: user_collection,
         });
-        let user_service = Arc::new(UserService::new(Arc::clone(&user_repo)));
+        let user_service = Arc::new(UserService::new(
+            Arc::clone(&user_repo),
+            Arc::clone(&user_repo_info_state.service),
+        ));
         Ok(UserState {
             service: user_service,
             repo: user_repo,
         })
     }
 
-    async fn build_test() -> InternalResult<Self> {
+    async fn build_test(user_repo_info_state: UserRepoInfoState) -> InternalResult<Self> {
         let collection: Arc<dyn MongoCollection<User>> = Arc::new(TestUserCollection::new());
         let user_repo: Arc<dyn UserRepositoryTrait> = Arc::new(UserRepository { collection });
-        let user_service = Arc::new(UserService::new(Arc::clone(&user_repo)));
+        let user_service = Arc::new(UserService::new(
+            Arc::clone(&user_repo),
+            Arc::clone(&user_repo_info_state.service),
+        ));
         Ok(UserState {
             repo: user_repo,
             service: user_service,
@@ -274,11 +285,13 @@ impl UserRepoInfoState {
                     durable: true,
                 },
             )
-                .await?,
+            .await?,
         );
 
-        let receiver =
-            Arc::new(UserRepoInfoReceiver::new(rabbitmq_receiver, service.clone()));
+        let receiver = Arc::new(UserRepoInfoReceiver::new(
+            rabbitmq_receiver,
+            service.clone(),
+        ));
 
         Ok(UserRepoInfoState {
             repo,
@@ -308,8 +321,10 @@ impl UserRepoInfoState {
             .await?,
         );
 
-        let user_repo_info_receiver =
-            Arc::new(UserRepoInfoReceiver::new(receiver, user_repo_info_service.clone()));
+        let user_repo_info_receiver = Arc::new(UserRepoInfoReceiver::new(
+            receiver,
+            user_repo_info_service.clone(),
+        ));
 
         Ok(UserRepoInfoState {
             repo: user_repo_info_repository,

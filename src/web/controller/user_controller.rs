@@ -17,7 +17,7 @@ pub fn routes(state: AppState) -> Router {
     Router::new()
         .route("/", post(create_user).get(list_users))
         .route("/:id", put(update_user).get(get_user).delete(delete_user))
-        .route("/:id/repo-infos", get(list_user_repos_info))
+        .route("/:id/info", get(list_user_repos_info))
         .with_state(state)
 }
 

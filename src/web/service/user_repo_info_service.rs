@@ -1,11 +1,11 @@
 use std::sync::Arc;
-use async_trait::async_trait;
 
+use async_trait::async_trait;
 use mongodb::bson::oid::ObjectId;
 
 use repo::dao::UserRepoInfoRepositoryTrait;
-use repo::dto::DtoList;
 use repo::dto::user_repo_info_dto::{CreateUserRepoInfoDto, UserRepoInfoDto};
+use repo::dto::DtoList;
 
 use crate::web::error::ApiResult;
 use crate::web::service::{PersistentServiceTrait, UserRepoInfoServiceTrait};
@@ -21,7 +21,17 @@ impl UserRepoInfoService {
     }
 }
 
-impl UserRepoInfoServiceTrait for UserRepoInfoService {}
+#[async_trait]
+impl UserRepoInfoServiceTrait for UserRepoInfoService {
+    async fn list_by_user_id(
+        &self,
+        user_id: ObjectId,
+        take: Option<u64>,
+        offset: Option<u64>,
+    ) -> ApiResult<DtoList<UserRepoInfoDto>> {
+        Ok(self.repo.list_by_user_id(user_id, take, offset).await?)
+    }
+}
 
 #[async_trait]
 impl PersistentServiceTrait<CreateUserRepoInfoDto, UserRepoInfoDto, ObjectId>
@@ -43,4 +53,3 @@ impl PersistentServiceTrait<CreateUserRepoInfoDto, UserRepoInfoDto, ObjectId>
         Ok(self.repo.list(take, offset).await?)
     }
 }
-
