@@ -1,4 +1,4 @@
-use chrono::{DateTime, Utc};
+use chrono::{DateTime, Local};
 use mongodb::bson::oid::ObjectId;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
@@ -19,14 +19,7 @@ pub struct UserRepoInfoDto {
     pub user_id: ObjectId,
     pub repo_id: Uuid,
     pub operation: UserRepoInfoOperation,
-    pub executed_at: DateTime<Utc>,
-}
-
-
-impl PartialEq for UserRepoInfoDto {
-    fn eq(&self, other: &Self) -> bool {
-        self.user_id == other.user_id && self.repo_id == other.repo_id &&  self.operation == other.operation
-    }
+    pub executed_at: DateTime<Local>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -76,10 +69,9 @@ impl From<Vec<u8>> for CreateUserRepoInfoDto {
     }
 }
 
-
-impl From<CreateUserRepoInfoDto> for Vec<u8> {
-    fn from(val: CreateUserRepoInfoDto) -> Self {
-        let string = serde_json::to_string(&val).unwrap();
+impl Into<Vec<u8>> for CreateUserRepoInfoDto {
+    fn into(self) -> Vec<u8> {
+        let string = serde_json::to_string(&self).unwrap();
         string.into_bytes()
     }
 }

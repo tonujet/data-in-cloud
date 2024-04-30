@@ -41,11 +41,13 @@ impl Scheme for UserRepoInfoScheme {
                   },
               },
           };
-        CreateCollectionOptions::builder()
+        let validation_opts = CreateCollectionOptions::builder()
             .validator(validator)
             .validation_action(Some(ValidationAction::Error))
             .validation_level(Some(ValidationLevel::Moderate))
-            .build()
+            .build();
+
+        validation_opts
     }
 
     fn new() -> Self {

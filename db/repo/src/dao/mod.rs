@@ -3,6 +3,7 @@ use std::sync::Arc;
 
 use async_trait::async_trait;
 use futures_util::StreamExt;
+use mongodb::bson::doc;
 use mongodb::bson::oid::ObjectId;
 use object_store::ObjectStore;
 use object_store::path::Path;
@@ -28,7 +29,7 @@ pub mod user_repo_info_repository;
 pub mod user_repo_repository;
 
 #[async_trait]
-pub trait RepositoryTrait<C, U, R, I>: Send + Sync {
+pub trait RepositoryTrait<C, U, R, I>: Send + Sync{
     async fn create(&self, dto: C) -> RepoResult<R>;
     async fn update(&self, id: &I, dto: U) -> RepoResult<R>;
     async fn delete(&self, id: &I) -> RepoResult<R>;
@@ -53,20 +54,12 @@ pub trait PersistentRepositoryTrait<C, R, I>: Send + Sync {
     async fn list(&self, take: Option<u64>, offset: Option<u64>) -> RepoResult<DtoList<R>>;
 }
 
-
-#[async_trait]
 pub trait UserRepoInfoRepositoryTrait:
     PersistentRepositoryTrait<CreateUserRepoInfoDto, UserRepoInfoDto, ObjectId>
 {
-    async fn list_by_user_id(
-        &self,
-        user_id: ObjectId,
-        take: Option<u64>,
-        offset: Option<u64>,
-    ) -> RepoResult<DtoList<UserRepoInfoDto>>;
 }
 
-const DELIMITER: &str = "____";
+const DELIMITER: &'static str = "____";
 
 #[async_trait]
 pub trait BlobConnRepositoryTrait<K, V>: Send + Sync
