@@ -1,21 +1,23 @@
-use axum::extract::{Path, Query, State};
-use axum::routing::{post, put};
 use axum::{Json, Router};
+use axum::extract::{Path, Query, State};
+use axum::routing::{get, post, put};
 use mongodb::bson::oid::ObjectId;
 
-use repo::dto::user_dto::{CreateUserDto, UpdateUserDto, UserDto};
 use repo::dto::DtoList;
+use repo::dto::user_dto::{CreateUserDto, UpdateUserDto, UserDto};
+use repo::dto::user_repo_info_dto::UserRepoInfoDto;
 
 use crate::web::state::UserState;
 use crate::web::utils::validation::ValidationWrapper;
 
-use super::AppState;
 use super::{ApiResult, PaginationParams};
+use super::AppState;
 
 pub fn routes(state: AppState) -> Router {
     Router::new()
         .route("/", post(create_user).get(list_users))
         .route("/:id", put(update_user).get(get_user).delete(delete_user))
+        .route("/:id/info", get(list_user_repos_info))
         .with_state(state)
 }
 
@@ -41,6 +43,15 @@ async fn list_users(
     Query(PaginationParams { take, offset }): Query<PaginationParams>,
 ) -> ApiResult<Json<DtoList<UserDto>>> {
     let users = state.service.list(take, offset).await?;
+    Ok(Json(users))
+}
+
+async fn list_user_repos_info(
+    State(state): State<UserState>,
+    Path(id): Path<ObjectId>,
+    Query(PaginationParams { take, offset }): Query<PaginationParams>,
+) -> ApiResult<Json<DtoList<UserRepoInfoDto>>> {
+    let users = state.service.list_user_repos_info(id, take, offset).await?;
     Ok(Json(users))
 }
 

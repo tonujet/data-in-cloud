@@ -2,12 +2,12 @@ use async_trait::async_trait;
 use mongodb::bson::oid::ObjectId;
 use uuid::Uuid;
 
-use repo::dto::{
-    DtoList,
-    repo_dto::{CreateUpdateRepoDto, RepoDto},
-};
 use repo::dto::user_dto::{CreateUserDto, UpdateUserDto, UserDto};
 use repo::dto::user_repo_info_dto::{CreateUserRepoInfoDto, UserRepoInfoDto};
+use repo::dto::{
+    repo_dto::{CreateUpdateRepoDto, RepoDto},
+    DtoList,
+};
 
 use crate::web::dto::user_repo_dto::{UserMultipleRepo, UserSingleRepo};
 
@@ -28,7 +28,10 @@ pub trait ServiceTrait<C, U, R, I>: Send + Sync {
     async fn list(&self, take: Option<u64>, offset: Option<u64>) -> ApiResult<DtoList<R>>;
 }
 
-pub trait UserServiceTrait: ServiceTrait<CreateUserDto, UpdateUserDto, UserDto, ObjectId> {}
+#[async_trait]
+pub trait UserServiceTrait: ServiceTrait<CreateUserDto, UpdateUserDto, UserDto, ObjectId> {
+    async fn list_user_repos_info(&self, id: ObjectId, page: Option<u64>, offset: Option<u64>) -> ApiResult<DtoList<UserRepoInfoDto>>; 
+}
 
 pub trait RepoServiceTrait:
     ServiceTrait<CreateUpdateRepoDto, CreateUpdateRepoDto, RepoDto, Uuid>
@@ -42,9 +45,16 @@ pub trait PersistentServiceTrait<C, R, I>: Send + Sync {
     async fn list(&self, take: Option<u64>, offset: Option<u64>) -> ApiResult<DtoList<R>>;
 }
 
+#[async_trait]
 pub trait UserRepoInfoServiceTrait:
     PersistentServiceTrait<CreateUserRepoInfoDto, UserRepoInfoDto, ObjectId>
 {
+    async fn list_by_user_id(
+        &self,
+        user_id: ObjectId,
+        take: Option<u64>,
+        offset: Option<u64>,
+    ) -> ApiResult<DtoList<UserRepoInfoDto>>;
 }
 
 #[async_trait]
@@ -64,4 +74,4 @@ pub trait ReceiverTrait<M: Send + Sync>: Send + Sync {
     async fn receive(&self) -> ApiResult<M>;
 }
 
-pub trait UserRepoInfoReceiverTrait: ReceiverTrait<UserRepoInfoDto>{}
+pub trait UserRepoInfoReceiverTrait: ReceiverTrait<UserRepoInfoDto> {}
