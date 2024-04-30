@@ -1,4 +1,5 @@
 use std::env;
+use std::str::FromStr;
 use std::sync::OnceLock;
 
 use dotenv::dotenv;
@@ -24,6 +25,7 @@ pub struct Config {
     pub SQL_DB: SqlDbConfig,
     pub MONGO_DB: MongoDbConfig,
     pub AWS: AwsConfig,
+    pub RABBITMQ: RabbitMQConfig,
 }
 
 impl ConfigLoader for Config {
@@ -34,6 +36,7 @@ impl ConfigLoader for Config {
             MONGO_DB: MongoDbConfig::load()?,
             SERVER: ServerConfig::load()?,
             AWS: AwsConfig::load()?,
+            RABBITMQ: RabbitMQConfig::load()?,
         })
     }
 }
@@ -65,39 +68,43 @@ impl ConfigLoader for SqlDbConfig {
 
 #[allow(non_snake_case)]
 pub struct MongoDbConfig {
-    pub URL: String, 
+    pub URL: String,
     pub NAME: String,
-    pub TEST_URL: String
+    pub TEST_URL: String,
 }
 
 impl ConfigLoader for MongoDbConfig {
-    fn load() -> InternalResult<Self> where Self: Sized {
+    fn load() -> InternalResult<Self>
+    where
+        Self: Sized,
+    {
         let port = get_env("MONGO_DB_PORT")?;
         let host = get_env("MONGO_DB_HOST")?;
-        
-        let url = format!("mongodb://{host}:{port}");
 
+        let url = format!("mongodb://{host}:{port}");
 
         Ok(MongoDbConfig {
             URL: url,
             NAME: get_env("MONGO_DB_NAME")?,
             TEST_URL: "".to_string(),
         })
-        
     }
 }
 
 #[allow(non_snake_case)]
 pub struct AwsConfig {
-    pub ACCESS_KEY: String, 
+    pub ACCESS_KEY: String,
     pub SECRET_ACCESS_KEY: String,
     pub BUCKET_NAME: String,
     pub BUCKET_REGION: String,
-} 
+}
 
 impl ConfigLoader for AwsConfig {
-    fn load() -> InternalResult<Self> where Self: Sized {
-        Ok(Self{
+    fn load() -> InternalResult<Self>
+    where
+        Self: Sized,
+    {
+        Ok(Self {
             ACCESS_KEY: get_env("AWS_ACCESS_KEY")?,
             SECRET_ACCESS_KEY: get_env("AWS_SECRET_ACCESS_KEY")?,
             BUCKET_NAME: get_env("AWS_BUCKET_NAME")?,
@@ -106,6 +113,26 @@ impl ConfigLoader for AwsConfig {
     }
 }
 
+#[allow(non_snake_case)]
+pub struct RabbitMQConfig {
+    pub HOST: String,
+    pub PORT: u16,
+    pub USER: String,
+    pub PASSWORD: String,
+}
+impl ConfigLoader for RabbitMQConfig {
+    fn load() -> InternalResult<Self>
+    where
+        Self: Sized,
+    {
+        Ok(Self {
+            HOST: get_env("RABBITMQ_HOST")?,
+            PORT: get_end_and_parse("RABBITMQ_PORT")?,
+            USER: get_env("RABBITMQ_USER")?,
+            PASSWORD: get_env("RABBITMQ_PASSWORD")?,
+        })
+    }
+}
 
 #[allow(non_snake_case)]
 pub struct ServerConfig {
@@ -119,9 +146,7 @@ impl ConfigLoader for ServerConfig {
     where
         Self: Sized,
     {
-        let port: u16 = get_env("SERVER_PORT")?
-            .parse()
-            .map_err(|_| InternalError::ConfigParseImpossible("PORT"))?;
+        let port = get_end_and_parse("SERVER_PORT")?;
         let host = get_env("SERVER_HOST")?;
         Ok(ServerConfig {
             SOCKET_ADDR: format!("{}:{port}", host.clone()),
@@ -133,4 +158,10 @@ impl ConfigLoader for ServerConfig {
 
 fn get_env(name: &'static str) -> InternalResult<String> {
     env::var(name).map_err(|_| InternalError::ConfigMissingEnv(name))
+}
+
+fn get_end_and_parse<T: FromStr>(name: &'static str) -> InternalResult<T> {
+    Ok(get_env(name)?
+        .parse()
+        .map_err(|_| InternalError::ConfigParseImpossible(name))?)
 }
