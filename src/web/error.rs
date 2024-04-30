@@ -9,6 +9,8 @@ use thiserror::Error;
 
 use repo::dao::error::RepoError;
 
+use crate::message_broker;
+
 pub type ApiResult<T> = Result<T, ApiError>;
 
 #[derive(Debug, AsRefStr, Error)]
@@ -31,7 +33,7 @@ pub enum ApiError {
 
 impl IntoResponse for ApiError {
     fn into_response(self) -> Response {
-        match self {
+        return match self {
             Self::Validation(ref errs) => self.to_response(StatusCode::UNPROCESSABLE_ENTITY, errs),
 
             Self::Serialization(_) => {
@@ -52,7 +54,7 @@ impl IntoResponse for ApiError {
                 _ => self.to_response(StatusCode::CONFLICT, self.to_string()),
             },
             Self::MessageBroker(_) => self.to_internal_error(),
-        }
+        };
     }
 }
 
