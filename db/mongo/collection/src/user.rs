@@ -1,7 +1,7 @@
 use std::sync::{Arc, Mutex};
 
 use async_trait::async_trait;
-use chrono::{DateTime, Utc};
+use chrono::{DateTime, Local};
 use mongodb::{Collection, Cursor};
 use mongodb::bson::Document;
 use mongodb::bson::oid::ObjectId;
@@ -11,8 +11,7 @@ use mongodb::options::{
 };
 use serde::{Deserialize, Serialize};
 
-use crate::{MongoCollection, utils};
-
+use crate::MongoCollection;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct User {
@@ -24,8 +23,8 @@ pub struct User {
     pub age: u8,
     pub is_public: bool,
     pub deleted: bool,
-    pub created: DateTime<Utc>,
-    pub updated: DateTime<Utc>,
+    pub created: DateTime<Local>,
+    pub updated: DateTime<Local>,
 }
 
 impl User {
@@ -36,7 +35,7 @@ impl User {
         age: u8,
         is_public: bool,
     ) -> Self {
-        let now = Utc::now();
+        let now = Local::now();
         Self {
             id: None,
             deleted: false,
@@ -53,13 +52,7 @@ impl User {
 
 #[derive(Clone)]
 pub struct UserCollection {
-    collection: Collection<User>,
-}
-
-impl UserCollection {
-    pub fn new(collection: Collection<User>) -> Self {
-        Self { collection }
-    }
+    pub collection: Collection<User>,
 }
 
 #[async_trait]
@@ -69,10 +62,18 @@ impl MongoCollection<User> for UserCollection {
     }
 }
 
-#[derive(Default)]
 pub struct TestUserCollection {
     users: Arc<Mutex<Vec<User>>>,
 }
+
+impl TestUserCollection {
+    pub fn new() -> Self {
+        Self {
+            users: Arc::new(Mutex::new(vec![])),
+        }
+    }
+}
+
 #[async_trait]
 impl MongoCollection<User> for TestUserCollection {
     async fn find_one(
@@ -166,7 +167,7 @@ impl MongoCollection<User> for TestUserCollection {
         _pipeline: Vec<Document>,
         _options: Option<AggregateOptions>,
     ) -> mongodb::error::Result<Cursor<Document>> {
-        panic!("This test collection can't be aggregated")
+        todo!()
     }
 
     async fn count_documents(
@@ -174,8 +175,8 @@ impl MongoCollection<User> for TestUserCollection {
         filter: Option<Document>,
         _options: Option<CountOptions>,
     ) -> mongodb::error::Result<u64> {
-        let doc: Option<Document> = filter;
-        if doc.is_none() {
+        let doc: Option<Document> = filter.into();
+        if doc == None {
             return Ok(self.users.lock().unwrap().len() as u64);
         }
 
@@ -202,7 +203,28 @@ impl MongoCollection<User> for TestUserCollection {
         _options: Option<AggregateOptions>,
     ) -> mongodb::error::Result<Vec<User>> {
         let users = self.users.lock().unwrap().clone();
-        let users = users.into_iter().filter(|u| !u.deleted).collect();
-        Ok(utils::paginate_inmemory_collection(users, pipeline))
+        let mut skip: Option<usize> = None;
+        let mut limit: Option<usize> = None;
+
+        for doc in pipeline {
+            let poss_skip = doc.get("$skip");
+            let poss_limit = doc.get("$limit");
+
+            if let (None, Some(poss_skip)) = (skip, poss_skip) {
+                skip = Some(poss_skip.as_i32().unwrap() as usize)
+            }
+
+            if let (None, Some(poss_limit)) = (skip, poss_limit) {
+                limit = Some(poss_limit.as_i32().unwrap() as usize)
+            }
+        }
+
+        let users: Vec<User> = users.into_iter().filter(|u| u.deleted == false).collect();
+
+        let skip = skip.unwrap();
+        let limit = limit.unwrap_or(users.len());
+
+        let users = users.into_iter().skip(skip).take(limit).collect();
+        Ok(users)
     }
 }
