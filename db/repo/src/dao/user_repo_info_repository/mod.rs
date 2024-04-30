@@ -44,15 +44,9 @@ impl PersistentRepositoryTrait<CreateUserRepoInfoDto, UserRepoInfoDto, ObjectId>
         take: Option<u64>,
         offset: Option<u64>,
     ) -> RepoResult<DtoList<UserRepoInfoDto>> {
-        let mut pipeline = vec![doc! {"$skip" : offset.unwrap_or(0) as u32}];
-
-        if let Some(take) = take.filter(|&take| take != 0) {
-            pipeline.push(doc! {"$limit" : take as u32})
-        }
-
         let dtos = self
             .collection
-            .aggregate_and_collect(pipeline, None)
+            .paginate_pipeline_and_collect(vec![], take, offset, None)
             .await?
             .into_iter()
             .map(|u| u.into())
