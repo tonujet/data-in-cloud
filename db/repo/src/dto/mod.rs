@@ -1,7 +1,8 @@
 use serde::{Deserialize, Serialize};
 
-pub mod repository_dto;
+pub mod repo_dto;
 pub mod user_dto;
+pub mod user_repo_info_dto;
 
 #[derive(Serialize, PartialEq, Deserialize, Debug)]
 pub struct DtoList<T> {
