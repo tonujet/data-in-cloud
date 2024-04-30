@@ -1,3 +1,4 @@
+use mongodb::bson::doc;
 use migration::{Migrator, MigratorTrait};
 
 use crate::config::config;
@@ -15,9 +16,10 @@ pub async fn init_nosql_database() -> InternalResult<mongodb::Database> {
     let mut client_options = mongodb::options::ClientOptions::parse(&config().MONGO_DB.URL).await?;
     client_options.app_name = Some(config().MONGO_DB.NAME.to_string());
     let client = mongodb::Client::with_options(client_options)?;
-    println!("Connected to mongodb");
     let conn = client.database(&config().MONGO_DB.NAME);
-    println!("Connected to database {}", &config().MONGO_DB.NAME);
+    let cmd = doc! { "ping": 1 };
+    conn.run_command(cmd, None).await?;
+    println!("Connected to mongodb database {}", &config().MONGO_DB.NAME);
     Ok(conn)
 }
 
