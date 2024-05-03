@@ -5,7 +5,7 @@ use repo::utils::repository::repository_test_helper;
 pub async fn delete_repo(client: &TestServer) -> RepoDto {
     let created_dto = create_repo(&client).await;
     let res = client
-        .delete(&format!("/api/v1/repos/{}", created_dto.id))
+        .delete(&format!("/apiV1/repos/{}", created_dto.id))
         .await;
     let deleted_dto: RepoDto = res.json();
     deleted_dto
@@ -13,7 +13,7 @@ pub async fn delete_repo(client: &TestServer) -> RepoDto {
 
 pub async fn create_repo(client: &TestServer) -> RepoDto {
     let create_dto = repository_test_helper::get_create_dto();
-    let res = client.post("/api/v1/repos").json(&create_dto).await;
+    let res = client.post("/apiV1/repos").json(&create_dto).await;
     let created_dto: RepoDto = res.json();
     created_dto
 }
@@ -26,6 +26,6 @@ pub async fn create_some_repos(client: &TestServer) {
         .enumerate()
     {
         let _ = &response_dtos[i];
-        let _ = client.post("/api/v1/repos").json(&create_dto).await;
+        let _ = client.post("/apiV1/repos").json(&create_dto).await;
     }
 }

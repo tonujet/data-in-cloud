@@ -8,7 +8,7 @@ pub async fn create_user1(client: &TestServer) -> UserDto {
     let expected_status_code = StatusCode::OK;
     let expected_user_dto = user_test_helper::get_created_dto1();
 
-    let res = client.post("/api/v1/users").json(&create_dto).await;
+    let res = client.post("/apiV1/users").json(&create_dto).await;
     let user_dto: UserDto = res.json();
 
     assert_eq!(res.status_code(), expected_status_code);
@@ -22,7 +22,7 @@ pub async fn create_user2(client: &TestServer) -> UserDto {
     let expected_status_code = StatusCode::OK;
     let expected_created_dto = user_test_helper::get_created_dto2();
 
-    let res = client.post("/api/v1/users").json(&create_dto).await;
+    let res = client.post("/apiV1/users").json(&create_dto).await;
     let created_dto: UserDto = res.json();
 
     assert_eq!(res.status_code(), expected_status_code);
@@ -36,7 +36,7 @@ pub async fn create_users(client: &TestServer) -> Vec<UserDto> {
     let mut created_dtos = Vec::new();
 
     for dto in create_dtos {
-        let res = client.post("/api/v1/users").json(&dto).await;
+        let res = client.post("/apiV1/users").json(&dto).await;
         assert_eq!(res.status_code(), expected_status_code);
 
         let user_dto: UserDto = res.json();
