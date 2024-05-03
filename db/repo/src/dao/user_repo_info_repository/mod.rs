@@ -8,7 +8,7 @@ use collection::user_repo_info::UserRepoInfo;
 use collection::MongoCollection;
 
 use crate::dao::error::RepoError::Internal;
-use crate::dao::error::RepoResult;
+use crate::dao::error::{Entity, RepoError, RepoResult};
 use crate::dao::{PersistentRepositoryTrait, UserRepoInfoRepositoryTrait};
 use crate::dto::user_repo_info_dto::{CreateUserRepoInfoDto, UserRepoInfoDto};
 use crate::dto::DtoList;
@@ -43,7 +43,7 @@ impl PersistentRepositoryTrait<CreateUserRepoInfoDto, UserRepoInfoDto, ObjectId>
             .collection
             .find_one(Some(doc! {"_id": id}), None)
             .await?
-            .ok_or(Internal("Can not find user"))?;
+            .ok_or(RepoError::NotFoundWithObjectId(*id, Entity::UserRepoInfo))?;
         Ok(info.into())
     }
 
