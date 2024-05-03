@@ -10,6 +10,8 @@ pub type RepoResult<T> = Result<T, RepoError>;
 pub enum Entity {
     Repository,
     User,
+    UserRepo,
+    UserRepoInfo,
 }
 
 #[derive(Error, Debug)]
@@ -17,6 +19,9 @@ pub enum RepoError {
     #[error("{} with id {0} not found", .1.as_ref())]
     NotFoundWithUuid(Uuid, Entity),
 
+    #[error("{} with id {0} no found", .1.as_ref())]
+    NotFoundWithObjectId(ObjectId, Entity),
+    
     #[error("{} with uuid {0} was deleted", .1.as_ref())]
     DeletedWithUuid(Uuid, Entity),
 
