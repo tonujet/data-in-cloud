@@ -1,4 +1,5 @@
 use axum::http::StatusCode;
+use axum_test::TestServer;
 use serde_json::Value;
 use serial_test::serial;
 
@@ -16,7 +17,7 @@ async fn create_repo_success() {
     let expected_status_code = StatusCode::OK;
     let expected_body = repository_test_helper::get_response_from_create_dto();
 
-    let res = setup.client.post("/api/v1/repos").json(&create_dto).await;
+    let res = setup.client.post("/apiV1/repos").json(&create_dto).await;
     let created_dto: RepoDto = res.json();
 
     assert_eq!(
@@ -38,7 +39,7 @@ async fn create_repo_with_non_valid_data_failure() {
     let expected_status_code = StatusCode::UNPROCESSABLE_ENTITY;
     let expected_body = repository_test_helper::get_response_from_invalid_dto();
 
-    let res = setup.client.post("/api/v1/repos").json(&create_dto).await;
+    let res = setup.client.post("/apiV1/repos").json(&create_dto).await;
 
     assert_eq!(
         res.status_code(),
@@ -62,7 +63,7 @@ async fn delete_repo_success() {
     let deleted_dto = repository_api_helper::delete_repo(&setup.client).await;
     let res = setup
         .client
-        .get(&format!("/api/v1/repos/{}", deleted_dto.id))
+        .get(&format!("/apiV1/repos/{}", deleted_dto.id))
         .await;
     let error_name = &res.json::<Value>()["error_name"];
 
@@ -88,7 +89,7 @@ async fn delete_deleted_repo_failure() {
     let deleted_dto = repository_api_helper::delete_repo(&setup.client).await;
     let res = setup
         .client
-        .delete(&format!("/api/v1/repos/{}", deleted_dto.id))
+        .delete(&format!("/apiV1/repos/{}", deleted_dto.id))
         .await;
     let error_name = &res.json::<Value>()["error_name"];
 
@@ -115,7 +116,7 @@ async fn update_repo_success() {
     let created_dto = repository_api_helper::create_repo(&setup.client).await;
     let res = setup
         .client
-        .put(&format!("/api/v1/repos/{}", created_dto.id))
+        .put(&format!("/apiV1/repos/{}", created_dto.id))
         .json(&update_dto)
         .await;
 
@@ -142,7 +143,7 @@ async fn update_repo_with_non_valid_data_failure() {
     let created_dto = repository_api_helper::create_repo(&setup.client).await;
     let res = setup
         .client
-        .put(&format!("/api/v1/repos/{}", { created_dto.id }))
+        .put(&format!("/apiV1/repos/{}", { created_dto.id }))
         .json(&update_dto)
         .await;
 
@@ -169,7 +170,7 @@ async fn update_deleted_repo_failure() {
     let deleted_dto = repository_api_helper::delete_repo(&setup.client).await;
     let res = setup
         .client
-        .put(&format!("/api/v1/repos/{}", deleted_dto.id))
+        .put(&format!("/apiV1/repos/{}", deleted_dto.id))
         .json(&update_dto)
         .await;
     let error_name = &res.json::<Value>()["error_name"];
@@ -196,7 +197,7 @@ async fn get_repo_by_uuid_success() {
     let created_dto = repository_api_helper::create_repo(&setup.client).await;
     let res = setup
         .client
-        .get(&format!("/api/v1/repos/{}", created_dto.id))
+        .get(&format!("/apiV1/repos/{}", created_dto.id))
         .await;
 
     assert_eq!(
@@ -221,7 +222,7 @@ async fn list_all_repos_success() {
     let expected_status_code = StatusCode::OK;
 
     repository_api_helper::create_some_repos(&setup.client).await;
-    let res = setup.client.get("/api/v1/repos").await;
+    let res = setup.client.get("/apiV1/repos").await;
 
     assert_eq!(
         res.status_code(),
@@ -255,7 +256,7 @@ async fn list_repos_using_take_and_offset_success() {
     repository_api_helper::create_some_repos(&setup.client).await;
     let res = setup
         .client
-        .get("/api/v1/repos")
+        .get("/apiV1/repos")
         .add_query_param("take", 2)
         .add_query_param("offset", 2)
         .await;
