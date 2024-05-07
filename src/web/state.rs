@@ -3,12 +3,13 @@ use std::sync::Arc;
 use axum::extract::FromRef;
 use mongodb::Collection;
 use object_store::aws::AmazonS3Builder;
-use object_store::memory::InMemory;
 use object_store::ObjectStore;
+use tokio::sync::Mutex;
 
 use collection::user::{TestUserCollection, User, UserCollection};
-use collection::user_repo_info::{UserRepoInfo, UserRepoInfoCollection};
-use collection::MongoCollection;
+use collection::user_repo_info::{
+    TestUserRepoInfoCollection, UserRepoInfo, UserRepoInfoCollection,
+};
 use repo::dao::repo_repository::RepoRepository;
 use repo::dao::user_repo::UserRepository;
 use repo::dao::user_repo_info_repository::UserRepoInfoRepository;
@@ -16,19 +17,22 @@ use repo::dao::user_repo_repository::UserRepoRepository;
 use repo::dao::{
     RepoRepositoryTrait, UserRepoInfoRepositoryTrait, UserRepoRepositoryTrait, UserRepositoryTrait,
 };
-use repo::dto::user_repo_info_dto::CreateUserRepoInfoDto;
+use repo::dto::user_repo_info_dto::{CreateUserRepoInfoDto, UserRepoInfoDto};
 
 use crate::config::config;
 use crate::error::InternalResult;
+use crate::message_broker;
+use crate::message_broker::error::MBrokerResult;
 use crate::message_broker::rabbitmq::{RabbitMQOptions, RabbitMQPublisher, RabbitMQReceiver};
-use crate::message_broker::{Publisher, Subscriber};
+use crate::message_broker::tests::{PublisherMock, ReceiverMock};
+use crate::message_broker::Subscriber;
+use crate::web::error::ApiResult;
 use crate::web::service::user_repo_info_receiver::UserRepoInfoReceiver;
 use crate::web::service::user_repo_info_service::UserRepoInfoService;
 use crate::web::service::user_repo_service::UserRepoService;
 use crate::web::service::user_service::UserService;
 use crate::web::service::{
-    RepoServiceTrait, UserRepoInfoReceiverTrait, UserRepoInfoServiceTrait, UserRepoServiceTrait,
-    UserServiceTrait,
+    RepoServiceTrait, UserRepoInfoServiceTrait, UserRepoServiceTrait, UserServiceTrait,
 };
 
 use super::service::repo_service::RepositoryService;
@@ -71,11 +75,9 @@ impl AppState {
         })
     }
 
-    pub async fn build_test(
-        rabbitmq_conn: amqprs::connection::Connection,
-    ) -> InternalResult<AppState> {
+    pub async fn build_test() -> InternalResult<AppState> {
         let sql_conn = crate::db::init_test_sql_database().await;
-        let user_repo_info_state = UserRepoInfoState::build_test(rabbitmq_conn).await?;
+        let user_repo_info_state = UserRepoInfoState::build_test().await?;
         let repo_state = RepoState::build(sql_conn.clone()).await?;
         let user_state = UserState::build_test(&user_repo_info_state).await?;
         let user_repo_state =
@@ -173,33 +175,12 @@ impl UserRepoState {
         Self::new(store, user_state, repo_state, user_repo_info_state)
     }
 
-    // TODO testing
     pub async fn build_test(
         user_state: &UserState,
         repo_state: &RepoState,
         user_repo_info_state: &UserRepoInfoState,
     ) -> InternalResult<Self> {
-        todo!();
-        let store = InMemory::new();
-        let conn = amqprs::connection::Connection::open(
-            &amqprs::connection::OpenConnectionArguments::new("localhost", 5672, "guest", "guest"),
-        )
-        .await
-        .unwrap();
-        conn.register_callback(amqprs::callbacks::DefaultConnectionCallback)
-            .await
-            .unwrap();
-        let publisher = Arc::new(
-            RabbitMQPublisher::init(
-                conn,
-                &RabbitMQOptions {
-                    queue_name: "user_repo_info",
-                    durable: true,
-                },
-            )
-            .await?,
-        );
-
+        let store = object_store::memory::InMemory::new();
         Self::new(store, user_state, repo_state, user_repo_info_state)
     }
 
@@ -236,8 +217,8 @@ impl FromRef<AppState> for UserRepoState {
 pub struct UserRepoInfoState {
     pub repo: Arc<dyn UserRepoInfoRepositoryTrait>,
     pub service: Arc<dyn UserRepoInfoServiceTrait>,
-    pub receiver: Arc<dyn UserRepoInfoReceiverTrait>,
-    pub publisher: Arc<dyn Publisher<CreateUserRepoInfoDto>>,
+    pub receiver: Arc<dyn message_broker::Receiver<UserRepoInfoDto, ApiResult<UserRepoInfoDto>>>,
+    pub publisher: Arc<dyn message_broker::Publisher<CreateUserRepoInfoDto>>,
 }
 
 impl UserRepoInfoState {
@@ -252,7 +233,8 @@ impl UserRepoInfoState {
         let repo: Arc<dyn UserRepoInfoRepositoryTrait> =
             Arc::new(UserRepoInfoRepository::new(collection));
 
-        let service = Arc::new(UserRepoInfoService::new(Arc::clone(&repo)));
+        let service: Arc<dyn UserRepoInfoServiceTrait> =
+            Arc::new(UserRepoInfoService::new(Arc::clone(&repo)));
 
         let options = RabbitMQOptions {
             queue_name: "user_repo_info",
@@ -261,12 +243,12 @@ impl UserRepoInfoState {
         let rabbitmq_receiver =
             Arc::new(RabbitMQReceiver::init(rabbitmq_conn.clone(), &options).await?);
 
-        let rabbitmq_publisher: Arc<dyn Publisher<CreateUserRepoInfoDto>> =
+        let rabbitmq_publisher: Arc<dyn message_broker::Publisher<CreateUserRepoInfoDto>> =
             Arc::new(RabbitMQPublisher::init(rabbitmq_conn, &options).await?);
 
         let receiver = Arc::new(UserRepoInfoReceiver::new(
             rabbitmq_receiver,
-            service.clone(),
+            Arc::clone(&service),
         ));
 
         Ok(UserRepoInfoState {
@@ -277,39 +259,41 @@ impl UserRepoInfoState {
         })
     }
 
-    pub async fn build_test(rabbitmq_conn: amqprs::connection::Connection) -> InternalResult<Self> {
-        todo!()
-        // let collection=
-        //     Arc::new(TestUserRepoInfoCollection::new());
-        //
-        // let user_repo_info_repository: Arc<dyn UserRepoInfoRepositoryTrait> =
-        //     Arc::new(UserRepoInfoRepository::new(collection));
-        //
-        // let user_repo_info_service = Arc::new(UserRepoInfoService::new(Arc::clone(
-        //     &user_repo_info_repository,
-        // )));
-        //
-        // let receiver = Arc::new(
-        //     RabbitMQReceiver::init(
-        //         rabbitmq_conn,
-        //         RabbitMQOptions {
-        //             queue_name: "user_repo_info",
-        //             durable: true,
-        //         },
-        //     )
-        //     .await?,
-        // );
-        //
-        // let user_repo_info_receiver = Arc::new(UserRepoInfoReceiver::new(
-        //     receiver,
-        //     user_repo_info_service.clone(),
-        // ));
-        //
-        // Ok(UserRepoInfoState {
-        //     repo: user_repo_info_repository,
-        //     service: user_repo_info_service,
-        //     receiver: user_repo_info_receiver,
-        // })
+    pub async fn build_test() -> InternalResult<Self> {
+        let collection = Arc::new(TestUserRepoInfoCollection::new());
+
+        let user_repo_info_repository: Arc<dyn UserRepoInfoRepositoryTrait> =
+            Arc::new(UserRepoInfoRepository::new(collection));
+
+        let user_repo_info_service = Arc::new(UserRepoInfoService::new(Arc::clone(
+            &user_repo_info_repository,
+        )));
+
+        let queue: Arc<Mutex<Vec<CreateUserRepoInfoDto>>> = Arc::new(Mutex::new(vec![]));
+
+        let receiver: Arc<
+            dyn message_broker::Receiver<
+                CreateUserRepoInfoDto,
+                MBrokerResult<CreateUserRepoInfoDto>,
+            >,
+        > = Arc::new(ReceiverMock::new(Arc::clone(&queue)));
+
+        let user_repo_info_receiver: Arc<
+            dyn message_broker::Receiver<UserRepoInfoDto, ApiResult<UserRepoInfoDto>>,
+        > = Arc::new(UserRepoInfoReceiver::new(
+            receiver,
+            user_repo_info_service.clone(),
+        ));
+        
+        let publisher: Arc<dyn message_broker::Publisher<CreateUserRepoInfoDto>> =
+            Arc::new(PublisherMock::new(Arc::clone(&queue), Arc::clone(&user_repo_info_receiver)));
+
+        Ok(UserRepoInfoState {
+            repo: user_repo_info_repository,
+            service: user_repo_info_service,
+            receiver: user_repo_info_receiver,
+            publisher,
+        })
     }
 }
 

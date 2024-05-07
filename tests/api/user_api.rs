@@ -4,11 +4,11 @@ use serial_test::serial;
 
 use repo::dto::DtoList;
 use repo::dto::user_dto::UserDto;
+use repo::dto::user_repo_info_dto::UserRepoInfoDto;
 use repo::utils::user::user_test_helper;
 
 use crate::common::Setup;
-
-use crate::helpers::user_api_helper;
+use crate::helpers::{user_api_helper, user_repo_api_helper};
 
 #[tokio::test]
 #[serial]
@@ -148,7 +148,6 @@ async fn list_all_users_success() {
     let created_dtos = user_api_helper::create_users(&setup.client).await;
     let expected_count = created_dtos.len() as u64;
 
-    
     let res = setup.client.get("/api/v1/users").await;
     let dtos: DtoList<UserDto> = res.json();
 
@@ -176,4 +175,27 @@ async fn list_users_using_take_and_skip_success() {
     assert_eq!(res.status_code(), expected_code);
     assert_eq!(dtos.dtos.len(), expected_len);
     assert_eq!(dtos.count, expected_count);
+}
+
+#[tokio::test]
+#[serial]
+async fn get_all_user_repo_info_for_user_success() {
+    let setup = Setup::new().await;
+    let (user_id, repo_ids) =
+        user_repo_api_helper::create_connected_user_and_repos(&setup.client).await;
+    let expected_code = StatusCode::OK;
+
+    let res = setup
+        .client
+        .get(&format!("/apiV1/users/{user_id}/info"))
+        .await;
+
+    assert_eq!(res.status_code(), expected_code);
+    let dto_list: DtoList<UserRepoInfoDto> = res.json();
+    println!("{dto_list:?}");
+    assert_eq!(dto_list.dtos.len(), repo_ids.len());
+
+    for dto in dto_list.dtos {
+        assert_eq!(dto.user_id, user_id)
+    }
 }

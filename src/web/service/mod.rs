@@ -69,9 +69,9 @@ pub trait UserRepoServiceTrait:
 {
 }
 
-#[async_trait]
-pub trait ReceiverTrait<M: Send + Sync>: Send + Sync {
-    async fn receive(&self) -> ApiResult<M>;
-}
-
-pub trait UserRepoInfoReceiverTrait: ReceiverTrait<UserRepoInfoDto> {}
+// #[async_trait]
+// pub trait ReceiverTrait<M: Send + Sync>: Send + Sync {
+//     async fn receive(&self) -> ApiResult<M>;
+// }
+// 
+// pub trait UserRepoInfoReceiverTrait: ReceiverTrait<UserRepoInfoDto> {}

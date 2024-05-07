@@ -5,20 +5,21 @@ use crate::message_broker::error::MBrokerResult;
 pub mod connection;
 pub mod error;
 pub mod rabbitmq;
+pub mod tests;
 
 #[async_trait]
-pub trait Publisher<M>: Send + Sync
+pub trait Publisher<M, R = MBrokerResult<()>>: Send + Sync
 where
     M: Send + Sync,
 {
-    async fn publish(&self, message: M) -> MBrokerResult<()>
+    async fn publish(&self, message: M) -> R
     where
         M: 'async_trait;
 }
 
 #[async_trait]
-pub trait Receiver<M>: Send + Sync {
-    async fn receive(&self) -> MBrokerResult<M>;
+pub trait Receiver<M, R = MBrokerResult<M>>: Send + Sync {
+    async fn receive(&self) -> R;
 }
 
 #[async_trait]
