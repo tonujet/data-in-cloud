@@ -131,7 +131,7 @@ impl UserState {
         let repo: Arc<dyn UserRepositoryTrait> = Arc::new(UserRepository::new(collection));
         let service = Arc::new(UserService::new(
             Arc::clone(&repo),
-            Arc::clone(&user_repo_info_state.service),
+            Arc::clone(&user_repo_info_state.repo),
         ));
         Ok(UserState { service, repo })
     }
@@ -141,7 +141,7 @@ impl UserState {
         let repo: Arc<dyn UserRepositoryTrait> = Arc::new(UserRepository::new(collection));
         let service = Arc::new(UserService::new(
             Arc::clone(&repo),
-            Arc::clone(&user_repo_info_state.service),
+            Arc::clone(&user_repo_info_state.repo),
         ));
         Ok(UserState { repo, service })
     }

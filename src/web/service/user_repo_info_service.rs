@@ -21,18 +21,7 @@ impl UserRepoInfoService {
     }
 }
 
-#[async_trait]
-impl UserRepoInfoServiceTrait for UserRepoInfoService {
-    async fn list_by_user_id(
-        &self,
-        user_id: ObjectId,
-        take: Option<u64>,
-        offset: Option<u64>,
-    ) -> ApiResult<DtoList<UserRepoInfoDto>> {
-        Ok(self.repo.list_by_user_id(user_id, take, offset).await?)
-    }
-}
-
+impl UserRepoInfoServiceTrait for UserRepoInfoService {}
 #[async_trait]
 impl PersistentServiceTrait<CreateUserRepoInfoDto, UserRepoInfoDto, ObjectId>
     for UserRepoInfoService
