@@ -6,9 +6,7 @@ use repo::dto::user_repo_info_dto::{CreateUserRepoInfoDto, UserRepoInfoDto};
 
 use crate::message_broker;
 use crate::web::error::ApiResult;
-use crate::web::service::{
-    ReceiverTrait, UserRepoInfoReceiverTrait, UserRepoInfoServiceTrait,
-};
+use crate::web::service::UserRepoInfoServiceTrait;
 
 pub struct UserRepoInfoReceiver {
     broker_receiver: Arc<dyn message_broker::Receiver<CreateUserRepoInfoDto>>,
@@ -27,10 +25,8 @@ impl UserRepoInfoReceiver {
     }
 }
 
-impl UserRepoInfoReceiverTrait for UserRepoInfoReceiver {}
-
 #[async_trait]
-impl ReceiverTrait<UserRepoInfoDto> for UserRepoInfoReceiver {
+impl message_broker::Receiver<UserRepoInfoDto, ApiResult<UserRepoInfoDto>> for UserRepoInfoReceiver {
     async fn receive(&self) -> ApiResult<UserRepoInfoDto> {
         let info = self.broker_receiver.receive().await?;
         let dto = self.service.create(info).await?;

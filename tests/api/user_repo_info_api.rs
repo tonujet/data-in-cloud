@@ -5,7 +5,6 @@ use serial_test::serial;
 use uuid::Uuid;
 
 use collection::user_repo_info::UserRepoInfoOperation;
-use ia_11_vorobei_ant::web::dto::user_repo_dto::{UserMultipleRepo, UserSingleRepo};
 use repo::dto::DtoList;
 use repo::dto::user_repo_info_dto::UserRepoInfoDto;
 
@@ -16,19 +15,19 @@ use crate::helpers::user_repo_api_helper;
 #[serial]
 async fn get_user_repo_info_success() {
     let setup = Setup::new().await;
-    let UserSingleRepo{ user, repo } = user_repo_api_helper::create_user_and_repo(&setup.client).await;
+    let (user_id, repo_id) = user_repo_api_helper::create_user_and_repo(&setup.client).await;
     let expected_code = StatusCode::OK;
 
-    let endpoint = format!("/api/v1/users/{}/repos/{}", user.id.unwrap(), repo.id);
+    let endpoint = format!("/apiV1/users/{}/repo/{}", user_id, repo_id);
     setup.client.post(&endpoint).await;
-    let info_res = setup.client.get("/api/v1/user-repo-infos").await;
+    let info_res = setup.client.get("/apiV1/user_repo_info").await;
     let info_dto_list: DtoList<UserRepoInfoDto> = info_res.json();
     let info_id = info_dto_list.dtos[0].id.unwrap();
     let expected_dto =
-        create_info_dto(info_id, user.id.unwrap(), repo.id, UserRepoInfoOperation::CreateLink);
+        create_info_dto(info_id, user_id, repo_id, UserRepoInfoOperation::CreateLink);
     let info_res = setup
         .client
-        .get(&format!("/api/v1/user-repo-infos/{}", info_id))
+        .get(&format!("/apiV1/user_repo_info/{}", info_id))
         .await;
 
     assert_eq!(
@@ -58,7 +57,7 @@ async fn get_non_existent_user_repo_info_failure() {
 
     let info_res = setup
         .client
-        .get(&format!("/api/v1/user-repo-infos/{}", info_id))
+        .get(&format!("/apiV1/user_repo_info/{}", info_id))
         .await;
 
     assert_eq!(
@@ -77,7 +76,7 @@ async fn get_non_existent_user_repo_info_failure() {
 #[serial]
 async fn list_two_user_repo_info_success() {
     let setup = Setup::new().await;
-    let UserMultipleRepo { user, repos } = 
+    let (user_id, repo_ids) =
         user_repo_api_helper::create_connected_user_and_repos(&setup.client).await;
     let expected_code = StatusCode::OK;
     let take: usize = 2;
@@ -85,7 +84,7 @@ async fn list_two_user_repo_info_success() {
 
     let res = setup
         .client
-        .get("/api/v1/user-repo-infos")
+        .get("/apiV1/user_repo_info")
         .add_query_param("take", take)
         .add_query_param("offset", offset)
         .await;
@@ -102,12 +101,12 @@ async fn list_two_user_repo_info_success() {
         "Entity length doesn't correspond to the desired"
     );
 
-    for repo_id in repos.dtos.into_iter().map(|d| d.id).rev().skip(offset).take(take) {
+    for repo_id in repo_ids.into_iter().skip(offset).take(take) {
         let info_dto = info_dto_list.dtos.remove(0);
 
         let expected_dto = UserRepoInfoDto {
             id: info_dto.id,
-            user_id: user.id.unwrap(),
+            user_id,
             repo_id,
             operation: UserRepoInfoOperation::CreateLink,
             executed_at: Default::default(),
