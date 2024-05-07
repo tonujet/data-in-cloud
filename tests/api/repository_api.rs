@@ -1,5 +1,4 @@
 use axum::http::StatusCode;
-use axum_test::TestServer;
 use serde_json::Value;
 use serial_test::serial;
 

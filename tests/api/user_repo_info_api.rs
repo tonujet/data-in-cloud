@@ -18,16 +18,16 @@ async fn get_user_repo_info_success() {
     let (user_id, repo_id) = user_repo_api_helper::create_user_and_repo(&setup.client).await;
     let expected_code = StatusCode::OK;
 
-    let endpoint = format!("/api/v1/users/{}/repos/{}", user_id, repo_id);
+    let endpoint = format!("/apiV1/users/{}/repo/{}", user_id, repo_id);
     setup.client.post(&endpoint).await;
-    let info_res = setup.client.get("/api/v1/user-repo-infos").await;
+    let info_res = setup.client.get("/apiV1/user_repo_info").await;
     let info_dto_list: DtoList<UserRepoInfoDto> = info_res.json();
     let info_id = info_dto_list.dtos[0].id.unwrap();
     let expected_dto =
         create_info_dto(info_id, user_id, repo_id, UserRepoInfoOperation::CreateLink);
     let info_res = setup
         .client
-        .get(&format!("/api/v1/user-repo-infos/{}", info_id))
+        .get(&format!("/apiV1/user_repo_info/{}", info_id))
         .await;
 
     assert_eq!(
@@ -57,7 +57,7 @@ async fn get_non_existent_user_repo_info_failure() {
 
     let info_res = setup
         .client
-        .get(&format!("/api/v1/user-repo-infos/{}", info_id))
+        .get(&format!("/apiV1/user_repo_info/{}", info_id))
         .await;
 
     assert_eq!(
@@ -84,7 +84,7 @@ async fn list_two_user_repo_info_success() {
 
     let res = setup
         .client
-        .get("/api/v1/user-repo-infos")
+        .get("/apiV1/user_repo_info")
         .add_query_param("take", take)
         .add_query_param("offset", offset)
         .await;
