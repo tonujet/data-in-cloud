@@ -30,7 +30,12 @@ pub trait ServiceTrait<C, U, R, I>: Send + Sync {
 
 #[async_trait]
 pub trait UserServiceTrait: ServiceTrait<CreateUserDto, UpdateUserDto, UserDto, ObjectId> {
-    async fn list_user_repos_info(&self, id: ObjectId, page: Option<u64>, offset: Option<u64>) -> ApiResult<DtoList<UserRepoInfoDto>>;
+    async fn list_user_repos_info(
+        &self,
+        id: ObjectId,
+        page: Option<u64>,
+        offset: Option<u64>,
+    ) -> ApiResult<DtoList<UserRepoInfoDto>>;
 }
 
 pub trait RepoServiceTrait:
@@ -49,12 +54,6 @@ pub trait PersistentServiceTrait<C, R, I>: Send + Sync {
 pub trait UserRepoInfoServiceTrait:
     PersistentServiceTrait<CreateUserRepoInfoDto, UserRepoInfoDto, ObjectId>
 {
-    async fn list_by_user_id(
-        &self,
-        user_id: ObjectId,
-        take: Option<u64>,
-        offset: Option<u64>,
-    ) -> ApiResult<DtoList<UserRepoInfoDto>>;
 }
 
 #[async_trait]
@@ -68,10 +67,3 @@ pub trait UserRepoServiceTrait:
     BlobConnServiceTrait<ObjectId, Uuid, UserSingleRepo, UserMultipleRepo>
 {
 }
-
-// #[async_trait]
-// pub trait ReceiverTrait<M: Send + Sync>: Send + Sync {
-//     async fn receive(&self) -> ApiResult<M>;
-// }
-// 
-// pub trait UserRepoInfoReceiverTrait: ReceiverTrait<UserRepoInfoDto> {}
