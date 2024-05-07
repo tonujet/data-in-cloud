@@ -8,7 +8,7 @@ pub fn run_detached_tasks(state: &AppState) {
         loop {
             let res = user_repo_info_receiver.receive().await;
             if let Err(e) = res {
-                println!("{e}");
+                eprintln!("{e}");
                 break;
             }
         }
