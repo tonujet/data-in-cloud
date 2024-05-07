@@ -69,18 +69,10 @@ impl MongoCollection<User> for UserCollection {
     }
 }
 
+#[derive(Default)]
 pub struct TestUserCollection {
     users: Arc<Mutex<Vec<User>>>,
 }
-
-impl TestUserCollection {
-    pub fn new() -> Self {
-        Self {
-            users: Arc::new(Mutex::new(vec![])),
-        }
-    }
-}
-
 #[async_trait]
 impl MongoCollection<User> for TestUserCollection {
     async fn find_one(
@@ -182,8 +174,8 @@ impl MongoCollection<User> for TestUserCollection {
         filter: Option<Document>,
         _options: Option<CountOptions>,
     ) -> mongodb::error::Result<u64> {
-        let doc: Option<Document> = filter.into();
-        if doc == None {
+        let doc: Option<Document> = filter;
+        if doc.is_none() {
             return Ok(self.users.lock().unwrap().len() as u64);
         }
 
@@ -210,7 +202,7 @@ impl MongoCollection<User> for TestUserCollection {
         _options: Option<AggregateOptions>,
     ) -> mongodb::error::Result<Vec<User>> {
         let users = self.users.lock().unwrap().clone();
-        let users = users.into_iter().filter(|u| u.deleted == false).collect();
+        let users = users.into_iter().filter(|u| !u.deleted).collect();
         Ok(utils::paginate_inmemory_collection(users, pipeline))
     }
 }

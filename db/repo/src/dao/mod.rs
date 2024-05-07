@@ -66,7 +66,7 @@ pub trait UserRepoInfoRepositoryTrait:
     ) -> RepoResult<DtoList<UserRepoInfoDto>>;
 }
 
-const DELIMITER: &'static str = "____";
+const DELIMITER: &str = "____";
 
 #[async_trait]
 pub trait BlobConnRepositoryTrait<K, V>: Send + Sync

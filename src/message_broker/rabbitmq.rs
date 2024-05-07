@@ -85,8 +85,6 @@ where
         let props = BasicProperties::default().with_delivery_mode(2).finish();
         ch.basic_publish(props, message.into(), publish_args)
             .await?;
-
-        println!(" [x] Sent");
         Ok(())
     }
 }
@@ -107,7 +105,7 @@ impl RabbitMQSubscriber for RabbitMQReceiver {
 #[async_trait]
 impl Subscriber<Connection, RabbitMQOptions> for RabbitMQReceiver {
     async fn init(conn: Connection, options: &RabbitMQOptions) -> MBrokerResult<Self>
-    where 
+    where
         Self: Sized,
     {
         let (ch, queue_name) = <Self as RabbitMQSubscriber>::init(conn, options).await?;
@@ -118,7 +116,7 @@ impl Subscriber<Connection, RabbitMQOptions> for RabbitMQReceiver {
 
         Ok(Self {
             channel: Mutex::new(Some(ch)),
-            queue_name,
+            _queue_name: queue_name,
             receiver: Mutex::new(rx),
         })
     }
@@ -145,7 +143,6 @@ where
         ))?;
         let ack_args = BasicAckArguments::new(msg.deliver.unwrap().delivery_tag(), false);
         ch.basic_ack(ack_args).await.unwrap();
-        println!(" [x] Received");
         Ok(payload.into())
     }
 }

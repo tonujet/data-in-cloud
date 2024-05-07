@@ -137,7 +137,7 @@ impl UserState {
     }
 
     async fn build_test(user_repo_info_state: &UserRepoInfoState) -> InternalResult<Self> {
-        let collection = Arc::new(TestUserCollection::new());
+        let collection = Arc::new(TestUserCollection::default());
         let repo: Arc<dyn UserRepositoryTrait> = Arc::new(UserRepository::new(collection));
         let service = Arc::new(UserService::new(
             Arc::clone(&repo),
@@ -260,7 +260,7 @@ impl UserRepoInfoState {
     }
 
     pub async fn build_test() -> InternalResult<Self> {
-        let collection = Arc::new(TestUserRepoInfoCollection::new());
+        let collection = Arc::new(TestUserRepoInfoCollection::default());
 
         let user_repo_info_repository: Arc<dyn UserRepoInfoRepositoryTrait> =
             Arc::new(UserRepoInfoRepository::new(collection));

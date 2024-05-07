@@ -76,9 +76,10 @@ impl From<Vec<u8>> for CreateUserRepoInfoDto {
     }
 }
 
-impl Into<Vec<u8>> for CreateUserRepoInfoDto {
-    fn into(self) -> Vec<u8> {
-        let string = serde_json::to_string(&self).unwrap();
+
+impl From<CreateUserRepoInfoDto> for Vec<u8> {
+    fn from(val: CreateUserRepoInfoDto) -> Self {
+        let string = serde_json::to_string(&val).unwrap();
         string.into_bytes()
     }
 }

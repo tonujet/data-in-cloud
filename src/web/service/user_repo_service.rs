@@ -10,7 +10,6 @@ use repo::dto::DtoList;
 use repo::dto::user_repo_info_dto::CreateUserRepoInfoDto;
 
 use crate::message_broker;
-use crate::message_broker::Publisher;
 use crate::web::dto::user_repo_dto::{UserMultipleRepo, UserSingleRepo};
 use crate::web::error::ApiResult;
 use crate::web::service::{BlobConnServiceTrait, RepoServiceTrait, UserRepoServiceTrait, UserServiceTrait};
@@ -21,7 +20,7 @@ pub struct UserRepoService {
     repo: Arc<dyn UserRepoRepositoryTrait>,
     user_service: Arc<dyn UserServiceTrait>,
     repo_service: Arc<dyn RepoServiceTrait>,
-    info_publisher: Arc<dyn Publisher<CreateUserRepoInfoDto>>,
+    info_publisher: Arc<dyn message_broker::Publisher<CreateUserRepoInfoDto>>,
 }
 
 impl UserRepoService {
@@ -29,7 +28,7 @@ impl UserRepoService {
         repo: Arc<dyn UserRepoRepositoryTrait>,
         user_service: Arc<dyn UserServiceTrait>,
         repo_service: Arc<dyn RepoServiceTrait>,
-        info_publisher: Arc<dyn Publisher<CreateUserRepoInfoDto>>,
+        info_publisher: Arc<dyn message_broker::Publisher<CreateUserRepoInfoDto>>,
     ) -> Self {
         Self {
             repo,

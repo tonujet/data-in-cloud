@@ -12,8 +12,7 @@ use crate::utils::user::user_test_helper;
 
 pub fn get_mock_repo() -> UserRepoRepository {
     let store = Arc::new(InMemory::new());
-    let repo = UserRepoRepository::new(store);
-    repo
+    UserRepoRepository::new(store)
 }
 
 

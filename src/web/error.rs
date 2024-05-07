@@ -33,7 +33,7 @@ pub enum ApiError {
 
 impl IntoResponse for ApiError {
     fn into_response(self) -> Response {
-        return match self {
+        match self {
             Self::Validation(ref errs) => self.to_response(StatusCode::UNPROCESSABLE_ENTITY, errs),
 
             Self::Serialization(_) => {
@@ -54,7 +54,7 @@ impl IntoResponse for ApiError {
                 _ => self.to_response(StatusCode::CONFLICT, self.to_string()),
             },
             Self::MessageBroker(_) => self.to_internal_error(),
-        };
+        }
     }
 }
 
