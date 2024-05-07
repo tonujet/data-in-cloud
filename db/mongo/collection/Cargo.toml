@@ -13,3 +13,4 @@ bson = "2.10.0"
 serde = "1.0.197"
 futures-util = "0.3.30"
 uuid = { version = "1.8.0", features = ["serde"]}
+tokio = "1.37.0"

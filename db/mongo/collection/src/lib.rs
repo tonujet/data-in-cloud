@@ -1,20 +1,21 @@
 use async_trait::async_trait;
 use bson::doc;
 use futures_util::TryStreamExt;
-use mongodb::bson::oid::ObjectId;
+use mongodb::{bson, Collection, Cursor};
 use mongodb::bson::Document;
+use mongodb::bson::oid::ObjectId;
 use mongodb::options::{
     AggregateOptions, CountOptions, FindOneOptions, InsertOneOptions, UpdateModifications,
     UpdateOptions,
 };
-use mongodb::{bson, Collection, Cursor};
 use serde::de::DeserializeOwned;
 use serde::Serialize;
 
 pub mod user;
 pub mod user_repo_info;
 pub mod utils;
-
+#[cfg(test)]
+mod tests;
 #[async_trait]
 pub trait MongoCollection<T: Serialize + DeserializeOwned + Unpin + Send + Sync>:
     Send + Sync
@@ -117,8 +118,3 @@ pub trait MongoCollection<T: Serialize + DeserializeOwned + Unpin + Send + Sync>
     }
 }
 
-
-#[cfg(test)]
-mod tests {
-    
-}
