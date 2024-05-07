@@ -1,5 +1,8 @@
 use bson::Document;
 
+#[cfg(test)]
+mod tests;
+
 pub fn paginate_inmemory_collection<E>(entities: Vec<E>, pipeline: Vec<Document>) -> Vec<E> {
     let mut skip: Option<usize> = None;
     let mut limit: Option<usize> = None;
@@ -17,7 +20,7 @@ pub fn paginate_inmemory_collection<E>(entities: Vec<E>, pipeline: Vec<Document>
         }
     }
 
-    let skip = skip.unwrap();
+    let skip = skip.unwrap_or(0);
     let limit = limit.unwrap_or(entities.len());
 
     entities.into_iter().skip(skip).take(limit).collect()
