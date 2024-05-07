@@ -1,18 +1,19 @@
 use async_trait::async_trait;
 use bson::doc;
 use futures_util::TryStreamExt;
-use mongodb::{bson, Collection, Cursor};
-use mongodb::bson::Document;
 use mongodb::bson::oid::ObjectId;
+use mongodb::bson::Document;
 use mongodb::options::{
     AggregateOptions, CountOptions, FindOneOptions, InsertOneOptions, UpdateModifications,
     UpdateOptions,
 };
+use mongodb::{bson, Collection, Cursor};
 use serde::de::DeserializeOwned;
 use serde::Serialize;
 
 pub mod user;
 pub mod user_repo_info;
+pub mod utils;
 
 #[async_trait]
 pub trait MongoCollection<T: Serialize + DeserializeOwned + Unpin + Send + Sync>:
@@ -105,13 +106,19 @@ pub trait MongoCollection<T: Serialize + DeserializeOwned + Unpin + Send + Sync>
         offset: Option<u64>,
         options: Option<AggregateOptions>,
     ) -> mongodb::error::Result<Vec<T>> {
-        let skip = doc! {"$skip" : offset.unwrap_or(0) as u32};
+        let skip = doc! {"$skip": offset.unwrap_or(0) as u32};
         pipeline.push(skip);
 
         if let Some(take) = take.filter(|&take| take != 0) {
-            pipeline.push(doc! {"$limit" : take as u32})
+            pipeline.push(doc! {"$limit": take as u32})
         }
 
         Ok(self.aggregate_and_collect(pipeline, options).await?)
     }
+}
+
+
+#[cfg(test)]
+mod tests {
+    
 }
