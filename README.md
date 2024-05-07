@@ -66,7 +66,7 @@ To run both the server and the tests, follow the instructions from the first lab
 ### Endpoint: ```/apiV1/user-repo-info```
 
 - Get info(POST): ```_/{user-repo-info_id}```
-- Get all info(GET): ```_?take={}&offset={}```
+- Get paginated info(GET): ```_?take={}&offset={}```
 
 ### Endpoint: ```/apiV1/users``
 - Get repo connection info for user: ```_/info/{user_id}```
