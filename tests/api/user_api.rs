@@ -192,7 +192,6 @@ async fn get_all_user_repo_info_for_user_success() {
 
     assert_eq!(res.status_code(), expected_code);
     let dto_list: DtoList<UserRepoInfoDto> = res.json();
-    println!("{dto_list:?}");
     assert_eq!(dto_list.dtos.len(), repo_ids.len());
 
     for dto in dto_list.dtos {

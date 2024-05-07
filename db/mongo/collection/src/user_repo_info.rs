@@ -127,10 +127,8 @@ impl MongoCollection<UserRepoInfo> for TestUserRepoInfoCollection {
             .first()
             .and_then(|val| val.get("$match").and_then(|r#match| r#match.as_document()));
         if let Some(doc) = r#match {
-            println!("{doc:?}");
             match doc.get("user_id") {
                 Some(user_id) => {
-                    println!("{user_id:?}");
                     entities.retain(|u| u.user_id == user_id.as_object_id().unwrap());
                 }
                 None => panic!("user_id match parameters not implemented"),
