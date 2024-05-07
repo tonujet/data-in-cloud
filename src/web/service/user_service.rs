@@ -10,7 +10,6 @@ use repo::dto::user_repo_info_dto::UserRepoInfoDto;
 
 use crate::web::error::ApiResult;
 use crate::web::service::{ServiceTrait, UserRepoInfoServiceTrait, UserServiceTrait};
-use crate::web::service::user_repo_info_service::UserRepoInfoService;
 
 pub struct UserService {
     repo: Arc<dyn UserRepositoryTrait>,

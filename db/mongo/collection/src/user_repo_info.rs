@@ -56,16 +56,9 @@ impl MongoCollection<UserRepoInfo> for UserRepoInfoCollection {
     }
 }
 
+#[derive(Default)]
 pub struct TestUserRepoInfoCollection {
     entities: Arc<Mutex<Vec<UserRepoInfo>>>,
-}
-
-impl TestUserRepoInfoCollection {
-    pub fn new() -> Self {
-        Self {
-            entities: Arc::new(Mutex::new(vec![])),
-        }
-    }
 }
 
 #[async_trait]

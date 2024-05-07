@@ -161,7 +161,7 @@ fn get_env(name: &'static str) -> InternalResult<String> {
 }
 
 fn get_end_and_parse<T: FromStr>(name: &'static str) -> InternalResult<T> {
-    Ok(get_env(name)?
+    get_env(name)?
         .parse()
-        .map_err(|_| InternalError::ConfigParseImpossible(name))?)
+        .map_err(|_| InternalError::ConfigParseImpossible(name))
 }

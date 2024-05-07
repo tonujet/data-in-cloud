@@ -8,7 +8,7 @@ use crate::dao::user_repo::UserRepository;
 use crate::dto::user_dto::{CreateUserDto, UpdateUserDto, UserDto};
 
 pub fn get_mock_repo() -> UserRepository {
-    let collection: Arc<dyn MongoCollection<User>> = Arc::new(TestUserCollection::new());
+    let collection: Arc<dyn MongoCollection<User>> = Arc::new(TestUserCollection::default());
     UserRepository::new(collection)
 }
 

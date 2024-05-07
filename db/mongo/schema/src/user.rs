@@ -59,13 +59,11 @@ impl Scheme for UserScheme {
             },
         };
 
-        let validation_opts = CreateCollectionOptions::builder()
+        CreateCollectionOptions::builder()
             .validator(validator)
             .validation_action(Some(ValidationAction::Error))
             .validation_level(Some(ValidationLevel::Moderate))
-            .build();
-
-        validation_opts
+            .build()
     }
 
     fn get_indexes(&self) -> Vec<(IndexModel, impl Into<Option<CreateIndexOptions>>)> {

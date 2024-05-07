@@ -62,7 +62,7 @@ impl UserRepository {
         let username_res = self.get_user(doc! {"username": username}).await;
 
         let reses = vec![(email_res, "email"), (username_res, "username")];
-        Ok(self.analyze_reses_to_uniqueness(reses)?)
+        self.analyze_reses_to_uniqueness(reses)
     }
 
     async fn validate_update_uniqueness(
@@ -76,7 +76,7 @@ impl UserRepository {
             let username_res = self.get_user(doc! {"username": &user_dto.username}).await;
             taken_fields.push((username_res, "username"));
         }
-        Ok(self.analyze_reses_to_uniqueness(taken_fields)?)
+        self.analyze_reses_to_uniqueness(taken_fields)
     }
 
     fn analyze_reses_to_uniqueness(
@@ -88,7 +88,7 @@ impl UserRepository {
             .filter(|tup| tup.0.is_ok())
             .map(|tup| tup.1)
             .collect();
-        if taken_fields.len() != 0 {
+        if !taken_fields.is_empty() {
             Err(Uniqueness(taken_fields, Entity::User))?
         }
         Ok(())

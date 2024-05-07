@@ -7,7 +7,6 @@ use mongodb::bson::oid::ObjectId;
 use collection::user_repo_info::UserRepoInfo;
 use collection::MongoCollection;
 
-use crate::dao::error::RepoError::Internal;
 use crate::dao::error::{Entity, RepoError, RepoResult};
 use crate::dao::{PersistentRepositoryTrait, UserRepoInfoRepositoryTrait};
 use crate::dto::user_repo_info_dto::{CreateUserRepoInfoDto, UserRepoInfoDto};
