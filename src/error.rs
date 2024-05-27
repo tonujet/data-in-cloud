@@ -1,7 +1,6 @@
 use std::io::Error;
 
 use thiserror::Error;
-use crate::message_broker;
 
 pub type InternalResult<T> = Result<T, InternalError>;
 

@@ -10,6 +10,9 @@ use collection::user::{TestUserCollection, User, UserCollection};
 use collection::user_repo_info::{
     TestUserRepoInfoCollection, UserRepoInfo, UserRepoInfoCollection,
 };
+use message_broker::error::MBrokerResult;
+use message_broker::rabbitmq::{RabbitMQOptions, RabbitMQPublisher, RabbitMQReceiver};
+use message_broker::Subscriber;
 use repo::dao::repo_repository::RepoRepository;
 use repo::dao::user_repo::UserRepository;
 use repo::dao::user_repo_info_repository::UserRepoInfoRepository;
@@ -21,11 +24,6 @@ use repo::dto::user_repo_info_dto::{CreateUserRepoInfoDto, UserRepoInfoDto};
 
 use crate::config::config;
 use crate::error::InternalResult;
-use crate::message_broker;
-use crate::message_broker::error::MBrokerResult;
-use crate::message_broker::rabbitmq::{RabbitMQOptions, RabbitMQPublisher, RabbitMQReceiver};
-use crate::message_broker::tests::{PublisherMock, ReceiverMock};
-use crate::message_broker::Subscriber;
 use crate::web::error::ApiResult;
 use crate::web::service::user_repo_info_receiver::UserRepoInfoReceiver;
 use crate::web::service::user_repo_info_service::UserRepoInfoService;
@@ -276,7 +274,7 @@ impl UserRepoInfoState {
                 CreateUserRepoInfoDto,
                 MBrokerResult<CreateUserRepoInfoDto>,
             >,
-        > = Arc::new(ReceiverMock::new(Arc::clone(&queue)));
+        > = Arc::new(message_broker::tests::ReceiverMock::new(Arc::clone(&queue)));
 
         let user_repo_info_receiver: Arc<
             dyn message_broker::Receiver<UserRepoInfoDto, ApiResult<UserRepoInfoDto>>,
@@ -286,7 +284,7 @@ impl UserRepoInfoState {
         ));
         
         let publisher: Arc<dyn message_broker::Publisher<CreateUserRepoInfoDto>> =
-            Arc::new(PublisherMock::new(Arc::clone(&queue), Arc::clone(&user_repo_info_receiver)));
+            Arc::new(message_broker::tests::PublisherMock::new(Arc::clone(&queue), Arc::clone(&user_repo_info_receiver)));
 
         Ok(UserRepoInfoState {
             repo: user_repo_info_repository,
