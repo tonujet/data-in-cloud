@@ -9,8 +9,6 @@ use thiserror::Error;
 
 use repo::dao::error::RepoError;
 
-use crate::message_broker;
-
 pub type ApiResult<T> = Result<T, ApiError>;
 
 #[derive(Debug, AsRefStr, Error)]

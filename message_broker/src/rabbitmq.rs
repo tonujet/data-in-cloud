@@ -9,8 +9,8 @@ use async_trait::async_trait;
 use tokio::sync::mpsc::UnboundedReceiver;
 use tokio::sync::Mutex;
 use uuid::Uuid;
+use crate::error::{MBrokerError, MBrokerResult};
 
-use crate::message_broker::error::{MBrokerError, MBrokerResult};
 
 use super::{Publisher, Receiver, Subscriber};
 

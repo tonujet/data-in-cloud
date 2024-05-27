@@ -1,7 +1,6 @@
 use amqprs::connection::OpenConnectionArguments;
-
+use message_broker::error::MBrokerResult;
 use crate::config::config;
-use crate::message_broker::error::MBrokerResult;
 
 pub async fn get_rabbitmq_connection() -> MBrokerResult<amqprs::connection::Connection> {
     let conn = amqprs::connection::Connection::open(&OpenConnectionArguments::new(
@@ -10,10 +9,10 @@ pub async fn get_rabbitmq_connection() -> MBrokerResult<amqprs::connection::Conn
         &config().RABBITMQ.USER,
         &config().RABBITMQ.PASSWORD,
     ))
-    .await?;
+        .await?;
     conn.register_callback(amqprs::callbacks::DefaultConnectionCallback)
         .await
         .unwrap();
     println!("Connected to RabbitMQ");
-    Ok(conn)    
+    Ok(conn)
 }

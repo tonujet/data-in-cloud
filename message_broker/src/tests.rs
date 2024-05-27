@@ -2,9 +2,9 @@ use std::sync::Arc;
 
 use async_trait::async_trait;
 use tokio::sync::Mutex;
+use crate::error::MBrokerResult;
+use crate::{Publisher, Receiver};
 
-use crate::message_broker::error::MBrokerResult;
-use crate::message_broker::{Publisher, Receiver};
 
 pub struct ReceiverMock<M: Send + Sync> {
     queue: Arc<Mutex<Vec<M>>>,
