@@ -4,7 +4,7 @@ use async_trait::async_trait;
 
 use repo::dto::user_repo_info_dto::{CreateUserRepoInfoDto, UserRepoInfoDto};
 
-use crate::message_broker;
+
 use crate::web::error::ApiResult;
 use crate::web::service::UserRepoInfoServiceTrait;
 
