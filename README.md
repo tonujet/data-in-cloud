@@ -63,12 +63,12 @@ To run both the server and the tests, follow the instructions from the first lab
 - [X]  Unit tests
 - [X]  Integration tests
 
-### Endpoint: ```/apiV1/user-repo-info```
+### Endpoint: ```/api/v1/user-repo-info```
 
 - Get info(POST): ```_/{user-repo-info_id}```
 - Get paginated info(GET): ```_?take={}&offset={}```
 
-### Endpoint: ```/apiV1/users``
+### Endpoint: ```/api/v1/users``
 - Get repo connection info for user: ```_/info/{user_id}```
 
 
@@ -76,7 +76,7 @@ As you can see above, there aren't any delete, create, or update endpoints. The 
 
 If you want to create information about user-repo connection, you must either create a new pair or delete the old one. Afterward, the appropriate info record will be saved to MongoDB
 
-### Endpoint: ```/apiV1/users/{user_id}/repos```
+### Endpoint: ```/api/v1/users/{user_id}/repos```
 
 - Add pair(POST): ```_/{repo_id}```
 - Delete pair(DELETE): ```_/{repo_id}```
