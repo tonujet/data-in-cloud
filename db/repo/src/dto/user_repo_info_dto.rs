@@ -29,13 +29,6 @@ impl PartialEq for UserRepoInfoDto {
     }
 }
 
-
-impl PartialEq for UserRepoInfoDto {
-    fn eq(&self, other: &Self) -> bool {
-        self.user_id == other.user_id && self.repo_id == other.repo_id &&  self.operation == other.operation
-    }
-}
-
 #[derive(Serialize, Deserialize, Debug)]
 pub struct CreateUserRepoInfoDto {
     pub user_id: ObjectId,

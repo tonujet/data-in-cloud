@@ -13,7 +13,7 @@ async fn add_pair_success() {
     let (user_id, repo_id) = user_repo_api_helper::create_user_and_repo(&setup.client).await;
     let expected_code = StatusCode::OK;
 
-    let endpoint = format!("/apiV1/users/{user_id}/repo/{repo_id}");
+    let endpoint = format!("/api/v1/users/{user_id}/repos/{repo_id}");
     let res = setup.client.post(&endpoint).await;
 
     assert_eq!(res.status_code(), expected_code);
@@ -26,7 +26,7 @@ async fn add_existing_pair_failure() {
     let (user_id, repo_id) = user_repo_api_helper::create_user_and_repo(&setup.client).await;
     let expected_code = StatusCode::CONFLICT;
 
-    let endpoint = format!("/apiV1/users/{user_id}/repo/{repo_id}");
+    let endpoint = format!("/api/v1/users/{user_id}/repos/{repo_id}");
     setup.client.post(&endpoint).await;
     let res = setup.client.post(&endpoint).await;
 
@@ -40,7 +40,7 @@ async fn delete_pair_success() {
     let (user_id, repo_id) = user_repo_api_helper::create_user_and_repo(&setup.client).await;
     let expected_code = StatusCode::OK;
 
-    let endpoint = format!("/apiV1/users/{user_id}/repo/{repo_id}");
+    let endpoint = format!("/api/v1/users/{user_id}/repos/{repo_id}");
     setup.client.post(&endpoint).await;
     let res = setup.client.delete(&endpoint).await;
 
@@ -54,7 +54,7 @@ async fn delete_two_times_the_same_pair_failure() {
     let (user_id, repo_id) = user_repo_api_helper::create_user_and_repo(&setup.client).await;
     let expected_code = StatusCode::CONFLICT;
 
-    let endpoint = format!("/apiV1/users/{user_id}/repo/{repo_id}");
+    let endpoint = format!("/api/v1/users/{user_id}/repos/{repo_id}");
     setup.client.post(&endpoint).await;
     setup.client.delete(&endpoint).await;
     let res = setup.client.delete(&endpoint).await;
@@ -70,7 +70,7 @@ async fn list_all_pairs_success() {
     let expected_code = StatusCode::OK;
     let expected_len = repo_ids.len();
 
-    let endpoint = format!("/apiV1/users/{user_id}/repo");
+    let endpoint = format!("/api/v1/users/{user_id}/repos");
     let res = setup.client.get(&endpoint).await;
     let user_repos_dto: UserMultipleRepo = res.json();
 
@@ -88,7 +88,7 @@ async fn list_pairs_with_pagination_success() {
     let expected_code = StatusCode::OK;
     let expected_len = take;
 
-    let endpoint = format!("/apiV1/users/{user_id}/repo");
+    let endpoint = format!("/api/v1/users/{user_id}/repos");
     let res = setup
         .client
         .get(&endpoint)
