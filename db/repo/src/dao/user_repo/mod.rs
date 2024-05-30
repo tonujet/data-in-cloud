@@ -1,7 +1,7 @@
 use std::sync::Arc;
 
 use async_trait::async_trait;
-use chrono::{Local, Utc};
+use chrono::Utc;
 use mongodb::bson::{doc, Document};
 use mongodb::bson::oid::ObjectId;
 

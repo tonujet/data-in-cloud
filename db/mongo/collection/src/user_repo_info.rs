@@ -2,7 +2,7 @@ use std::sync::{Arc, Mutex};
 
 use async_trait::async_trait;
 use bson::serde_helpers::uuid_1_as_binary;
-use chrono::{DateTime, Local, Utc};
+use chrono::{DateTime, Utc};
 use mongodb::bson::oid::ObjectId;
 use mongodb::bson::Document;
 use mongodb::options::{

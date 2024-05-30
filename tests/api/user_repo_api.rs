@@ -1,13 +1,8 @@
 use axum::http::StatusCode;
-use axum_test::TestServer;
 use serial_test::serial;
 
 use ia_11_vorobei_ant::web::dto::user_repo_dto::{UserMultipleRepo, UserSingleRepo};
 use repo::dto::DtoList;
-use repo::dto::repo_dto::RepoDto;
-use repo::dto::user_dto::UserDto;
-use repo::utils::repository::repository_test_helper;
-use repo::utils::user_repo::user_repo_test_helper;
 
 use crate::common::Setup;
 use crate::helpers::user_repo_api_helper;
@@ -54,6 +49,7 @@ async fn delete_pair_success() {
     let res = setup.client.delete(&endpoint).await;
 
     assert_eq!(res.status_code(), expected_code);
+    assert_eq!(res.json::<UserSingleRepo>(), expected_body);
 }
 
 #[tokio::test]
