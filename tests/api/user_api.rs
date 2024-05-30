@@ -187,7 +187,7 @@ async fn get_all_user_repo_info_for_user_success() {
 
     let res = setup
         .client
-        .get(&format!("/apiV1/users/{user_id}/info"))
+        .get(&format!("/api/v1/users/{user_id}/info"))
         .await;
 
     assert_eq!(res.status_code(), expected_code);

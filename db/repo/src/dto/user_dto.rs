@@ -1,4 +1,4 @@
-use chrono::{DateTime, Local};
+use chrono::{DateTime, Local, Utc};
 use mongodb::bson::oid::ObjectId;
 use serde::{Deserialize, Serialize};
 use validator::Validate;
@@ -63,8 +63,8 @@ pub struct UserDto {
     pub username: String,
     pub age: u8,
     pub is_public: bool,
-    pub created: DateTime<Local>,
-    pub updated: DateTime<Local>,
+    pub created: DateTime<Utc>,
+    pub updated: DateTime<Utc>,
 }
 
 impl From<User> for UserDto {

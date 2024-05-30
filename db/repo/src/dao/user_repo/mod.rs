@@ -1,7 +1,7 @@
 use std::sync::Arc;
 
 use async_trait::async_trait;
-use chrono::Local;
+use chrono::{Local, Utc};
 use mongodb::bson::{doc, Document};
 use mongodb::bson::oid::ObjectId;
 
@@ -119,7 +119,7 @@ impl RepositoryTrait<CreateUserDto, UpdateUserDto, UserDto, ObjectId> for UserRe
             "username": username,
             "age": age as u32,
             "is_public": is_public,
-            "updated": Local::now().to_rfc3339()
+            "updated": Utc::now().to_rfc3339()
         }};
 
         self.collection

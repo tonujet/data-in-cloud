@@ -63,7 +63,7 @@ To run both the server and the tests, follow the instructions from the first lab
 - [X]  Unit tests
 - [X]  Integration tests
 
-### Endpoint: ```/api/v1/user-repo-info```
+### Endpoint: ```/api/v1/user-repo-infos```
 
 - Get info(POST): ```_/{user-repo-info_id}```
 - Get paginated info(GET): ```_?take={}&offset={}```

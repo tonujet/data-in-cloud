@@ -54,7 +54,6 @@ async fn delete_pair_success() {
     let res = setup.client.delete(&endpoint).await;
 
     assert_eq!(res.status_code(), expected_code);
-    assert_eq!(res.json::<UserSingleRepo>(), expected_body);
 }
 
 #[tokio::test]

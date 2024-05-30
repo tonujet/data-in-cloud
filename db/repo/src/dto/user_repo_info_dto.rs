@@ -1,4 +1,4 @@
-use chrono::{DateTime, Local};
+use chrono::{DateTime, Local, Utc};
 use mongodb::bson::oid::ObjectId;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
@@ -19,7 +19,7 @@ pub struct UserRepoInfoDto {
     pub user_id: ObjectId,
     pub repo_id: Uuid,
     pub operation: UserRepoInfoOperation,
-    pub executed_at: DateTime<Local>,
+    pub executed_at: DateTime<Utc>,
 }
 
 

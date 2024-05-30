@@ -2,7 +2,7 @@ use std::sync::{Arc, Mutex};
 
 use async_trait::async_trait;
 use bson::serde_helpers::uuid_1_as_binary;
-use chrono::{DateTime, Local};
+use chrono::{DateTime, Local, Utc};
 use mongodb::bson::oid::ObjectId;
 use mongodb::bson::Document;
 use mongodb::options::{
@@ -24,12 +24,12 @@ pub struct UserRepoInfo {
     #[serde(with = "uuid_1_as_binary")]
     pub repo_id: Uuid,
     pub operation: UserRepoInfoOperation,
-    pub executed_at: DateTime<Local>,
+    pub executed_at: DateTime<Utc>,
 }
 
 impl UserRepoInfo {
     pub fn new(user_id: ObjectId, repo_id: Uuid, operation: UserRepoInfoOperation) -> UserRepoInfo {
-        let executed_at = Local::now();
+        let executed_at = Utc::now();
         Self {
             id: None,
             user_id,
