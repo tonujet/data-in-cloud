@@ -1,7 +1,7 @@
 use std::sync::{Arc, Mutex};
 
 use async_trait::async_trait;
-use chrono::{DateTime, Local};
+use chrono::{DateTime, Local, Utc};
 use mongodb::{Collection, Cursor};
 use mongodb::bson::Document;
 use mongodb::bson::oid::ObjectId;
@@ -24,8 +24,8 @@ pub struct User {
     pub age: u8,
     pub is_public: bool,
     pub deleted: bool,
-    pub created: DateTime<Local>,
-    pub updated: DateTime<Local>,
+    pub created: DateTime<Utc>,
+    pub updated: DateTime<Utc>,
 }
 
 impl User {
@@ -36,7 +36,7 @@ impl User {
         age: u8,
         is_public: bool,
     ) -> Self {
-        let now = Local::now();
+        let now = Utc::now();
         Self {
             id: None,
             deleted: false,
