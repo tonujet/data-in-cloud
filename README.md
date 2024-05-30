@@ -69,7 +69,7 @@ To run both the server and the tests, follow the instructions from the first lab
 - Get paginated info(GET): ```_?take={}&offset={}```
 
 ### Endpoint: ```/api/v1/users``
-- Get repo connection info for user: ```_/info/{user_id}```
+- Get repo connection info for user: ```_/{user_id}/repo-infos```
 
 
 As you can see above, there aren't any delete, create, or update endpoints. The reason why I decided to do this is that this entity is created automatically and, obviously, it can't be updated and deleted because this is system information(at least directly)
