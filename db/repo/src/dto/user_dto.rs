@@ -51,7 +51,7 @@ impl From<CreateUserDto> for User {
     }
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(deny_unknown_fields)]
 pub struct UserDto {
     #[serde(
