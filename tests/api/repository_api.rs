@@ -1,12 +1,12 @@
 use axum::http::StatusCode;
-use axum_test::TestServer;
 use serde_json::Value;
 use serial_test::serial;
 
-use repo::dto::{DtoList, repository_dto::RepoDto};
+use repo::dto::{DtoList, repo_dto::RepoDto};
 use repo::utils::repository::repository_test_helper;
 
 use super::common::Setup;
+use crate::helpers::repository_api_helper;
 
 #[tokio::test]
 #[serial]
@@ -59,7 +59,7 @@ async fn delete_repo_success() {
     let expected_status_code = StatusCode::CONFLICT;
     let expected_error_name = "RepositoryError";
 
-    let deleted_dto = delete_repo(&setup.client).await;
+    let deleted_dto = repository_api_helper::delete_repo(&setup.client).await;
     let res = setup
         .client
         .get(&format!("/api/v1/repos/{}", deleted_dto.id))
@@ -85,7 +85,7 @@ async fn delete_deleted_repo_failure() {
     let expected_status_code = StatusCode::CONFLICT;
     let expected_error_name = "RepositoryError";
 
-    let deleted_dto = delete_repo(&setup.client).await;
+    let deleted_dto = repository_api_helper::delete_repo(&setup.client).await;
     let res = setup
         .client
         .delete(&format!("/api/v1/repos/{}", deleted_dto.id))
@@ -112,7 +112,7 @@ async fn update_repo_success() {
     let expected_status_code = StatusCode::OK;
     let expected_body = repository_test_helper::get_response_from_update_dto();
 
-    let created_dto = create_repo(&setup.client).await;
+    let created_dto = repository_api_helper::create_repo(&setup.client).await;
     let res = setup
         .client
         .put(&format!("/api/v1/repos/{}", created_dto.id))
@@ -139,7 +139,7 @@ async fn update_repo_with_non_valid_data_failure() {
     let expected_status_code = StatusCode::UNPROCESSABLE_ENTITY;
     let expected_body = repository_test_helper::get_response_from_invalid_dto();
 
-    let created_dto = create_repo(&setup.client).await;
+    let created_dto = repository_api_helper::create_repo(&setup.client).await;
     let res = setup
         .client
         .put(&format!("/api/v1/repos/{}", { created_dto.id }))
@@ -166,7 +166,7 @@ async fn update_deleted_repo_failure() {
     let expected_error_name = "RepositoryError";
     let update_dto = repository_test_helper::get_update_dto();
 
-    let deleted_dto = delete_repo(&setup.client).await;
+    let deleted_dto = repository_api_helper::delete_repo(&setup.client).await;
     let res = setup
         .client
         .put(&format!("/api/v1/repos/{}", deleted_dto.id))
@@ -193,7 +193,7 @@ async fn get_repo_by_uuid_success() {
     let expected_status_code = StatusCode::OK;
     let expected_body = repository_test_helper::get_response_from_create_dto();
 
-    let created_dto = create_repo(&setup.client).await;
+    let created_dto = repository_api_helper::create_repo(&setup.client).await;
     let res = setup
         .client
         .get(&format!("/api/v1/repos/{}", created_dto.id))
@@ -220,7 +220,7 @@ async fn list_all_repos_success() {
     let expected_body = DtoList::new(response_dtos, len as u64, None, None);
     let expected_status_code = StatusCode::OK;
 
-    create_some_repos(&setup.client).await;
+    repository_api_helper::create_some_repos(&setup.client).await;
     let res = setup.client.get("/api/v1/repos").await;
 
     assert_eq!(
@@ -252,7 +252,7 @@ async fn list_repos_using_take_and_offset_success() {
     );
     let expected_status_code = StatusCode::OK;
 
-    create_some_repos(&setup.client).await;
+    repository_api_helper::create_some_repos(&setup.client).await;
     let res = setup
         .client
         .get("/api/v1/repos")
@@ -270,32 +270,4 @@ async fn list_repos_using_take_and_offset_success() {
         expected_body,
         "List response body doesn't correspond to the desired"
     )
-}
-
-async fn delete_repo(client: &TestServer) -> RepoDto {
-    let created_dto = create_repo(&client).await;
-    let res = client
-        .delete(&format!("/api/v1/repos/{}", created_dto.id))
-        .await;
-    let deleted_dto: RepoDto = res.json();
-    deleted_dto
-}
-
-async fn create_repo(client: &TestServer) -> RepoDto {
-    let create_dto = repository_test_helper::get_create_dto();
-    let res = client.post("/api/v1/repos").json(&create_dto).await;
-    let created_dto: RepoDto = res.json();
-    created_dto
-}
-
-
-async fn create_some_repos(client: &TestServer) {
-    let response_dtos = repository_test_helper::get_response_from_create_dtos();
-    for (i, create_dto) in repository_test_helper::get_create_dtos()
-        .iter()
-        .enumerate()
-    {
-        let _ = &response_dtos[i];
-        let _ = client.post("/api/v1/repos").json(&create_dto).await;
-    }
 }

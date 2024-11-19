@@ -12,7 +12,7 @@ use mongodb::bson::oid::ObjectId;
 use object_store::path::Path;
 use object_store::ObjectStore;
 use uuid::Uuid;
-use crate::dao::{BlobConnRepoTrait, DELIMITER, UserRepositoryRepoTrait};
+use crate::dao::{BlobConnRepositoryTrait, DELIMITER, UserRepoRepositoryTrait};
 
 use crate::dao::error::RepoError::{Internal, InternalConcrete};
 use crate::dao::error::{Entity, RepoResult};
@@ -20,20 +20,20 @@ use crate::dao::error::{Entity, RepoResult};
 
 
 #[derive(Clone)]
-pub struct UserRepositoryRepo {
+pub struct UserRepoRepository {
     store: Arc<dyn ObjectStore>,
 }
 
-impl UserRepositoryRepoTrait for UserRepositoryRepo {}
+impl UserRepoRepositoryTrait for UserRepoRepository {}
 
-impl UserRepositoryRepo {
+impl UserRepoRepository {
     pub fn new(store: Arc<dyn ObjectStore>) -> Self {
         Self { store }
     }
 }
 
 #[async_trait]
-impl BlobConnRepoTrait<ObjectId, Uuid> for UserRepositoryRepo {
+impl BlobConnRepositoryTrait<ObjectId, Uuid> for UserRepoRepository {
     async fn list_pairs(&self, user_id: &ObjectId) -> RepoResult<Vec<Uuid>> {
         let stream = self.store.list(None);
 

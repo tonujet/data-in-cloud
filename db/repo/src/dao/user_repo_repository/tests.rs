@@ -1,6 +1,6 @@
 use uuid::Uuid;
 
-use crate::dao::BlobConnRepoTrait;
+use crate::dao::BlobConnRepositoryTrait;
 use crate::utils::user_repo::user_repo_test_helper;
 
 #[tokio::test]

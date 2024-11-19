@@ -6,7 +6,7 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [workspace]
-members = [".", "db/postgres/entity", "db/postgres/migration", "db/mongo/collection", "db/repo", "db/mongo/schema"]
+members = [".", "db/postgres/entity", "db/postgres/migration", "db/mongo/collection", "db/repo", "db/mongo/schema", "message_broker"]
 
 [dependencies]
 entity = { path = "db/postgres/entity" }
@@ -14,6 +14,7 @@ migration = { path = "db/postgres/migration" }
 repo = {path = "db/repo"}
 schema = {path = "db/mongo/schema"}
 collection = {path = "db/mongo/collection"}
+message_broker = {path = "message_broker"}
 
 axum = { version = "0.7.4", features = ["macros"] }
 tokio = { version = "1.36.0", features = ["full"] }
@@ -30,6 +31,9 @@ axum-test = "14.3.1"
 dotenv = "0.15.0"
 strum = { version = "0.26.1", features = ["derive"] }
 mongodb = "2.8.2"
+object_store = { version = "0.9.1", features = ["aws"] }
+amqprs = "1.6.0"
+
 
 [dev-dependencies]
 #sea-orm = {version = "0.12", features = ["mock"]}

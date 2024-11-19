@@ -1,13 +1,16 @@
-use mongodb::options::{CreateCollectionOptions, CreateIndexOptions};
 use mongodb::{Collection, Database, IndexModel};
+use mongodb::options::{CreateCollectionOptions, CreateIndexOptions};
+
 use collection::user::User;
+use collection::user_repo_info::UserRepoInfo;
 
 use crate::error::SchemeResult;
 use crate::user::UserScheme;
+use crate::user_repo_info::UserRepoInfoScheme;
 
 pub mod error;
 pub mod user;
-
+mod user_repo_info;
 
 trait GetScheme<Entity = Self> {
     fn get_scheme() -> impl Scheme<Entity = Entity>;
@@ -16,6 +19,12 @@ trait GetScheme<Entity = Self> {
 impl GetScheme for User {
     fn get_scheme() -> impl Scheme<Entity = Self> {
         UserScheme {}
+    }
+}
+
+impl GetScheme for UserRepoInfo {
+    fn get_scheme() -> impl Scheme<Entity = Self> {
+        UserRepoInfoScheme {}
     }
 }
 
@@ -29,7 +38,10 @@ pub trait Scheme {
     type Entity;
     fn get_collection_name(&self) -> &'static str;
     fn get_validation_options(&self) -> CreateCollectionOptions;
-    fn get_indexes(&self) -> Vec<(IndexModel, impl Into<Option<CreateIndexOptions>>)>;
+    fn get_indexes(&self) -> Vec<(IndexModel, impl Into<Option<CreateIndexOptions>>)> {
+        let v: Vec<(IndexModel, Option<CreateIndexOptions>)> = vec![];
+        v
+    }
 
     async fn get_collection(&self, db: &Database) -> SchemeResult<Collection<Self::Entity>> {
         let name = self.get_collection_name();
@@ -40,6 +52,7 @@ pub trait Scheme {
         for (index, option) in indexes {
             collection.create_index(index, option).await?;
         }
+
         Ok(collection)
     }
 

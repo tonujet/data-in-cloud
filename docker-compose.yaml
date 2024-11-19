@@ -2,7 +2,7 @@ version: '3.9'
 
 services:
   server:
-    image: tonujet/data-in-cloud:3
+    image: tonujet/data-in-cloud:4
     container_name: server
     environment:
       - SERVER_HOST
@@ -21,6 +21,10 @@ services:
       - AWS_SECRET_ACCESS_KEY
       - AWS_BUCKET_NAME
       - AWS_BUCKET_REGION
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT
+      - RABBITMQ_USER
+      - RABBITMQ_PASSWORD
     ports:
       - 80:${SERVER_PORT}
     env_file:
@@ -28,8 +32,12 @@ services:
     networks:
       - server-side
     depends_on:
-      - sql_db
-      - mongo_db
+      sql_db:
+        condition: service_healthy
+      mongo_db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
 
   sql_db:
     image: postgres:16-alpine
@@ -48,6 +56,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+      start_period: 10s
 
   mongo_db:
     image: mongo
@@ -66,7 +75,26 @@ services:
       interval: 10s
       timeout: 10s
       retries: 5
+      start_period: 10s
 
+  rabbitmq:
+    image: rabbitmq:3-alpine
+    container_name: rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD}
+      - RABBITMQ_NODE_PORT=${RABBITMQ_PORT}
+    networks:
+      - server-side
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq/
+      - rabbitmq-log:/var/log/rabbitmq
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 20s
 
 
 networks:
@@ -75,3 +103,5 @@ networks:
 volumes:
   sql-db-data:
   mongo-db-data:
+  rabbitmq-data:
+  rabbitmq-log:

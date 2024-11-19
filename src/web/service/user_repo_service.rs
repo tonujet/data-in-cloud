@@ -4,32 +4,37 @@ use async_trait::async_trait;
 use mongodb::bson::oid::ObjectId;
 use uuid::Uuid;
 
-use repo::dao::UserRepositoryRepoTrait;
+use collection::user_repo_info::UserRepoInfoOperation;
+use repo::dao::UserRepoRepositoryTrait;
 use repo::dto::DtoList;
+use repo::dto::user_repo_info_dto::CreateUserRepoInfoDto;
+
 
 use crate::web::dto::user_repo_dto::{UserMultipleRepo, UserSingleRepo};
 use crate::web::error::ApiResult;
-use crate::web::service::{
-    BlobConnServiceTrait, RepoServiceTrait, UserRepoServiceTrait, UserServiceTrait,
-};
+use crate::web::service::{BlobConnServiceTrait, RepoServiceTrait, UserRepoServiceTrait, UserServiceTrait};
+
 
 #[derive(Clone)]
 pub struct UserRepoService {
-    repo: Arc<dyn UserRepositoryRepoTrait>,
+    repo: Arc<dyn UserRepoRepositoryTrait>,
     user_service: Arc<dyn UserServiceTrait>,
     repo_service: Arc<dyn RepoServiceTrait>,
+    info_publisher: Arc<dyn message_broker::Publisher<CreateUserRepoInfoDto>>,
 }
 
 impl UserRepoService {
     pub fn new(
-        repo: Arc<dyn UserRepositoryRepoTrait>,
+        repo: Arc<dyn UserRepoRepositoryTrait>,
         user_service: Arc<dyn UserServiceTrait>,
         repo_service: Arc<dyn RepoServiceTrait>,
+        info_publisher: Arc<dyn message_broker::Publisher<CreateUserRepoInfoDto>>,
     ) -> Self {
         Self {
             repo,
             user_service,
             repo_service,
+            info_publisher,
         }
     }
 }
@@ -42,6 +47,13 @@ impl BlobConnServiceTrait<ObjectId, Uuid, UserSingleRepo, UserMultipleRepo> for 
         let user = self.user_service.get(key_id).await?;
         let repo = self.repo_service.get(val_id).await?;
         self.repo.add_pair(key_id, val_id).await?;
+        self.info_publisher
+            .publish(CreateUserRepoInfoDto {
+                user_id: user.id.unwrap(),
+                repo_id: repo.id,
+                operation: UserRepoInfoOperation::CreateLink,
+            })
+            .await?;
         Ok(UserSingleRepo::new(user, repo))
     }
 
@@ -81,6 +93,13 @@ impl BlobConnServiceTrait<ObjectId, Uuid, UserSingleRepo, UserMultipleRepo> for 
         let user = self.user_service.get(key_id).await?;
         let repo = self.repo_service.get(val_id).await?;
         self.repo.delete_pair(key_id, val_id).await?;
+        self.info_publisher
+            .publish(CreateUserRepoInfoDto {
+                user_id: user.id.unwrap(),
+                repo_id: repo.id,
+                operation: UserRepoInfoOperation::DeleteLink,
+            })
+            .await?;
         Ok(UserSingleRepo::new(user, repo))
     }
 }

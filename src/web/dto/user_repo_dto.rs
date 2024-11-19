@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 use repo::dto::DtoList;
-use repo::dto::repository_dto::RepoDto;
+use repo::dto::repo_dto::RepoDto;
 use repo::dto::user_dto::UserDto;
 
 #[derive(Serialize, Deserialize, PartialEq, Debug)]
