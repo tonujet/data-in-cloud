@@ -31,7 +31,7 @@ pub enum ApiError {
 
 impl IntoResponse for ApiError {
     fn into_response(self) -> Response {
-        match self {
+        return match self {
             Self::Validation(ref errs) => self.to_response(StatusCode::UNPROCESSABLE_ENTITY, errs),
 
             Self::Serialization(_) => {
@@ -52,7 +52,7 @@ impl IntoResponse for ApiError {
                 _ => self.to_response(StatusCode::CONFLICT, self.to_string()),
             },
             Self::MessageBroker(_) => self.to_internal_error(),
-        }
+        };
     }
 }
 
@@ -70,5 +70,14 @@ impl ApiError {
 
     fn to_internal_error(&self) -> Response {
         (StatusCode::INTERNAL_SERVER_ERROR, "Something went wrong").into_response()
+    }
+    
+}
+
+impl async_graphql::ErrorExtensions for ApiError {
+    fn extend(&self) -> async_graphql::Error {
+        async_graphql::Error::new(self.to_string()).extend_with(|_, e|
+            e.set("error_name", format!("{}Error", self.as_ref()))
+        )
     }
 }

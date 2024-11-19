@@ -12,7 +12,9 @@ use repo::dto::user_repo_info_dto::CreateUserRepoInfoDto;
 
 use crate::web::dto::user_repo_dto::{UserMultipleRepo, UserSingleRepo};
 use crate::web::error::ApiResult;
-use crate::web::service::{BlobConnServiceTrait, RepoServiceTrait, UserRepoServiceTrait, UserServiceTrait};
+use crate::web::service::{
+    BlobConnServiceTrait, RepoServiceTrait, UserRepoServiceTrait, UserServiceTrait,
+};
 
 
 #[derive(Clone)]

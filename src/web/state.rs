@@ -282,7 +282,7 @@ impl UserRepoInfoState {
             receiver,
             user_repo_info_service.clone(),
         ));
-        
+
         let publisher: Arc<dyn message_broker::Publisher<CreateUserRepoInfoDto>> =
             Arc::new(message_broker::tests::PublisherMock::new(Arc::clone(&queue), Arc::clone(&user_repo_info_receiver)));
 

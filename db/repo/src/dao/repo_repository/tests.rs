@@ -31,7 +31,7 @@ pub async fn get_stub_repo() -> impl RepoRepositoryTrait {
 async fn it_should_not_update_deleted_repo() {
     let repository_repo = get_stub_repo().await;
     let create_repo = repository_test_helper::get_create_dto();
-    
+
     let repo = repository_repo.create(create_repo).await.unwrap();
     let repo = repository_repo.delete(&repo.id).await.unwrap();
     let update_repo = repository_test_helper::get_update_dto();

@@ -104,18 +104,18 @@ pub fn get_create_dtos() -> Vec<CreateUserDto> {
 }
 
 pub fn get_update_dto() -> UpdateUserDto {
-   UpdateUserDto {
-       username: "update".to_string(),
-       age: 11,
-       is_public: true,
-   } 
+    UpdateUserDto {
+        username: "update".to_string(),
+        age: 11,
+        is_public: true,
+    }
 }
 
 pub fn get_updated() -> User {
     let update_dto = get_update_dto();
     let mut created = get_created1();
     created.username = update_dto.username;
-    created.age = update_dto.age; 
+    created.age = update_dto.age;
     created.is_public = update_dto.is_public;
     created
 }
@@ -124,4 +124,3 @@ pub fn get_updated() -> User {
 pub fn get_updated_dto() -> UserDto {
     get_updated().into()
 }
-

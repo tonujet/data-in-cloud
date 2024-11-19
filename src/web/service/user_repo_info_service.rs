@@ -24,7 +24,7 @@ impl UserRepoInfoService {
 impl UserRepoInfoServiceTrait for UserRepoInfoService {}
 #[async_trait]
 impl PersistentServiceTrait<CreateUserRepoInfoDto, UserRepoInfoDto, ObjectId>
-    for UserRepoInfoService
+for UserRepoInfoService
 {
     async fn create(&self, dto: CreateUserRepoInfoDto) -> ApiResult<UserRepoInfoDto> {
         Ok(self.repo.create(dto).await?)

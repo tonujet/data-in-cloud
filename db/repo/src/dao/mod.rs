@@ -37,12 +37,12 @@ pub trait RepositoryTrait<C, U, R, I>: Send + Sync {
 }
 
 pub trait RepoRepositoryTrait:
-    RepositoryTrait<CreateUpdateRepoDto, CreateUpdateRepoDto, RepoDto, Uuid>
+RepositoryTrait<CreateUpdateRepoDto, CreateUpdateRepoDto, RepoDto, Uuid>
 {
 }
 
 pub trait UserRepositoryTrait:
-    RepositoryTrait<CreateUserDto, UpdateUserDto, UserDto, ObjectId>
+RepositoryTrait<CreateUserDto, UpdateUserDto, UserDto, ObjectId>
 {
 }
 
@@ -56,7 +56,7 @@ pub trait PersistentRepositoryTrait<C, R, I>: Send + Sync {
 
 #[async_trait]
 pub trait UserRepoInfoRepositoryTrait:
-    PersistentRepositoryTrait<CreateUserRepoInfoDto, UserRepoInfoDto, ObjectId>
+PersistentRepositoryTrait<CreateUserRepoInfoDto, UserRepoInfoDto, ObjectId>
 {
     async fn list_by_user_id(
         &self,

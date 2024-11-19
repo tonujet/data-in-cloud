@@ -1,7 +1,7 @@
 use std::sync::{Arc, Mutex};
 
 use async_trait::async_trait;
-use chrono::{DateTime, Local, Utc};
+use chrono::{DateTime, Utc};
 use mongodb::{Collection, Cursor};
 use mongodb::bson::Document;
 use mongodb::bson::oid::ObjectId;
@@ -193,7 +193,7 @@ impl MongoCollection<User> for TestUserCollection {
                 .count() as u64);
         }
 
-        panic!("Other options not implemented yet")
+        unimplemented!("Other options not implemented yet")
     }
 
     async fn aggregate_and_collect(

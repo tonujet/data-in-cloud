@@ -7,6 +7,7 @@ use entity::{repository, RepositoryType};
 
 #[derive(Deserialize, Debug, Validate, Serialize)]
 #[serde(deny_unknown_fields)]
+#[derive(async_graphql::InputObject)]
 pub struct CreateUpdateRepoDto {
     #[validate(length(min = 3, max = 30, message = "Must be between 3 and 30 characters"))]
     pub title: String,
@@ -17,6 +18,7 @@ pub struct CreateUpdateRepoDto {
 }
 
 #[derive(Serialize, Deserialize, Debug, Eq, Clone)]
+#[derive(async_graphql::SimpleObject)]
 pub struct RepoDto {
     pub id: Uuid,
     pub title: String,

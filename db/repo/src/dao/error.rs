@@ -6,7 +6,7 @@ use uuid::Uuid;
 
 pub type RepoResult<T> = Result<T, RepoError>;
 
-#[derive(AsRefStr, Debug)]
+#[derive(AsRefStr, Debug, Clone)]
 pub enum Entity {
     Repository,
     User,
@@ -40,10 +40,8 @@ pub enum RepoError {
     #[error("{0}")]
     Internal(&'static str),
 
-
     #[error("{0}")]
     InternalConcrete(String),
-
 
     #[error("{} already has connection with {}", .0.as_ref(), .1.as_ref())]
     AlreadyConnected(Entity, Entity),
