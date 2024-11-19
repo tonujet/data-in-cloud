@@ -1,8 +1,7 @@
-use axum::Router;
-
 use crate::config::config;
 use crate::error::InternalResult;
 use crate::web::state::AppState;
+use axum::Router;
 
 mod controller;
 pub mod dto;
