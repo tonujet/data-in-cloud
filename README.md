@@ -78,7 +78,16 @@ If you want to create information about user-repo connection, you must either cr
 
 ### Endpoint: ```/api/v1/users/{user_id}/repos```
 
-- Add pair(POST): ```_/{repo_id}```
+- Add pair(POST): ```_/{repo_id}``` 
 - Delete pair(DELETE): ```_/{repo_id}```
 
 As a message broker was used RabbitMq that supports AMQP. The needed driver was used to access the message broker using this protocol
+
+
+## lab5
+- [X] GraphQL endpoint for lab1 lab2 lab4 services
+
+- [ ] Docker is unavailable for this lab
+
+### Endpoint and web interface: ```/api/v1/graphql```
+Similar GraphQL queries and mutation were added to corresponding controllers from lab1, lab2, and lab4. Since I am using controller - service - repository architecture, it was a pretty easy task. The reason why I avoided lab3 is because my AWS account expired and thus occurred to my keys, so right now I technically can't use this particular endpoint. It is true, that I could recreate the account and add a new configuration to the project, but I am too lazy, and the point of this lab is to learn how to use GraphQL only
