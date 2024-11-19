@@ -14,7 +14,7 @@ pub fn api_routes(state: AppState) -> Router {
         .nest("/repos", repository_controller::routes(state.clone()))
         .nest("/users", user_controller::routes(state.clone()))
         .nest("/users", user_repo_controller::routes(state.clone()));
-    router.nest("/apiV1", api_router)
+    router.nest("/api/v1", api_router)
 }
 
 #[derive(Deserialize)]

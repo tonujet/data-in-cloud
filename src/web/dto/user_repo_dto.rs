@@ -3,7 +3,7 @@ use repo::dto::DtoList;
 use repo::dto::repository_dto::RepoDto;
 use repo::dto::user_dto::UserDto;
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, PartialEq, Debug)]
 pub struct UserSingleRepo {
     pub user: UserDto,
     pub repo: RepoDto,
@@ -17,7 +17,9 @@ impl UserSingleRepo {
 
 
 
-#[derive(Serialize, Deserialize)]
+
+
+#[derive(Serialize, Deserialize, PartialEq, Debug)]
 pub struct UserMultipleRepo {
     pub user: UserDto,
     pub repos: DtoList<RepoDto>,

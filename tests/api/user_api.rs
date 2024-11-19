@@ -23,7 +23,7 @@ async fn create_user_with_taken_email_and_username_failure() {
     let expected_code = StatusCode::CONFLICT;
 
     create_user1(&setup.client).await;
-    let res = setup.client.post("/apiV1/users").json(&create_dto).await;
+    let res = setup.client.post("/api/v1/users").json(&create_dto).await;
 
     assert_eq!(res.status_code(), expected_code);
 }
@@ -39,7 +39,7 @@ async fn update_user_success() {
     let user_dto = create_user1(&setup.client).await;
     let res = setup
         .client
-        .put(&format!("/apiV1/users/{}", user_dto.id.unwrap()))
+        .put(&format!("/api/v1/users/{}", user_dto.id.unwrap()))
         .json(&update_dto)
         .await;
     let user_dto: UserDto = res.json();
@@ -60,7 +60,7 @@ async fn update_user_with_taken_username_failure() {
     update_dto.username = user1_dto.username;
     let res = setup
         .client
-        .put(&format!("/apiV1/users/{}", user2_dto.id.unwrap()))
+        .put(&format!("/api/v1/users/{}", user2_dto.id.unwrap()))
         .json(&update_dto)
         .await;
 
@@ -77,7 +77,7 @@ async fn delete_user_success() {
 
     let res = setup
         .client
-        .delete(&format!("/apiV1/users/{}", user_dto.id.unwrap()))
+        .delete(&format!("/api/v1/users/{}", user_dto.id.unwrap()))
         .await;
     let deleted_dto: UserDto = res.json();
     
@@ -86,7 +86,7 @@ async fn delete_user_success() {
 
     let res = setup
         .client
-        .get(&format!("/apiV1/users/{}", user_dto.id.unwrap()))
+        .get(&format!("/api/v1/users/{}", user_dto.id.unwrap()))
         .await;
     assert_eq!(res.status_code(), expected_get_code);
 }
@@ -100,7 +100,7 @@ async fn delete_nonexistent_user_failure() {
 
     let res = setup
         .client
-        .delete(&format!("/apiV1/users/{}", user_dto.id.unwrap()))
+        .delete(&format!("/api/v1/users/{}", user_dto.id.unwrap()))
         .await;
     
     assert_eq!(res.status_code(), expected_delete_code);
@@ -115,7 +115,7 @@ async fn get_user_success() {
 
     let res = setup
         .client
-        .get(&format!("/apiV1/users/{}", user_dto.id.unwrap()))
+        .get(&format!("/api/v1/users/{}", user_dto.id.unwrap()))
         .await;
     let got_dto: UserDto = res.json();
 
@@ -132,7 +132,7 @@ async fn get_notexistent_user_failure() {
 
     let res = setup
         .client
-        .get(&format!("/apiV1/users/{}", user_dto.id.unwrap()))
+        .get(&format!("/api/v1/users/{}", user_dto.id.unwrap()))
         .await;
 
     assert_eq!(res.status_code(), expected_code)
@@ -147,7 +147,7 @@ async fn list_all_users_success() {
     let expected_count = created_dtos.len() as u64;
 
     
-    let res = setup.client.get("/apiV1/users").await;
+    let res = setup.client.get("/api/v1/users").await;
     let dtos: DtoList<UserDto> = res.json();
 
     assert_eq!(res.status_code(), expected_code);
@@ -165,7 +165,7 @@ async fn list_users_using_take_and_skip_success() {
 
     let res = setup
         .client
-        .get("/apiV1/users")
+        .get("/api/v1/users")
         .add_query_param("take", 3)
         .add_query_param("offset", 1)
         .await;
@@ -181,7 +181,7 @@ async fn create_user1(client: &TestServer) -> UserDto {
     let expected_status_code = StatusCode::OK;
     let expected_user_dto = user_test_helper::get_created_dto1();
 
-    let res = client.post("/apiV1/users").json(&create_dto).await;
+    let res = client.post("/api/v1/users").json(&create_dto).await;
     let user_dto: UserDto = res.json();
 
     assert_eq!(res.status_code(), expected_status_code);
@@ -195,7 +195,7 @@ async fn create_user2(client: &TestServer) -> UserDto {
     let expected_status_code = StatusCode::OK;
     let expected_created_dto = user_test_helper::get_created_dto2();
 
-    let res = client.post("/apiV1/users").json(&create_dto).await;
+    let res = client.post("/api/v1/users").json(&create_dto).await;
     let created_dto: UserDto = res.json();
 
     assert_eq!(res.status_code(), expected_status_code);
@@ -209,7 +209,7 @@ async fn create_users(client: &TestServer) -> Vec<UserDto> {
     let mut created_dtos = Vec::new();
 
     for dto in create_dtos {
-        let res = client.post("/apiV1/users").json(&dto).await;
+        let res = client.post("/api/v1/users").json(&dto).await;
         assert_eq!(res.status_code(), expected_status_code);
 
         let user_dto: UserDto = res.json();

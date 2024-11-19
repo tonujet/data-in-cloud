@@ -10,8 +10,8 @@ use crate::web::state::{AppState, UserRepoState};
 
 pub fn routes(state: AppState) -> Router {
     Router::new()
-        .route("/:user_id/repo/:repo_id", post(add_pair).delete(delete_pair))
-        .route("/:user_id/repo", get(list_pairs))
+        .route("/:user_id/repos/:repo_id", post(add_pair).delete(delete_pair))
+        .route("/:user_id/repos", get(list_pairs))
         .with_state(state)
 }
 

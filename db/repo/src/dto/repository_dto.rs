@@ -16,7 +16,7 @@ pub struct CreateUpdateRepoDto {
     pub repo_type: RepositoryType,
 }
 
-#[derive(Serialize, Deserialize, Debug, Eq)]
+#[derive(Serialize, Deserialize, Debug, Eq, Clone)]
 pub struct RepoDto {
     pub id: Uuid,
     pub title: String,

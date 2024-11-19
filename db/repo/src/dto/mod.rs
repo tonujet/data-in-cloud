@@ -34,7 +34,7 @@ impl<T> DtoList<T> {
             }
 
             (Some(take), None) => {
-                if take > count  || take == 0{
+                if take > count || take == 0 {
                     Some(count)
                 } else {
                     Some(take)

@@ -7,7 +7,7 @@
 - [X]  Unit tests
 - [X]  Integration tests
 
-### Endpoint: ```/apiV1/repos```
+### Endpoint: ```/api/v1/repos```
 
 - Create(POST): ```_```
 - Update(PUT): ```_/{id}```
@@ -26,7 +26,7 @@ In rust, tests are already built in language. Project include integration test `
 - [X]  Unit tests
 - [X]  Integration tests
 
-### Endpoint: ```/apiV1/users```
+### Endpoint: ```/api/v1/users```
 
 - Create(POST): ```_```
 - Update(PUT): ```_/{id}```
@@ -45,7 +45,7 @@ To run both the server and the tests, follow the instructions from the first lab
 - [X]  Unit tests
 - [X]  Integration tests
 
-### Endpoint: ```/apiV1/users/{user_id}/repo```
+### Endpoint: ```/api/v1/users/{user_id}/repos```
 
 - Add pair(POST): ```_/{repo_id}```
 - List pair(GET): ```_?take={}&offset={}```
