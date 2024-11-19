@@ -1,0 +1,77 @@
+version: '3.9'
+
+services:
+  server:
+    build: .
+    container_name: server
+    environment:
+      - SERVER_HOST
+      - SERVER_PORT
+      - SQL_DB_HOST=sql_db
+      - SQL_DB_NAME
+      - SQL_DB_PORT
+      - SQL_DB_USER
+      - SQL_DB_PASSWORD
+      - SQL_DB_PROTOCOL
+      - SQL_DB_TEST_URL
+      - MONGO_DB_HOST=mongo_db
+      - MONGO_DB_NAME
+      - MONGO_DB_PORT
+      - AWS_ACCESS_KEY
+      - AWS_SECRET_ACCESS_KEY
+      - AWS_BUCKET_NAME
+      - AWS_BUCKET_REGION
+    ports:
+      - 80:${SERVER_PORT}
+    env_file:
+      - ./.env
+    networks:
+      - server-side
+    depends_on:
+      - sql_db
+      - mongo_db
+
+  sql_db:
+    image: postgres:16-alpine
+    container_name: sql-db
+    environment:
+      POSTGRES_PASSWORD: ${SQL_DB_PASSWORD}
+      POSTGRES_USER: ${SQL_DB_USER}
+      POSTGRES_DB: ${SQL_DB_NAME}
+      PGPORT: ${SQL_DB_PORT}
+    networks:
+      - server-side
+    volumes:
+      - sql-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${SQL_DB_USER} -d ${SQL_DB_NAME}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  mongo_db:
+    image: mongo
+    container_name: mongo-db
+    command: mongod --port ${MONGO_DB_PORT}
+    environment:
+      - MONGO_DB_PORT
+      - MONGO_DB_HOST
+      - MONGO_INITDB_DATABASE=${MONGO_DB_NAME}
+    networks:
+      - server-side
+    volumes:
+      - mongo-db-data:/data/db
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh ${MONGO_DB_HOST}:${MONGO_DB_PORT}/${MONGO_DB_NAME} --quiet
+      interval: 10s
+      timeout: 10s
+      retries: 5
+
+
+
+networks:
+  server-side:
+
+volumes:
+  sql-db-data:
+  mongo-db-data:

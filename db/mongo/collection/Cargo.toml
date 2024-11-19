@@ -1,0 +1,13 @@
+[package]
+name = "collection"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+async-trait = "0.1.79"
+mongodb = "2.8.2"
+chrono = { version = "0.4.37", features = ["serde"]}
+serde = "1.0.197"
+futures-util = "0.3.30"
