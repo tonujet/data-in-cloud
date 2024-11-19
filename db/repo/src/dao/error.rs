@@ -6,7 +6,7 @@ use uuid::Uuid;
 
 pub type RepoResult<T> = Result<T, RepoError>;
 
-#[derive(AsRefStr, Debug)]
+#[derive(AsRefStr, Debug, Clone)]
 pub enum Entity {
     Repository,
     User,

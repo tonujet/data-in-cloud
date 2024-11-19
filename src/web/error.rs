@@ -71,4 +71,13 @@ impl ApiError {
     fn to_internal_error(&self) -> Response {
         (StatusCode::INTERNAL_SERVER_ERROR, "Something went wrong").into_response()
     }
+    
+}
+
+impl async_graphql::ErrorExtensions for ApiError {
+    fn extend(&self) -> async_graphql::Error {
+        async_graphql::Error::new(self.to_string()).extend_with(|_, e|
+            e.set("error_name", format!("{}Error", self.as_ref()))
+        )
+    }
 }
