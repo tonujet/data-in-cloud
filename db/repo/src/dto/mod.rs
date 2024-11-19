@@ -3,8 +3,9 @@ use crate::dto::repo_dto::RepoDto;
 use crate::dto::user_dto::UserDto;
 use crate::dto::user_repo_info_dto::UserRepoInfoDto;
 
-pub mod repository_dto;
+pub mod repo_dto;
 pub mod user_dto;
+pub mod user_repo_info_dto;
 
 #[derive(Serialize, PartialEq, Deserialize, Debug)]
 pub struct DtoList<T> {

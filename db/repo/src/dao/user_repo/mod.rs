@@ -1,7 +1,7 @@
 use std::sync::Arc;
 
 use async_trait::async_trait;
-use chrono::{Local, Utc};
+use chrono::Utc;
 use mongodb::bson::{doc, Document};
 use mongodb::bson::oid::ObjectId;
 
@@ -25,8 +25,17 @@ mod tests;
 
 #[derive(Clone)]
 pub struct UserRepository {
-    pub collection: Arc<dyn MongoCollection<User>>,
+    collection: Arc<dyn MongoCollection<User>>,
 }
+
+impl UserRepository {
+    pub fn new(collection: Arc<dyn MongoCollection<User>>) -> Self {
+        Self {
+            collection
+        }
+    }
+}
+
 
 impl UserRepositoryTrait for UserRepository {}
 
@@ -53,7 +62,7 @@ impl UserRepository {
         let username_res = self.get_user(doc! {"username": username}).await;
 
         let reses = vec![(email_res, "email"), (username_res, "username")];
-        Ok(self.analyze_reses_to_uniqueness(reses)?)
+        self.analyze_reses_to_uniqueness(reses)
     }
 
     async fn validate_update_uniqueness(
@@ -67,7 +76,7 @@ impl UserRepository {
             let username_res = self.get_user(doc! {"username": &user_dto.username}).await;
             taken_fields.push((username_res, "username"));
         }
-        Ok(self.analyze_reses_to_uniqueness(taken_fields)?)
+        self.analyze_reses_to_uniqueness(taken_fields)
     }
 
     fn analyze_reses_to_uniqueness(
@@ -79,7 +88,7 @@ impl UserRepository {
             .filter(|tup| tup.0.is_ok())
             .map(|tup| tup.1)
             .collect();
-        if taken_fields.len() != 0 {
+        if !taken_fields.is_empty() {
             Err(Uniqueness(taken_fields, Entity::User))?
         }
         Ok(())
@@ -138,18 +147,13 @@ impl RepositoryTrait<CreateUserDto, UpdateUserDto, UserDto, ObjectId> for UserRe
     }
 
     async fn list(&self, take: Option<u64>, offset: Option<u64>) -> RepoResult<DtoList<UserDto>> {
-        let mut pipeline = vec![
+        let pipeline = vec![
             doc! {"$match": doc!{"deleted": false}},
-            doc! {"$skip" : offset.unwrap_or(0) as u32},
         ];
-
-        if let Some(take) = take.filter(|&take| take != 0) {
-            pipeline.push(doc! {"$limit" : take as u32})
-        }
 
         let dtos = self
             .collection
-            .aggregate_and_collect(pipeline, None)
+            .paginate_pipeline_and_collect(pipeline, take, offset, None)
             .await?
             .into_iter()
             .map(|u| u.into())

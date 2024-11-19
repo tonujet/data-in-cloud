@@ -12,8 +12,7 @@ use crate::utils::user::user_test_helper;
 
 pub fn get_mock_repo() -> UserRepoRepository {
     let store = Arc::new(InMemory::new());
-    let repo = UserRepoRepository::new(store);
-    repo
+    UserRepoRepository::new(store)
 }
 
 
@@ -30,11 +29,3 @@ pub fn get_create_dtos() -> (CreateUserDto, CreateUpdateRepoDto) {
     let user_create_dto = user_test_helper::get_create_dto1();
     (user_create_dto, repo_create_dto)
 }
-
-
-
-
-
-
-
-

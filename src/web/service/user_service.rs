@@ -3,26 +3,34 @@ use async_trait::async_trait;
 
 use mongodb::bson::oid::ObjectId;
 
-use repo::dao::UserRepositoryTrait;
+use repo::dao::{UserRepoInfoRepositoryTrait, UserRepositoryTrait};
 use repo::dto::user_dto::{CreateUserDto, UpdateUserDto, UserDto};
 use repo::dto::DtoList;
+use repo::dto::user_repo_info_dto::UserRepoInfoDto;
 
 use crate::web::error::ApiResult;
 use crate::web::service::{ServiceTrait, UserServiceTrait};
 
 pub struct UserService {
     repo: Arc<dyn UserRepositoryTrait>,
+    user_repo_info_repo: Arc<dyn UserRepoInfoRepositoryTrait>
 }
 
 impl UserService {
-    pub fn new(repo: Arc<dyn UserRepositoryTrait>) -> Self {
-        UserService {
-            repo
+    pub fn new(repo: Arc<dyn UserRepositoryTrait>, user_repo_info_repo: Arc<dyn UserRepoInfoRepositoryTrait>) -> Self {
+        Self {
+            repo,
+            user_repo_info_repo
         }
     }
 }
 
-impl UserServiceTrait for UserService {}
+#[async_trait]
+impl UserServiceTrait for UserService {
+    async fn list_user_repos_info(&self, id: ObjectId, page: Option<u64>, offset: Option<u64>) -> ApiResult<DtoList<UserRepoInfoDto>> {
+        Ok(self.user_repo_info_repo.list_by_user_id(id, page, offset).await?)
+    }
+}
 
 #[async_trait]
 impl ServiceTrait<CreateUserDto, UpdateUserDto, UserDto, ObjectId> for UserService {

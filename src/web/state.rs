@@ -129,17 +129,17 @@ impl UserState {
         let repo: Arc<dyn UserRepositoryTrait> = Arc::new(UserRepository::new(collection));
         let service = Arc::new(UserService::new(
             Arc::clone(&repo),
-            Arc::clone(&user_repo_info_state.service),
+            Arc::clone(&user_repo_info_state.repo),
         ));
         Ok(UserState { service, repo })
     }
 
     async fn build_test(user_repo_info_state: &UserRepoInfoState) -> InternalResult<Self> {
-        let collection = Arc::new(TestUserCollection::new());
+        let collection = Arc::new(TestUserCollection::default());
         let repo: Arc<dyn UserRepositoryTrait> = Arc::new(UserRepository::new(collection));
         let service = Arc::new(UserService::new(
             Arc::clone(&repo),
-            Arc::clone(&user_repo_info_state.service),
+            Arc::clone(&user_repo_info_state.repo),
         ));
         Ok(UserState { repo, service })
     }
@@ -258,7 +258,7 @@ impl UserRepoInfoState {
     }
 
     pub async fn build_test() -> InternalResult<Self> {
-        let collection = Arc::new(TestUserRepoInfoCollection::new());
+        let collection = Arc::new(TestUserRepoInfoCollection::default());
 
         let user_repo_info_repository: Arc<dyn UserRepoInfoRepositoryTrait> =
             Arc::new(UserRepoInfoRepository::new(collection));
@@ -282,7 +282,7 @@ impl UserRepoInfoState {
             receiver,
             user_repo_info_service.clone(),
         ));
-        
+
         let publisher: Arc<dyn message_broker::Publisher<CreateUserRepoInfoDto>> =
             Arc::new(message_broker::tests::PublisherMock::new(Arc::clone(&queue), Arc::clone(&user_repo_info_receiver)));
 

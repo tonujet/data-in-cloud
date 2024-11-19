@@ -1,7 +1,7 @@
+use crate::common::Setup;
 use axum::http::StatusCode;
 use serde_json::{json, Value};
 use serial_test::serial;
-use crate::common::Setup;
 
 mod api;
 mod common;
