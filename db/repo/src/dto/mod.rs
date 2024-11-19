@@ -1,4 +1,7 @@
 use serde::{Deserialize, Serialize};
+use crate::dto::repo_dto::RepoDto;
+use crate::dto::user_dto::UserDto;
+use crate::dto::user_repo_info_dto::UserRepoInfoDto;
 
 pub mod repository_dto;
 pub mod user_dto;
@@ -9,6 +12,7 @@ pub struct DtoList<T> {
     pub count: u64,
     pub last_taken_entity_number: Option<u64>,
 }
+
 
 impl<T> DtoList<T> {
     pub fn new(dtos: Vec<T>, count: u64, take: Option<u64>, offset: Option<u64>) -> Self {
@@ -45,6 +49,27 @@ impl<T> DtoList<T> {
             dtos,
             count,
             last_taken_entity_number,
+        }
+    }
+}
+
+
+
+#[derive(async_graphql::SimpleObject)]
+#[graphql(concrete(name = "GraphqlRepoList", params(RepoDto)))]
+#[graphql(concrete(name = "GraphqlUserLIst", params(UserDto)))]
+#[graphql(concrete(name = "GraphqlUserRepoInfoLIst", params(UserRepoInfoDto)))]
+pub struct GraphqlDtoList<T: async_graphql::OutputType>{
+    pub dtos: Vec<T>,
+    pub count: u64,
+    pub last_taken_entity_number: Option<u64>,
+}
+
+
+impl<T: async_graphql::OutputType> From<DtoList<T>> for GraphqlDtoList<T> {
+    fn from(DtoList{ dtos, count, last_taken_entity_number }: DtoList<T>) -> Self {
+        Self {
+            dtos, count, last_taken_entity_number
         }
     }
 }

@@ -9,6 +9,7 @@ use crate::utils::dto::serialize_option_object_id;
 
 #[derive(Serialize, Deserialize, Debug, Validate)]
 #[serde(deny_unknown_fields)]
+#[derive(async_graphql::InputObject)]
 pub struct CreateUserDto {
     #[validate(length(min = 3, max = 200, message = "Must be between 3 and 30 characters"))]
     #[validate(email(message = "Must be email with the common pattern"))]
@@ -28,6 +29,7 @@ pub struct CreateUserDto {
 
 #[derive(Serialize, Deserialize, Debug, Validate)]
 #[serde(deny_unknown_fields)]
+#[derive(async_graphql::InputObject)]
 pub struct UpdateUserDto {
     #[validate(length(min = 3, max = 200, message = "Must be between 3 and 30 characters"))]
     pub username: String,
@@ -53,6 +55,7 @@ impl From<CreateUserDto> for User {
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(deny_unknown_fields)]
+#[derive(async_graphql::SimpleObject)]
 pub struct UserDto {
     #[serde(
         skip_serializing_if = "Option::is_none",

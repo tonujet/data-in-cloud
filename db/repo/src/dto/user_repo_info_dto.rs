@@ -8,6 +8,7 @@ use collection::user_repo_info::{UserRepoInfo, UserRepoInfoOperation};
 use crate::utils::dto::{serialize_object_id, serialize_option_object_id};
 
 #[derive(Serialize, Deserialize, Debug)]
+#[derive(async_graphql::SimpleObject)]
 pub struct UserRepoInfoDto {
     #[serde(
         skip_serializing_if = "Option::is_none",
