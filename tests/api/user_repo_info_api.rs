@@ -5,7 +5,7 @@ use serial_test::serial;
 use uuid::Uuid;
 
 use collection::user_repo_info::UserRepoInfoOperation;
-use ia_11_vorobei_ant::web::dto::user_repo_dto::{UserMultipleRepo, UserSingleRepo};
+use ia_11_vorobei_ant::web::dto::user_repo_dto::{OneToManyDto, OneToOneDto};
 use repo::dto::DtoList;
 use repo::dto::user_repo_info_dto::UserRepoInfoDto;
 
@@ -16,7 +16,7 @@ use crate::helpers::user_repo_api_helper;
 #[serial]
 async fn get_user_repo_info_success() {
     let setup = Setup::new().await;
-    let UserSingleRepo{ user, repo } = user_repo_api_helper::create_user_and_repo(&setup.client).await;
+    let OneToOneDto { left: user, right: repo } = user_repo_api_helper::create_user_and_repo(&setup.client).await;
     let expected_code = StatusCode::OK;
 
     let endpoint = format!("/api/v1/users/{}/repos/{}", user.id.unwrap(), repo.id);
@@ -77,7 +77,7 @@ async fn get_non_existent_user_repo_info_failure() {
 #[serial]
 async fn list_two_user_repo_info_success() {
     let setup = Setup::new().await;
-    let UserMultipleRepo { user, repos } =
+    let OneToManyDto { one: user, many: repos } =
         user_repo_api_helper::create_connected_user_and_repos(&setup.client).await;
     let expected_code = StatusCode::OK;
     let take: usize = 2;

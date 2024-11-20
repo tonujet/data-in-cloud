@@ -1,32 +1,26 @@
-use serde::{Deserialize, Serialize};
 use repo::dto::DtoList;
-use repo::dto::repo_dto::RepoDto;
-use repo::dto::user_dto::UserDto;
+use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, PartialEq, Debug)]
-pub struct UserSingleRepo {
-    pub user: UserDto,
-    pub repo: RepoDto,
+pub struct OneToOneDto<L, R> {
+    pub left: L,
+    pub right: R,
 }
 
-impl UserSingleRepo {
-    pub fn new(user: UserDto, repo: RepoDto) -> Self {
-        Self { user, repo }
+impl<L, R> OneToOneDto<L, R> {
+    pub fn new(left: L, right: R) -> Self {
+        Self { left, right }
     }
 }
 
-
-
-
-
 #[derive(Serialize, Deserialize, PartialEq, Debug)]
-pub struct UserMultipleRepo {
-    pub user: UserDto,
-    pub repos: DtoList<RepoDto>,
+pub struct OneToManyDto<O, M> {
+    pub one: O,
+    pub many: DtoList<M>,
 }
 
-impl UserMultipleRepo {
-    pub fn new(user: UserDto, repos: DtoList<RepoDto>) -> Self {
-        Self { user, repos }
+impl<O, M> OneToManyDto<O, M> {
+    pub fn new(one: O, many: DtoList<M>) -> Self {
+        Self { one, many }
     }
 }

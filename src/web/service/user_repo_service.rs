@@ -7,10 +7,12 @@ use uuid::Uuid;
 use collection::user_repo_info::UserRepoInfoOperation;
 use repo::dao::UserRepoRepositoryTrait;
 use repo::dto::DtoList;
+use repo::dto::repo_dto::RepoDto;
+use repo::dto::user_dto::UserDto;
 use repo::dto::user_repo_info_dto::CreateUserRepoInfoDto;
 
 
-use crate::web::dto::user_repo_dto::{UserMultipleRepo, UserSingleRepo};
+use crate::web::dto::user_repo_dto::{OneToManyDto, OneToOneDto};
 use crate::web::error::ApiResult;
 use crate::web::service::{
     BlobConnServiceTrait, RepoServiceTrait, UserRepoServiceTrait, UserServiceTrait,
@@ -44,8 +46,8 @@ impl UserRepoService {
 impl UserRepoServiceTrait for UserRepoService {}
 
 #[async_trait]
-impl BlobConnServiceTrait<ObjectId, Uuid, UserSingleRepo, UserMultipleRepo> for UserRepoService {
-    async fn add_pair(&self, key_id: &ObjectId, val_id: &Uuid) -> ApiResult<UserSingleRepo> {
+impl BlobConnServiceTrait<ObjectId, Uuid, OneToOneDto<UserDto, RepoDto>, OneToManyDto<UserDto, RepoDto>> for UserRepoService {
+    async fn add_pair(&self, key_id: &ObjectId, val_id: &Uuid) -> ApiResult<OneToOneDto<UserDto, RepoDto>> {
         let user = self.user_service.get(key_id).await?;
         let repo = self.repo_service.get(val_id).await?;
         self.repo.add_pair(key_id, val_id).await?;
@@ -56,7 +58,7 @@ impl BlobConnServiceTrait<ObjectId, Uuid, UserSingleRepo, UserMultipleRepo> for 
                 operation: UserRepoInfoOperation::CreateLink,
             })
             .await?;
-        Ok(UserSingleRepo::new(user, repo))
+        Ok(OneToOneDto::new(user, repo))
     }
 
     async fn list_pairs(
@@ -64,7 +66,7 @@ impl BlobConnServiceTrait<ObjectId, Uuid, UserSingleRepo, UserMultipleRepo> for 
         key_id: &ObjectId,
         take: Option<u64>,
         offset: Option<u64>,
-    ) -> ApiResult<UserMultipleRepo> {
+    ) -> ApiResult<OneToManyDto<UserDto, RepoDto>> {
         let user = self.user_service.get(key_id).await?;
         let repo_ids = self.repo.list_pairs(key_id).await?;
         let len = repo_ids.len();
@@ -85,13 +87,13 @@ impl BlobConnServiceTrait<ObjectId, Uuid, UserSingleRepo, UserMultipleRepo> for 
             let repo = self.repo_service.get(id).await?;
             repos.push(repo);
         }
-        Ok(UserMultipleRepo::new(
+        Ok(OneToManyDto::new(
             user,
             DtoList::new(repos, len as u64, take, offset),
         ))
     }
 
-    async fn delete_pair(&self, key_id: &ObjectId, val_id: &Uuid) -> ApiResult<UserSingleRepo> {
+    async fn delete_pair(&self, key_id: &ObjectId, val_id: &Uuid) -> ApiResult<OneToOneDto<UserDto, RepoDto>> {
         let user = self.user_service.get(key_id).await?;
         let repo = self.repo_service.get(val_id).await?;
         self.repo.delete_pair(key_id, val_id).await?;
@@ -102,6 +104,6 @@ impl BlobConnServiceTrait<ObjectId, Uuid, UserSingleRepo, UserMultipleRepo> for 
                 operation: UserRepoInfoOperation::DeleteLink,
             })
             .await?;
-        Ok(UserSingleRepo::new(user, repo))
+        Ok(OneToOneDto::new(user, repo))
     }
 }

@@ -9,7 +9,7 @@ use repo::dto::{
     DtoList,
 };
 
-use crate::web::dto::user_repo_dto::{UserMultipleRepo, UserSingleRepo};
+use crate::web::dto::user_repo_dto::{OneToManyDto, OneToOneDto};
 
 use super::error::ApiResult;
 
@@ -39,7 +39,7 @@ pub trait UserServiceTrait: ServiceTrait<CreateUserDto, UpdateUserDto, UserDto, 
 }
 
 pub trait RepoServiceTrait:
-ServiceTrait<CreateUpdateRepoDto, CreateUpdateRepoDto, RepoDto, Uuid>
+    ServiceTrait<CreateUpdateRepoDto, CreateUpdateRepoDto, RepoDto, Uuid>
 {
 }
 
@@ -52,7 +52,7 @@ pub trait PersistentServiceTrait<C, R, I>: Send + Sync {
 
 #[async_trait]
 pub trait UserRepoInfoServiceTrait:
-PersistentServiceTrait<CreateUserRepoInfoDto, UserRepoInfoDto, ObjectId>
+    PersistentServiceTrait<CreateUserRepoInfoDto, UserRepoInfoDto, ObjectId>
 {
 }
 
@@ -64,6 +64,6 @@ pub trait BlobConnServiceTrait<K, V, S, M>: Send + Sync {
 }
 
 pub trait UserRepoServiceTrait:
-BlobConnServiceTrait<ObjectId, Uuid, UserSingleRepo, UserMultipleRepo>
+    BlobConnServiceTrait<ObjectId, Uuid, OneToOneDto<UserDto, RepoDto>, OneToManyDto<UserDto, RepoDto>>
 {
 }

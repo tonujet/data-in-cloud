@@ -163,13 +163,16 @@ impl UserRepoState {
         repo_state: &RepoState,
         user_repo_info_state: &UserRepoInfoState,
     ) -> InternalResult<Self> {
-        let store = AmazonS3Builder::new()
+        let _store = AmazonS3Builder::new()
             .with_bucket_name(&config().AWS.BUCKET_NAME)
             .with_region(&config().AWS.BUCKET_REGION)
             .with_access_key_id(&config().AWS.ACCESS_KEY)
             .with_secret_access_key(&config().AWS.SECRET_ACCESS_KEY)
             .build()?;
 
+        println!("AWS S3 bucket is temporary disabled. Instead the local one is used");
+        // TODO move filepath to config
+        let store = object_store::local::LocalFileSystem::new_with_prefix("temp")?;
         Self::new(store, user_state, repo_state, user_repo_info_state)
     }
 
@@ -284,7 +287,10 @@ impl UserRepoInfoState {
         ));
 
         let publisher: Arc<dyn message_broker::Publisher<CreateUserRepoInfoDto>> =
-            Arc::new(message_broker::tests::PublisherMock::new(Arc::clone(&queue), Arc::clone(&user_repo_info_receiver)));
+            Arc::new(message_broker::tests::PublisherMock::new(
+                Arc::clone(&queue),
+                Arc::clone(&user_repo_info_receiver),
+            ));
 
         Ok(UserRepoInfoState {
             repo: user_repo_info_repository,

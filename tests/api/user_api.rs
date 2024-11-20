@@ -1,6 +1,6 @@
 use axum::http::StatusCode;
 use serial_test::serial;
-use ia_11_vorobei_ant::web::dto::user_repo_dto::UserMultipleRepo;
+use ia_11_vorobei_ant::web::dto::user_repo_dto::OneToManyDto;
 
 use repo::dto::DtoList;
 use repo::dto::user_dto::UserDto;
@@ -181,7 +181,7 @@ async fn list_users_using_take_and_skip_success() {
 #[serial]
 async fn get_all_user_repo_info_for_user_success() {
     let setup = Setup::new().await;
-    let UserMultipleRepo { user, repos } =
+    let OneToManyDto { one: user, many: repos } =
         user_repo_api_helper::create_connected_user_and_repos(&setup.client).await;
     let expected_code = StatusCode::OK;
 
