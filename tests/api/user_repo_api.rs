@@ -3,7 +3,8 @@ use serial_test::serial;
 
 use dto::DtoList;
 use dto::{OneToManyDto, OneToOneDto};
-
+use dto::repo_dto::RepoDto;
+use dto::user_dto::UserDto;
 use crate::common::Setup;
 use crate::helpers::user_repo_api_helper;
 
@@ -22,7 +23,7 @@ async fn add_pair_success() {
     let res = setup.client.post(&endpoint).await;
 
     assert_eq!(res.status_code(), expected_code);
-    assert_eq!(res.json::<OneToOneDto>(), expected_body);
+    assert_eq!(res.json::<OneToOneDto<UserDto, RepoDto>>(), expected_body);
 }
 
 #[tokio::test]
@@ -58,7 +59,7 @@ async fn delete_pair_success() {
     let res = setup.client.delete(&endpoint).await;
 
     assert_eq!(res.status_code(), expected_code);
-    assert_eq!(res.json::<OneToOneDto>(), expected_body);
+    assert_eq!(res.json::<OneToOneDto<UserDto, RepoDto>>(), expected_body);
 }
 
 #[tokio::test]
@@ -83,7 +84,7 @@ async fn delete_two_times_the_same_pair_failure() {
 #[serial]
 async fn list_all_pairs_success() {
     let setup = Setup::new().await;
-    let user_multiple_repos: OneToManyDto =
+    let user_multiple_repos =
         user_repo_api_helper::create_connected_user_and_repos(&setup.client).await;
     let expected_code = StatusCode::OK;
 
@@ -94,7 +95,7 @@ async fn list_all_pairs_success() {
     let res = setup.client.get(&endpoint).await;
 
     assert_eq!(res.status_code(), expected_code);
-    assert_eq!(res.json::<OneToManyDto>(), user_multiple_repos)
+    assert_eq!(res.json::<OneToManyDto<UserDto, RepoDto>>(), user_multiple_repos)
 }
 
 #[tokio::test]
@@ -128,5 +129,5 @@ async fn list_pairs_with_pagination_success() {
         .await;
 
     assert_eq!(res.status_code(), expected_code);
-    assert_eq!(res.json::<OneToManyDto>(), expected_body);
+    assert_eq!(res.json::<OneToManyDto<UserDto, RepoDto>>(), expected_body);
 }

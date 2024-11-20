@@ -8,6 +8,7 @@ mod runtime;
 pub mod web;
 
 // TODO Think about the change of generics in general repository and service traits to the associated types
+// TODO Think about urls in tests and version based technique
 pub async fn main() -> error::InternalResult<()> {
     let sql_conn = db::init_sql_database().await?;
     let nosql_conn = db::init_nosql_database().await?;

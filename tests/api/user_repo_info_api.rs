@@ -57,7 +57,7 @@ async fn get_non_existent_user_repo_info_failure() {
     let info_id = ObjectId::new();
     let expected_code = StatusCode::CONFLICT;
     let expected_body = json!({
-        "status_code": "409",
+        "status_code": 409,
         "status_code_message": "Conflict",
         "message": format!("UserRepoInfo with id {info_id} not found"),
         "error_name": "RepositoryError"

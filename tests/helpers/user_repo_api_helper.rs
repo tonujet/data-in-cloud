@@ -2,17 +2,18 @@ use axum_test::TestServer;
 use dto::repo_dto::RepoDto;
 use dto::DtoList;
 use dto::{OneToManyDto, OneToOneDto};
+use dto::user_dto::UserDto;
 use repo::utils::repository::repository_test_helper;
 use repo::utils::user_repo::user_repo_test_helper;
 
-pub async fn create_user_and_repo(client: &TestServer) -> OneToOneDto {
+pub async fn create_user_and_repo(client: &TestServer) -> OneToOneDto<UserDto, RepoDto> {
     let (user_create_dto, repo_create_dto) = user_repo_test_helper::get_create_dtos();
     let user_res = client.post("/api/v1/users").json(&user_create_dto).await;
     let repo_res = client.post("/api/v1/repos").json(&repo_create_dto).await;
     OneToOneDto::new(user_res.json(), repo_res.json())
 }
 
-pub async fn create_connected_user_and_repos(client: &TestServer) -> OneToManyDto {
+pub async fn create_connected_user_and_repos(client: &TestServer) -> OneToManyDto<UserDto, RepoDto> {
     let OneToOneDto {
         left: user_dto,
         right: repo_dto,

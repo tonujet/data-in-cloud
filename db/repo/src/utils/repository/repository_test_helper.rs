@@ -47,7 +47,7 @@ pub fn get_response_from_invalid_dto() -> Value {
                 }
             ]
         },
-        "status_code": "422",
+        "status_code": 422,
         "status_code_message": "Unprocessable Entity"
     })
 }

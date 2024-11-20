@@ -15,7 +15,7 @@ async fn not_found_endpoint_success() {
     let expected_body: Value = json!({
             "error_name": "EndpointNotFoundError",
             "message": "Endpoint http://localhost/not_found_endpoint not found",
-            "status_code": "404",
+            "status_code": 404,
             "status_code_message": "Not Found"
     });
 
