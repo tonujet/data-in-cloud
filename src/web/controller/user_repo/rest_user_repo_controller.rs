@@ -28,7 +28,7 @@ use repo::dto::{OneToManyDto, OneToOneDto};
         )
     ),
     tags(
-        (name = EntityApi::Users.to_tag())
+        (name = EntityApi::Users.to_str_tag())
     ),
 )]
 pub struct UserRepoOpenApi;
@@ -51,7 +51,7 @@ pub fn routes(state: AppState) -> Router {
         ("repo_id" = Uuid, Path),
     ),
     responses (ApiResponses<OneToOneDto<UserDto, RepoDto>>),
-    tag = EntityApi::Users.to_tag(),
+    tag = EntityApi::Users.to_str_tag(),
 )]
 async fn add_pair(
     State(state): State<UserRepoState>,
@@ -69,7 +69,7 @@ async fn add_pair(
         ("repo_id" = Uuid, Path),
     ),
     responses (ApiResponses<OneToManyDto<UserDto, RepoDto>>),
-    tag = EntityApi::Users.to_tag(),
+    tag = EntityApi::Users.to_str_tag(),
 )]
 async fn delete_pair(
     State(state): State<UserRepoState>,
@@ -87,7 +87,7 @@ async fn delete_pair(
         PaginationParams,
     ),
     responses (ApiResponses<OneToOneDto<UserDto, RepoDto>>),
-    tag = EntityApi::Users.to_tag(),
+    tag = EntityApi::Users.to_str_tag(),
 )]
 async fn list_pairs(
     State(state): State<UserRepoState>,

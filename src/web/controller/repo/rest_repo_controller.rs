@@ -28,7 +28,7 @@ use repo::dto::{repo_dto::RepoDto, DtoList};
         )
     ),
     tags(
-        (name = EntityApi::Repos.to_tag())
+        (name = EntityApi::Repos.to_str_tag())
     ),
 )]
 pub struct RepoOpenApi;
@@ -45,7 +45,7 @@ pub fn routes(state: AppState) -> Router {
     path = "",
     request_body = CreateUpdateRepoDto,
     responses (ApiResponses<RepoDto>),
-    tag = EntityApi::Repos.to_tag(),
+    tag = EntityApi::Repos.to_str_tag(),
 )]
 async fn create_repo(
     State(state): State<RepoState>,
@@ -61,7 +61,7 @@ async fn create_repo(
     params(UuidPathParam),
     request_body = CreateUpdateRepoDto,
     responses (ApiResponses<RepoDto>),
-    tag = EntityApi::Repos.to_tag(),
+    tag = EntityApi::Repos.to_str_tag(),
 )]
 async fn update_repo(
     State(state): State<RepoState>,
@@ -77,7 +77,7 @@ async fn update_repo(
     path = "",
     params(PaginationParams),
     responses (ApiResponses<DtoList<RepoDto>>),
-    tag = EntityApi::Repos.to_tag(),
+    tag = EntityApi::Repos.to_str_tag(),
 )]
 async fn list_repos(
     State(state): State<RepoState>,
@@ -92,7 +92,7 @@ async fn list_repos(
     path = "/{id}",
     params(UuidPathParam),
     responses (ApiResponses<RepoDto>),
-    tag = EntityApi::Repos.to_tag(),
+    tag = EntityApi::Repos.to_str_tag(),
 )]
 async fn get_repo(
     State(state): State<RepoState>,
@@ -107,7 +107,7 @@ async fn get_repo(
     path = "/{id}",
     params(UuidPathParam),
     responses (ApiResponses<RepoDto>),
-    tag = EntityApi::Repos.to_tag(),
+    tag = EntityApi::Repos.to_str_tag(),
 )]
 async fn delete_repo(
     State(state): State<RepoState>,

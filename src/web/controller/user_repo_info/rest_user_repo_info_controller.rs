@@ -23,7 +23,7 @@ use utoipa::OpenApi;
         )
     ),
     tags(
-        (name = EntityApi::UserRepoInfos.to_tag())
+        (name = EntityApi::UserRepoInfos.to_str_tag())
     ),
 )]
 pub struct UserRepoInfoOpenApi;
@@ -40,7 +40,7 @@ pub fn routes(state: AppState) -> Router {
     path = "/{id}",
     params(ObjectIdPathParam),
     responses (ApiResponses<UserRepoInfoDto>),
-    tag = EntityApi::UserRepoInfos.to_tag(),
+    tag = EntityApi::UserRepoInfos.to_str_tag(),
 )]
 async fn get_user_repo_info(
     State(state): State<UserRepoInfoState>,
@@ -55,7 +55,7 @@ async fn get_user_repo_info(
     path = "",
     params(PaginationParams),
     responses (ApiResponses<DtoList<UserRepoInfoDto>>),
-    tag = EntityApi::UserRepoInfos.to_tag(),
+    tag = EntityApi::UserRepoInfos.to_str_tag(),
 )]
 async fn list_user_repo_info(
     State(state): State<UserRepoInfoState>,

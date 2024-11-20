@@ -29,7 +29,7 @@ use repo::dto::DtoList;
         )
     ),
     tags(
-        (name = EntityApi::Users.to_tag())
+        (name = EntityApi::Users.to_str_tag())
     ),
 )]
 pub struct UserOpenApi;
@@ -47,7 +47,7 @@ pub fn routes(state: AppState) -> Router {
     path = "",
     request_body = CreateUserDto,
     responses (ApiResponses<UserDto>),
-    tag = EntityApi::Users.to_tag(),
+    tag = EntityApi::Users.to_str_tag(),
 )]
 async fn create_user(
     State(state): State<UserState>,
@@ -63,7 +63,7 @@ async fn create_user(
     params(ObjectIdPathParam),
     request_body = UpdateUserDto,
     responses (ApiResponses<UserDto>),
-    tag = EntityApi::Users.to_tag(),
+    tag = EntityApi::Users.to_str_tag(),
 )]
 async fn update_user(
     State(state): State<UserState>,
@@ -79,7 +79,7 @@ async fn update_user(
     path = "",
     params(PaginationParams),
     responses (ApiResponses<DtoList<UserDto>>),
-    tag = EntityApi::Users.to_tag(),
+    tag = EntityApi::Users.to_str_tag(),
 )]
 async fn list_users(
     State(state): State<UserState>,
@@ -94,7 +94,7 @@ async fn list_users(
     path = "/{id}/repo-infos",
     params(ObjectIdPathParam, PaginationParams),
     responses (ApiResponses<DtoList<UserRepoInfoDto>>),
-    tag = EntityApi::Users.to_tag(),
+    tag = EntityApi::Users.to_str_tag(),
 )]
 async fn list_user_repos_info(
     State(state): State<UserState>,
@@ -110,7 +110,7 @@ async fn list_user_repos_info(
     path = "/{id}",
     params(ObjectIdPathParam),
     responses (ApiResponses<UserDto>),
-    tag = EntityApi::Users.to_tag(),
+    tag = EntityApi::Users.to_str_tag(),
 )]
 async fn get_user(
     State(state): State<UserState>,
@@ -125,7 +125,7 @@ async fn get_user(
     path = "/{id}",
     params(ObjectIdPathParam),
     responses (ApiResponses<UserDto>),
-    tag = EntityApi::Users.to_tag(),
+    tag = EntityApi::Users.to_str_tag(),
 )]
 async fn delete_user(
     State(state): State<UserState>,

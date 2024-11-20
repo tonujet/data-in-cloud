@@ -12,7 +12,7 @@ pub mod error;
 pub mod user;
 mod user_repo_info;
 
-trait GetScheme<Entity = Self> {
+pub trait GetScheme<Entity = Self> {
     fn get_scheme() -> impl Scheme<Entity = Entity>;
 }
 
@@ -33,7 +33,7 @@ pub async fn get_collection<T: GetScheme>(database: &Database) -> SchemeResult<C
 }
 
 // Template method pattern implementation
-#[warn(async_fn_in_trait)]
+#[allow(async_fn_in_trait)]
 pub trait Scheme {
     type Entity;
     fn get_collection_name(&self) -> &'static str;
