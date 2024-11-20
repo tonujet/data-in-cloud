@@ -30,3 +30,15 @@
 *.exe
 *.out
 *.app
+
+# IDE config
+.idea
+
+# Rust config
+Cargo.lock
+debug/
+target/
+**/*.rs.bk
+*.pdb
+.cargo/
+.env

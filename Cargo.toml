@@ -1,0 +1,42 @@
+[package]
+name = "ia-11-vorobei-ant"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[workspace]
+members = [".", "db/postgres/entity", "db/postgres/migration", "db/mongo/collection", "db/repo", "db/mongo/schema", "message_broker", "dto"]
+
+[dependencies]
+entity = { path = "db/postgres/entity" }
+migration = { path = "db/postgres/migration" }
+repo = {path = "db/repo"}
+schema = {path = "db/mongo/schema"}
+collection = {path = "db/mongo/collection"}
+message_broker = {path = "message_broker"}
+dto = {path = "dto"}
+
+axum = { version = "0.7.5", features = ["macros"] }
+tokio = { version = "1.36.0", features = ["full"] }
+serde = { version = "1.0.197", features = ["derive"] }
+serde_json = "1.0.114"
+async-trait = "0.1.77"
+uuid = { version = "1.7.0", features = ["v4", "fast-rng"] }
+validator = { version = "0.16.1", features = ["derive"] }
+thiserror = "1.0.29"
+sea-orm = { version = "0.12", features = ["sqlx-postgres", "runtime-tokio-rustls", "macros"] }
+axum-test = "14.3.1"
+dotenv = "0.15.0"
+strum = { version = "0.26.1", features = ["derive"] }
+mongodb = "2.8.2"
+object_store = { version = "0.9.1", features = ["aws"] }
+amqprs = "1.6.0"
+async-graphql = { version = "7.0.11", features = ["uuid"] }
+async-graphql-axum = "7.0.11"
+utoipa = { version = "5.2.0", features = ["uuid", "chrono"] }
+utoipa-swagger-ui = { version = "8.0.3", features = ["axum"] }
+once_cell = "1.20.2"
+
+
+[dev-dependencies]
+serial_test = "3.0.0"
