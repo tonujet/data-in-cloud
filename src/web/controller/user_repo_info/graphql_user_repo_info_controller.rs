@@ -1,8 +1,8 @@
 use crate::web::state::AppState;
 use async_graphql::{Context, Object, ResultExt};
-use repo::dto::GraphqlDtoList;
 
 use mongodb::bson::oid::ObjectId;
+use repo::dto::DtoList;
 use repo::dto::user_repo_info_dto::UserRepoInfoDto;
 
 #[derive(Default)]
@@ -27,7 +27,7 @@ impl QueryUserRepoInfo {
         ctx: &Context<'a>,
         take: Option<u64>,
         offset: Option<u64>,
-    ) -> async_graphql::Result<GraphqlDtoList<UserRepoInfoDto>> {
+    ) -> async_graphql::Result<DtoList<UserRepoInfoDto>> {
         let AppState {
             user_repo_info_state: state,
             ..
@@ -36,7 +36,6 @@ impl QueryUserRepoInfo {
             .service
             .list(take, offset)
             .await
-            .map(|dto_list| dto_list.into())
             .extend()
     }
 }

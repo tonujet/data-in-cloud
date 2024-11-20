@@ -1,8 +1,7 @@
 use crate::web::controller::PaginationParams;
-use crate::web::dto::user_repo_dto::{OneToManyDto, OneToOneDto};
 use crate::web::error::ApiResult;
 use crate::web::openapi::{
-    ApiResponses, ObjectIdPathParam, OpenApiOneToManyDto, OpenApiOneToOneDto, UuidPathParam,
+    ApiResponses, ObjectIdPathParam,
 };
 use crate::web::state::{AppState, UserRepoState};
 
@@ -15,6 +14,7 @@ use repo::dto::repo_dto::RepoDto;
 use repo::dto::user_dto::UserDto;
 use utoipa::OpenApi;
 use uuid::Uuid;
+use repo::dto::{OneToManyDto, OneToOneDto};
 
 #[derive(OpenApi)]
 #[openapi(
@@ -23,8 +23,8 @@ use uuid::Uuid;
     ),
     components(
         schemas(
-            OpenApiOneToManyDto<UserDto, RepoDto>,
-            OpenApiOneToOneDto<UserDto, RepoDto>,
+            OneToManyDto<UserDto, RepoDto>,
+            OneToOneDto<UserDto, RepoDto>,
         )
     ),
     tags(
@@ -50,7 +50,7 @@ pub fn routes(state: AppState) -> Router {
         ("user_id" = String, Path, pattern = "^[0-9a-fA-F]{24}$"),
         ("repo_id" = Uuid, Path),
     ),
-    responses (ApiResponses<OpenApiOneToOneDto<UserDto, RepoDto>>),
+    responses (ApiResponses<OneToOneDto<UserDto, RepoDto>>),
     tag = EntityApi::Users.to_tag(),
 )]
 async fn add_pair(
@@ -68,7 +68,7 @@ async fn add_pair(
         ("user_id" = String, Path, pattern = "^[0-9a-fA-F]{24}$"),
         ("repo_id" = Uuid, Path),
     ),
-    responses (ApiResponses<OpenApiOneToManyDto<UserDto, RepoDto>>),
+    responses (ApiResponses<OneToManyDto<UserDto, RepoDto>>),
     tag = EntityApi::Users.to_tag(),
 )]
 async fn delete_pair(
@@ -86,7 +86,7 @@ async fn delete_pair(
         ObjectIdPathParam,
         PaginationParams,
     ),
-    responses (ApiResponses<OpenApiOneToOneDto<UserDto, RepoDto>>),
+    responses (ApiResponses<OneToOneDto<UserDto, RepoDto>>),
     tag = EntityApi::Users.to_tag(),
 )]
 async fn list_pairs(

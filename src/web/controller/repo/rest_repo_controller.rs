@@ -7,7 +7,7 @@ use uuid::Uuid;
 use super::super::EntityApi;
 use crate::web::controller::PaginationParams;
 use crate::web::error::ApiResult;
-use crate::web::openapi::{ApiResponses, OpenApiDtoList, UuidPathParam};
+use crate::web::openapi::{ApiResponses, UuidPathParam};
 use crate::web::state::{AppState, RepoState};
 use crate::web::utils::validation::ValidationWrapper;
 use entity::RepositoryType;
@@ -24,7 +24,7 @@ use repo::dto::{repo_dto::RepoDto, DtoList};
     components(
         schemas(
             RepoDto, RepositoryType,
-            CreateUpdateRepoDto, OpenApiDtoList::<RepoDto>
+            CreateUpdateRepoDto, DtoList<RepoDto>
         )
     ),
     tags(
@@ -76,7 +76,7 @@ async fn update_repo(
     get,
     path = "",
     params(PaginationParams),
-    responses (ApiResponses<OpenApiDtoList<RepoDto>>),
+    responses (ApiResponses<DtoList<RepoDto>>),
     tag = EntityApi::Repos.to_tag(),
 )]
 async fn list_repos(

@@ -1,6 +1,6 @@
 use crate::web::controller::PaginationParams;
 use crate::web::error::ApiResult;
-use crate::web::openapi::{ApiResponses, ObjectIdPathParam, OpenApiDtoList};
+use crate::web::openapi::{ApiResponses, ObjectIdPathParam};
 use crate::web::state::{AppState, UserRepoInfoState};
 
 use super::super::EntityApi;
@@ -19,7 +19,7 @@ use utoipa::OpenApi;
     ),
     components(
         schemas(
-            UserRepoInfoDto, OpenApiDtoList::<UserRepoInfoDto>,
+            UserRepoInfoDto, DtoList<UserRepoInfoDto>,
         )
     ),
     tags(
@@ -54,7 +54,7 @@ async fn get_user_repo_info(
     get,
     path = "",
     params(PaginationParams),
-    responses (ApiResponses<OpenApiDtoList<UserRepoInfoDto>>),
+    responses (ApiResponses<DtoList<UserRepoInfoDto>>),
     tag = EntityApi::UserRepoInfos.to_tag(),
 )]
 async fn list_user_repo_info(

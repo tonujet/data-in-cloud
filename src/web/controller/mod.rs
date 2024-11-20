@@ -6,14 +6,16 @@ use user::graphql_user_controller::{MutationUser, QueryUser};
 use user::rest_user_controller::{self, UserOpenApi};
 use user_repo_info::graphql_user_repo_info_controller::QueryUserRepoInfo;
 use user_repo_info::rest_user_repo_info_controller::{self, UserRepoInfoOpenApi};
-use user_repo_controller::UserRepoOpenApi;
+use user_repo::rest_user_repo_controller::{self, UserRepoOpenApi};
+
+
 use crate::web::error::ApiErrorResponse;
 
 
 mod repo;
 mod user;
-mod user_repo_controller;
 mod user_repo_info;
+mod user_repo;
 
 use crate::web::state::AppState;
 use async_graphql::{http::GraphiQLSource, EmptySubscription, Schema, SimpleObject};
@@ -81,7 +83,7 @@ pub fn api_routes(state: AppState) -> Router {
         .route("/graphql", get(graphiql).post_service(GraphQL::new(schema)))
         .nest(EntityApi::Repos.to_endpoint(), rest_repo_controller::routes(state.clone()))
         .nest(EntityApi::Users.to_endpoint(), rest_user_controller::routes(state.clone()))
-        .nest(EntityApi::Users.to_endpoint(), user_repo_controller::routes(state.clone()))
+        .nest(EntityApi::Users.to_endpoint(), rest_user_repo_controller::routes(state.clone()))
         .nest(
             EntityApi::UserRepoInfos.to_endpoint(),
             rest_user_repo_info_controller::routes(state.clone()),

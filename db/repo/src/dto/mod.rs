@@ -1,21 +1,30 @@
-use serde::{Deserialize, Serialize};
-use crate::dto::repo_dto::RepoDto;
-use crate::dto::user_dto::UserDto;
 use crate::dto::user_repo_info_dto::UserRepoInfoDto;
+use crate::dto::{repo_dto::RepoDto, user_dto::UserDto};
+use serde::{Deserialize, Serialize};
 
 pub mod repo_dto;
 pub mod user_dto;
 pub mod user_repo_info_dto;
 
-#[derive(Serialize, PartialEq, Deserialize, Debug)]
-pub struct DtoList<T> {
+#[derive(
+    Serialize, Deserialize, PartialEq, Debug, async_graphql::SimpleObject, utoipa::ToSchema,
+)]
+#[graphql(concrete(name = "RepoDtoList", params(RepoDto)))]
+#[graphql(concrete(name = "UserDtoList", params(UserDto)))]
+#[graphql(concrete(name = "UserRepoInfoDtoList", params(UserRepoInfoDto)))]
+pub struct DtoList<T>
+where
+    T: utoipa::ToSchema + async_graphql::OutputType,
+{
     pub dtos: Vec<T>,
     pub count: u64,
     pub last_taken_entity_number: Option<u64>,
 }
 
-
-impl<T> DtoList<T> {
+impl<T> DtoList<T>
+where
+    T: utoipa::ToSchema + async_graphql::OutputType,
+{
     pub fn new(dtos: Vec<T>, count: u64, take: Option<u64>, offset: Option<u64>) -> Self {
         let last_taken_entity_number = match (take, offset) {
             (None, None) => Some(count),
@@ -54,23 +63,50 @@ impl<T> DtoList<T> {
     }
 }
 
-
-
-#[derive(async_graphql::SimpleObject)]
-#[graphql(concrete(name = "GraphqlRepoList", params(RepoDto)))]
-#[graphql(concrete(name = "GraphqlUserLIst", params(UserDto)))]
-#[graphql(concrete(name = "GraphqlUserRepoInfoLIst", params(UserRepoInfoDto)))]
-pub struct GraphqlDtoList<T: async_graphql::OutputType>{
-    pub dtos: Vec<T>,
-    pub count: u64,
-    pub last_taken_entity_number: Option<u64>,
+#[derive(
+    Serialize, Deserialize, PartialEq, Debug, async_graphql::SimpleObject, utoipa::ToSchema,
+)]
+#[graphql(concrete(name = "UserToRepoDto", params(UserDto, RepoDto)))]
+pub struct OneToOneDto<L, R>
+where
+    L: async_graphql::OutputType + utoipa::ToSchema,
+    R: async_graphql::OutputType + utoipa::ToSchema,
+{
+    pub left: L,
+    pub right: R,
 }
 
+impl<L, R> OneToOneDto<L, R>
+where
+    L: async_graphql::OutputType + utoipa::ToSchema,
+    R: async_graphql::OutputType + utoipa::ToSchema,
+{
+    pub fn new(left: L, right: R) -> Self {
+        Self { left, right }
+    }
+}
 
-impl<T: async_graphql::OutputType> From<DtoList<T>> for GraphqlDtoList<T> {
-    fn from(DtoList{ dtos, count, last_taken_entity_number }: DtoList<T>) -> Self {
-        Self {
-            dtos, count, last_taken_entity_number
-        }
+#[derive(
+    Serialize, Deserialize, PartialEq, Debug, async_graphql::SimpleObject, utoipa::ToSchema,
+)]
+#[graphql(concrete(name = "UserToReposDto", params(UserDto, RepoDto)))]
+pub struct OneToManyDto<O, M>
+where
+    O: async_graphql::OutputType + utoipa::ToSchema,
+    M: async_graphql::OutputType + utoipa::ToSchema,
+    DtoList<M>: async_graphql::OutputType + utoipa::ToSchema,
+{
+    pub one: O,
+    pub many: DtoList<M>,
+}
+
+impl<O, M> OneToManyDto<O, M>
+where
+    O: async_graphql::OutputType + utoipa::ToSchema,
+    M: async_graphql::OutputType + utoipa::ToSchema,
+    DtoList<M>: async_graphql::OutputType + utoipa::ToSchema,
+{
+    pub fn new(one: O, many: DtoList<M>) -> Self {
+        Self { one, many }
     }
 }

@@ -1,6 +1,6 @@
 use crate::web::controller::PaginationParams;
 use crate::web::error::ApiResult;
-use crate::web::openapi::{ApiResponses, ObjectIdPathParam, OpenApiDtoList};
+use crate::web::openapi::{ApiResponses, ObjectIdPathParam};
 use crate::web::state::{AppState, UserState};
 use crate::web::utils::validation::ValidationWrapper;
 use axum::extract::{Path, Query, State};
@@ -24,8 +24,8 @@ use repo::dto::DtoList;
     components(
         schemas(
             UserDto, CreateUserDto,
-            UpdateUserDto, OpenApiDtoList::<UserDto>,
-            OpenApiDtoList::<UserRepoInfoDto>,
+            UpdateUserDto, DtoList<UserDto>,
+            DtoList<UserRepoInfoDto>,
         )
     ),
     tags(
@@ -78,7 +78,7 @@ async fn update_user(
     get,
     path = "",
     params(PaginationParams),
-    responses (ApiResponses<OpenApiDtoList<UserDto>>),
+    responses (ApiResponses<DtoList<UserDto>>),
     tag = EntityApi::Users.to_tag(),
 )]
 async fn list_users(
@@ -93,7 +93,7 @@ async fn list_users(
     get,
     path = "/{id}/repo-infos",
     params(ObjectIdPathParam, PaginationParams),
-    responses (ApiResponses<OpenApiDtoList<UserRepoInfoDto>>),
+    responses (ApiResponses<DtoList<UserRepoInfoDto>>),
     tag = EntityApi::Users.to_tag(),
 )]
 async fn list_user_repos_info(

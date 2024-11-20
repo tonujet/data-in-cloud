@@ -5,11 +5,9 @@ use validator::Validate;
 
 use collection::user::User;
 
-use crate::utils::dto::{serialize_option_object_id, object_id_schema};
+use crate::utils::dto::{object_id_schema, serialize_option_object_id};
 
-#[derive(Serialize, Deserialize, Debug, Validate)]
-#[derive(async_graphql::InputObject)]
-#[derive(utoipa::ToSchema)]
+#[derive(Serialize, Deserialize, Debug, Validate, async_graphql::InputObject, utoipa::ToSchema)]
 #[serde(deny_unknown_fields)]
 pub struct CreateUserDto {
     #[validate(length(min = 3, max = 200, message = "Must be between 3 and 30 characters"))]
@@ -30,9 +28,7 @@ pub struct CreateUserDto {
     pub is_public: bool,
 }
 
-#[derive(Serialize, Deserialize, Debug, Validate)]
-#[derive(async_graphql::InputObject)]
-#[derive(utoipa::ToSchema)]
+#[derive(Serialize, Deserialize, Debug, Validate, async_graphql::InputObject, utoipa::ToSchema)]
 #[serde(deny_unknown_fields)]
 pub struct UpdateUserDto {
     #[validate(length(min = 3, max = 200, message = "Must be between 3 and 30 characters"))]
@@ -58,9 +54,7 @@ impl From<CreateUserDto> for User {
     }
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
-#[derive(async_graphql::SimpleObject)]
-#[derive(utoipa::ToSchema)]
+#[derive(Serialize, Deserialize, Debug, Clone, async_graphql::SimpleObject, utoipa::ToSchema)]
 #[serde(deny_unknown_fields)]
 pub struct UserDto {
     #[serde(

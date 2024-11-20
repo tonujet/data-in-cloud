@@ -6,10 +6,8 @@ use repo::dto::user_dto::{CreateUserDto, UpdateUserDto, UserDto};
 use repo::dto::user_repo_info_dto::{CreateUserRepoInfoDto, UserRepoInfoDto};
 use repo::dto::{
     repo_dto::{CreateUpdateRepoDto, RepoDto},
-    DtoList,
+    DtoList, OneToManyDto, OneToOneDto,
 };
-
-use crate::web::dto::user_repo_dto::{OneToManyDto, OneToOneDto};
 
 use super::error::ApiResult;
 
@@ -20,7 +18,10 @@ pub mod user_repo_service;
 pub mod user_service;
 
 #[async_trait]
-pub trait ServiceTrait<C, U, R, I>: Send + Sync {
+pub trait ServiceTrait<C, U, R, I>: Send + Sync
+where
+    R: async_graphql::OutputType + utoipa::ToSchema,
+{
     async fn create(&self, dto: C) -> ApiResult<R>;
     async fn update(&self, id: &I, dto: U) -> ApiResult<R>;
     async fn delete(&self, id: &I) -> ApiResult<R>;
@@ -44,7 +45,10 @@ pub trait RepoServiceTrait:
 }
 
 #[async_trait]
-pub trait PersistentServiceTrait<C, R, I>: Send + Sync {
+pub trait PersistentServiceTrait<C, R, I>: Send + Sync
+where
+    R: async_graphql::OutputType + utoipa::ToSchema,
+{
     async fn create(&self, dto: C) -> ApiResult<R>;
     async fn get(&self, id: &I) -> ApiResult<R>;
     async fn list(&self, take: Option<u64>, offset: Option<u64>) -> ApiResult<DtoList<R>>;

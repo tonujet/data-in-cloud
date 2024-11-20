@@ -5,7 +5,6 @@ use axum::Router;
 use utoipa::OpenApi;
 
 mod controller;
-pub mod dto;
 pub mod error;
 pub mod service;
 pub mod state;

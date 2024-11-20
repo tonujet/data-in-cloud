@@ -6,13 +6,12 @@ use uuid::Uuid;
 
 use collection::user_repo_info::UserRepoInfoOperation;
 use repo::dao::UserRepoRepositoryTrait;
-use repo::dto::DtoList;
+use repo::dto::{DtoList, OneToManyDto, OneToOneDto};
 use repo::dto::repo_dto::RepoDto;
 use repo::dto::user_dto::UserDto;
 use repo::dto::user_repo_info_dto::CreateUserRepoInfoDto;
 
 
-use crate::web::dto::user_repo_dto::{OneToManyDto, OneToOneDto};
 use crate::web::error::ApiResult;
 use crate::web::service::{
     BlobConnServiceTrait, RepoServiceTrait, UserRepoServiceTrait, UserServiceTrait,

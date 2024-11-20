@@ -5,11 +5,9 @@ use uuid::Uuid;
 
 use collection::user_repo_info::{UserRepoInfo, UserRepoInfoOperation};
 
-use crate::utils::dto::{serialize_object_id, serialize_option_object_id, object_id_schema};
+use crate::utils::dto::{object_id_schema, serialize_object_id, serialize_option_object_id};
 
-#[derive(Serialize, Deserialize, Debug)]
-#[derive(async_graphql::SimpleObject)]
-#[derive(utoipa::ToSchema)]
+#[derive(Serialize, Deserialize, Debug, async_graphql::SimpleObject, utoipa::ToSchema)]
 #[serde(deny_unknown_fields)]
 pub struct UserRepoInfoDto {
     #[serde(
@@ -27,15 +25,15 @@ pub struct UserRepoInfoDto {
     pub executed_at: DateTime<Utc>,
 }
 
-
 impl PartialEq for UserRepoInfoDto {
     fn eq(&self, other: &Self) -> bool {
-        self.user_id == other.user_id && self.repo_id == other.repo_id &&  self.operation == other.operation
+        self.user_id == other.user_id
+            && self.repo_id == other.repo_id
+            && self.operation == other.operation
     }
 }
 
-#[derive(Serialize, Deserialize, Debug)]
-#[derive(utoipa::ToSchema)]
+#[derive(Serialize, Deserialize, Debug, utoipa::ToSchema)]
 pub struct CreateUserRepoInfoDto {
     #[schema(schema_with = object_id_schema)]
     pub user_id: ObjectId,
@@ -82,7 +80,6 @@ impl From<Vec<u8>> for CreateUserRepoInfoDto {
         dto
     }
 }
-
 
 impl From<CreateUserRepoInfoDto> for Vec<u8> {
     fn from(val: CreateUserRepoInfoDto) -> Self {
