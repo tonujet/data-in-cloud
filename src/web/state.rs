@@ -170,9 +170,9 @@ impl UserRepoState {
             .with_secret_access_key(&config().AWS.SECRET_ACCESS_KEY)
             .build()?;
 
-        println!("AWS S3 bucket is temporary disabled. Instead the local one is used");
-        // TODO move filepath to config
-        let store = object_store::local::LocalFileSystem::new_with_prefix("temp")?;
+        println!("AWS S3 bucket is temporarily disabled. Instead the local one is used");
+        let store =
+            object_store::local::LocalFileSystem::new_with_prefix(&config().RESERVE.LOCAL_STORE)?;
         Self::new(store, user_state, repo_state, user_repo_info_state)
     }
 

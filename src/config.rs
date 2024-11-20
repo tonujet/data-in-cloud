@@ -26,6 +26,7 @@ pub struct Config {
     pub MONGO_DB: MongoDbConfig,
     pub AWS: AwsConfig,
     pub RABBITMQ: RabbitMQConfig,
+    pub RESERVE: ReserveConfig,
 }
 
 impl ConfigLoader for Config {
@@ -37,6 +38,23 @@ impl ConfigLoader for Config {
             SERVER: ServerConfig::load()?,
             AWS: AwsConfig::load()?,
             RABBITMQ: RabbitMQConfig::load()?,
+            RESERVE: ReserveConfig::load()?,
+        })
+    }
+}
+
+#[allow(non_snake_case)]
+pub struct ReserveConfig {
+    pub LOCAL_STORE: String,
+}
+
+impl ConfigLoader for ReserveConfig {
+    fn load() -> InternalResult<Self>
+    where
+        Self: Sized,
+    {
+        Ok(Self {
+            LOCAL_STORE: get_env("RESERVE_LOCAL_STORE")?
         })
     }
 }

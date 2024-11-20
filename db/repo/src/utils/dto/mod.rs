@@ -27,9 +27,6 @@ pub fn object_id_schema() -> Object {
     ObjectBuilder::new()
         .schema_type(utoipa::openapi::schema::Type::String)
         .title(Some("Bson ObjectId"))
-        // .format(Some(utoipa::openapi::SchemaFormat::Custom(
-        //     "Uuid".to_string(),
-        // )))
         .pattern(Some("^[0-9a-fA-F]{24}$"))
         .description(Some("Object id from bson"))
         .build()
