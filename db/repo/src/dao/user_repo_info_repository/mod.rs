@@ -9,8 +9,8 @@ use collection::MongoCollection;
 
 use crate::dao::error::{Entity, RepoError, RepoResult};
 use crate::dao::{PersistentRepositoryTrait, UserRepoInfoRepositoryTrait};
-use crate::dto::user_repo_info_dto::{CreateUserRepoInfoDto, UserRepoInfoDto};
-use crate::dto::DtoList;
+use dto::user_repo_info_dto::{CreateUserRepoInfoDto, UserRepoInfoDto};
+use dto::DtoList;
 
 #[cfg(test)]
 mod tests;

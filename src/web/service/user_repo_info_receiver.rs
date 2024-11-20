@@ -2,7 +2,7 @@ use std::sync::Arc;
 
 use async_trait::async_trait;
 
-use repo::dto::user_repo_info_dto::{CreateUserRepoInfoDto, UserRepoInfoDto};
+use dto::user_repo_info_dto::{CreateUserRepoInfoDto, UserRepoInfoDto};
 
 
 use crate::web::error::ApiResult;

@@ -1,10 +1,10 @@
 use axum::http::StatusCode;
 use serial_test::serial;
-use ia_11_vorobei_ant::web::dto::user_repo_dto::OneToManyDto;
+use dto::OneToManyDto;
 
-use repo::dto::DtoList;
-use repo::dto::user_dto::UserDto;
-use repo::dto::user_repo_info_dto::UserRepoInfoDto;
+use dto::DtoList;
+use dto::user_dto::UserDto;
+use dto::user_repo_info_dto::UserRepoInfoDto;
 use repo::utils::user::user_test_helper;
 
 use crate::common::Setup;

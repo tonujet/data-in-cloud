@@ -5,7 +5,7 @@ use validator::Validate;
 
 use collection::user::User;
 
-use crate::utils::dto::{object_id_schema, serialize_option_object_id};
+use crate::utils::{object_id_schema, serialize_option_object_id};
 
 #[derive(Serialize, Deserialize, Debug, Validate, async_graphql::InputObject, utoipa::ToSchema)]
 #[serde(deny_unknown_fields)]

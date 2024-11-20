@@ -5,8 +5,8 @@ use object_store::memory::InMemory;
 use uuid::Uuid;
 
 use crate::dao::user_repo_repository::UserRepoRepository;
-use crate::dto::repo_dto::CreateUpdateRepoDto;
-use crate::dto::user_dto::CreateUserDto;
+use dto::repo_dto::CreateUpdateRepoDto;
+use dto::user_dto::CreateUserDto;
 use crate::utils::repository::repository_test_helper;
 use crate::utils::user::user_test_helper;
 

@@ -5,7 +5,7 @@ use uuid::Uuid;
 
 use collection::user_repo_info::{UserRepoInfo, UserRepoInfoOperation};
 
-use crate::utils::dto::{object_id_schema, serialize_object_id, serialize_option_object_id};
+use crate::utils::{object_id_schema, serialize_object_id, serialize_option_object_id};
 
 #[derive(Serialize, Deserialize, Debug, async_graphql::SimpleObject, utoipa::ToSchema)]
 #[serde(deny_unknown_fields)]

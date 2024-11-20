@@ -2,7 +2,7 @@ use serde_json::{json, Value};
 use uuid::Uuid;
 
 use entity::{repository, RepositoryType};
-use crate::dto::repo_dto::{CreateUpdateRepoDto, RepoDto};
+use dto::repo_dto::{CreateUpdateRepoDto, RepoDto};
 
 
 pub fn get_create_dto() -> CreateUpdateRepoDto {

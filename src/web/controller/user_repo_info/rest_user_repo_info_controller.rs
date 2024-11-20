@@ -8,8 +8,8 @@ use axum::extract::{Path, Query, State};
 use axum::routing::get;
 use axum::{Json, Router};
 use mongodb::bson::oid::ObjectId;
-use repo::dto::user_repo_info_dto::UserRepoInfoDto;
-use repo::dto::DtoList;
+use dto::user_repo_info_dto::UserRepoInfoDto;
+use dto::DtoList;
 use utoipa::OpenApi;
 
 #[derive(OpenApi)]

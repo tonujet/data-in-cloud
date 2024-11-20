@@ -2,8 +2,8 @@ use crate::web::state::AppState;
 use async_graphql::{Context, Object, ResultExt};
 
 use mongodb::bson::oid::ObjectId;
-use repo::dto::DtoList;
-use repo::dto::user_repo_info_dto::UserRepoInfoDto;
+use dto::DtoList;
+use dto::user_repo_info_dto::UserRepoInfoDto;
 
 #[derive(Default)]
 pub struct QueryUserRepoInfo;

@@ -1,7 +1,7 @@
 use axum_test::TestServer;
-use ia_11_vorobei_ant::web::dto::user_repo_dto::{OneToManyDto, OneToOneDto};
-use repo::dto::DtoList;
-use repo::dto::repo_dto::RepoDto;
+use dto::{OneToManyDto, OneToOneDto};
+use dto::DtoList;
+use dto::repo_dto::RepoDto;
 use repo::utils::repository::repository_test_helper;
 use repo::utils::user_repo::user_repo_test_helper;
 

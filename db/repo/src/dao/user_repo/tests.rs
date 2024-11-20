@@ -3,7 +3,7 @@ use collection::user::User;
 use crate::dao::error::RepoResult;
 use crate::dao::RepositoryTrait;
 use crate::dao::user_repo::UserRepository;
-use crate::dto::user_dto::UserDto;
+use dto::user_dto::UserDto;
 use crate::utils::user::user_test_helper;
 
 #[tokio::test]

@@ -2,7 +2,7 @@ use mongodb::bson::oid::ObjectId;
 use super::error::ApiErrorResponse;
 use utoipa::{IntoParams, IntoResponses, ToSchema};
 use uuid::Uuid;
-use repo::utils::dto::object_id_schema;
+use dto::utils::object_id_schema;
 
 #[derive(IntoResponses)]
 #[allow(dead_code)]

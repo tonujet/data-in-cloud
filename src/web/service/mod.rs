@@ -2,9 +2,9 @@ use async_trait::async_trait;
 use mongodb::bson::oid::ObjectId;
 use uuid::Uuid;
 
-use repo::dto::user_dto::{CreateUserDto, UpdateUserDto, UserDto};
-use repo::dto::user_repo_info_dto::{CreateUserRepoInfoDto, UserRepoInfoDto};
-use repo::dto::{
+use dto::user_dto::{CreateUserDto, UpdateUserDto, UserDto};
+use dto::user_repo_info_dto::{CreateUserRepoInfoDto, UserRepoInfoDto};
+use dto::{
     repo_dto::{CreateUpdateRepoDto, RepoDto},
     DtoList, OneToManyDto, OneToOneDto,
 };

@@ -1,0 +1,17 @@
+[package]
+name = "dto"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+collection = {path = "../db/mongo/collection"}
+entity = {path = "../db/postgres/entity"}
+
+serde = { version = "1.0.197", features = ["derive"] }
+serde_json = "1.0.114"
+uuid = { version = "1.7.0", features = ["v4"] }
+validator = { version = "0.16.1", features = ["derive"] }
+chrono = { version = "0.4.34", features = ["serde"] }
+mongodb = { version = "2.8.2"}
+async-graphql = { version = "7.0.11", features = ["uuid", "chrono", "bson"] }
+utoipa = { version = "5.2.0", features = ["chrono", "uuid"] }

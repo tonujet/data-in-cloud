@@ -12,11 +12,11 @@ use error::RepoResult;
 
 use crate::dao::error::Entity;
 use crate::dao::error::RepoError::{AlreadyConnected, InternalConcrete, NotYetConnected};
-use crate::dto::user_dto::UpdateUserDto;
-use crate::dto::user_repo_info_dto::{CreateUserRepoInfoDto, UserRepoInfoDto};
+use dto::user_dto::UpdateUserDto;
+use dto::user_repo_info_dto::{CreateUserRepoInfoDto, UserRepoInfoDto};
 
-use super::dto::DtoList;
-use super::dto::{
+use dto::DtoList;
+use dto::{
     repo_dto::{CreateUpdateRepoDto, RepoDto},
     user_dto::{CreateUserDto, UserDto},
 };

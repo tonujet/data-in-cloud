@@ -6,10 +6,10 @@ use uuid::Uuid;
 
 use collection::user_repo_info::UserRepoInfoOperation;
 use repo::dao::UserRepoRepositoryTrait;
-use repo::dto::{DtoList, OneToManyDto, OneToOneDto};
-use repo::dto::repo_dto::RepoDto;
-use repo::dto::user_dto::UserDto;
-use repo::dto::user_repo_info_dto::CreateUserRepoInfoDto;
+use dto::{DtoList, OneToManyDto, OneToOneDto};
+use dto::repo_dto::RepoDto;
+use dto::user_dto::UserDto;
+use dto::user_repo_info_dto::CreateUserRepoInfoDto;
 
 
 use crate::web::error::ApiResult;

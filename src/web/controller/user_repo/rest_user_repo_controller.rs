@@ -10,11 +10,11 @@ use axum::extract::{Path, Query, State};
 use axum::routing::{get, post};
 use axum::{Json, Router};
 use mongodb::bson::oid::ObjectId;
-use repo::dto::repo_dto::RepoDto;
-use repo::dto::user_dto::UserDto;
+use dto::repo_dto::RepoDto;
+use dto::user_dto::UserDto;
 use utoipa::OpenApi;
 use uuid::Uuid;
-use repo::dto::{OneToManyDto, OneToOneDto};
+use dto::{OneToManyDto, OneToOneDto};
 
 #[derive(OpenApi)]
 #[openapi(

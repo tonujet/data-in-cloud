@@ -1,11 +1,11 @@
 use crate::web::state::AppState;
 use crate::web::utils::validation::GraphQLValidator;
 use async_graphql::{Context, MergedObject, Object, ResultExt};
-use repo::dto::user_dto::{CreateUserDto, UpdateUserDto, UserDto};
+use dto::user_dto::{CreateUserDto, UpdateUserDto, UserDto};
 
 use mongodb::bson::oid::ObjectId;
-use repo::dto::DtoList;
-use repo::dto::user_repo_info_dto::UserRepoInfoDto;
+use dto::DtoList;
+use dto::user_repo_info_dto::UserRepoInfoDto;
 use crate::web::controller::user_repo::graphql_user_repo_controller::{UserRepoMutation, UserRepoQuery};
 
 #[derive(MergedObject, Default)]

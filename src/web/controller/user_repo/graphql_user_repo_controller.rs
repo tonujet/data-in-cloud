@@ -1,9 +1,9 @@
 use crate::web::state::AppState;
 use async_graphql::{Context, Object, ResultExt};
 use mongodb::bson::oid::ObjectId;
-use repo::dto::repo_dto::RepoDto;
-use repo::dto::user_dto::UserDto;
-use repo::dto::{OneToManyDto, OneToOneDto};
+use dto::repo_dto::RepoDto;
+use dto::user_dto::UserDto;
+use dto::{OneToManyDto, OneToOneDto};
 use uuid::Uuid;
 
 #[derive(Default)]

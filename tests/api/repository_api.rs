@@ -2,7 +2,7 @@ use axum::http::StatusCode;
 use serde_json::Value;
 use serial_test::serial;
 
-use repo::dto::{DtoList, repo_dto::RepoDto};
+use dto::{DtoList, repo_dto::RepoDto};
 use repo::utils::repository::repository_test_helper;
 
 use super::common::Setup;

@@ -1,10 +1,12 @@
-use crate::dto::user_repo_info_dto::UserRepoInfoDto;
-use crate::dto::{repo_dto::RepoDto, user_dto::UserDto};
 use serde::{Deserialize, Serialize};
+use repo_dto::RepoDto;
+use user_dto::UserDto;
+use user_repo_info_dto::UserRepoInfoDto;
 
 pub mod repo_dto;
 pub mod user_dto;
 pub mod user_repo_info_dto;
+pub mod utils;
 
 #[derive(
     Serialize, Deserialize, PartialEq, Debug, async_graphql::SimpleObject, utoipa::ToSchema,

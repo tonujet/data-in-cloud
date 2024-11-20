@@ -4,8 +4,8 @@ use async_trait::async_trait;
 use mongodb::bson::oid::ObjectId;
 
 use repo::dao::UserRepoInfoRepositoryTrait;
-use repo::dto::user_repo_info_dto::{CreateUserRepoInfoDto, UserRepoInfoDto};
-use repo::dto::DtoList;
+use dto::user_repo_info_dto::{CreateUserRepoInfoDto, UserRepoInfoDto};
+use dto::DtoList;
 
 use crate::web::error::ApiResult;
 use crate::web::service::{PersistentServiceTrait, UserRepoInfoServiceTrait};

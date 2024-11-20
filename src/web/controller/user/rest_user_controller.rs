@@ -10,9 +10,9 @@ use mongodb::bson::oid::ObjectId;
 use utoipa::OpenApi;
 
 use super::super::EntityApi;
-use repo::dto::user_dto::{CreateUserDto, UpdateUserDto, UserDto};
-use repo::dto::user_repo_info_dto::UserRepoInfoDto;
-use repo::dto::DtoList;
+use dto::user_dto::{CreateUserDto, UpdateUserDto, UserDto};
+use dto::user_repo_info_dto::UserRepoInfoDto;
+use dto::DtoList;
 
 #[derive(OpenApi)]
 #[openapi(

@@ -1,9 +1,9 @@
 use crate::web::state::AppState;
 use crate::web::utils::validation::GraphQLValidator;
 use async_graphql::{Context, Object, ResultExt};
-use repo::dto::repo_dto::{CreateUpdateRepoDto, RepoDto};
+use dto::repo_dto::{CreateUpdateRepoDto, RepoDto};
 use uuid::Uuid;
-use repo::dto::DtoList;
+use dto::DtoList;
 
 #[derive(Default)]
 pub struct QueryRepo;

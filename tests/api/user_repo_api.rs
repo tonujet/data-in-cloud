@@ -1,8 +1,8 @@
 use axum::http::StatusCode;
 use serial_test::serial;
 
-use ia_11_vorobei_ant::web::dto::user_repo_dto::{OneToManyDto, OneToOneDto};
-use repo::dto::DtoList;
+use dto::{OneToManyDto, OneToOneDto};
+use dto::DtoList;
 
 use crate::common::Setup;
 use crate::helpers::user_repo_api_helper;

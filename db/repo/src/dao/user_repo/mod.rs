@@ -8,7 +8,7 @@ use mongodb::bson::oid::ObjectId;
 use collection::MongoCollection;
 use collection::user::User;
 
-use crate::dto::{
+use dto::{
     DtoList,
     user_dto::UpdateUserDto
 };

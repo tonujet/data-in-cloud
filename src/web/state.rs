@@ -20,7 +20,7 @@ use repo::dao::user_repo_repository::UserRepoRepository;
 use repo::dao::{
     RepoRepositoryTrait, UserRepoInfoRepositoryTrait, UserRepoRepositoryTrait, UserRepositoryTrait,
 };
-use repo::dto::user_repo_info_dto::{CreateUserRepoInfoDto, UserRepoInfoDto};
+use dto::user_repo_info_dto::{CreateUserRepoInfoDto, UserRepoInfoDto};
 
 use crate::config::config;
 use crate::error::InternalResult;

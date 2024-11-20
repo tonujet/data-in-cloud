@@ -1,5 +1,5 @@
 use axum_test::TestServer;
-use repo::dto::repo_dto::RepoDto;
+use dto::repo_dto::RepoDto;
 use repo::utils::repository::repository_test_helper;
 
 pub async fn delete_repo(client: &TestServer) -> RepoDto {

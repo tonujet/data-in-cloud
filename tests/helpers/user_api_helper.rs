@@ -1,6 +1,6 @@
 use axum::http::StatusCode;
 use axum_test::TestServer;
-use repo::dto::user_dto::UserDto;
+use dto::user_dto::UserDto;
 use repo::utils::user::user_test_helper;
 
 pub async fn create_user1(client: &TestServer) -> UserDto {

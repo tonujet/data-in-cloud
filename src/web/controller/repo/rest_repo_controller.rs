@@ -11,8 +11,8 @@ use crate::web::openapi::{ApiResponses, UuidPathParam};
 use crate::web::state::{AppState, RepoState};
 use crate::web::utils::validation::ValidationWrapper;
 use entity::RepositoryType;
-use repo::dto::repo_dto::CreateUpdateRepoDto;
-use repo::dto::{repo_dto::RepoDto, DtoList};
+use dto::repo_dto::CreateUpdateRepoDto;
+use dto::{repo_dto::RepoDto, DtoList};
 
 #[derive(OpenApi)]
 #[openapi(
