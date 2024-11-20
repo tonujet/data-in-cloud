@@ -1,9 +1,9 @@
 use crate::web::state::AppState;
 use async_graphql::{Context, Object, ResultExt};
 
-use mongodb::bson::oid::ObjectId;
-use dto::DtoList;
 use dto::user_repo_info_dto::UserRepoInfoDto;
+use dto::DtoList;
+use mongodb::bson::oid::ObjectId;
 
 #[derive(Default)]
 pub struct QueryUserRepoInfo;
@@ -32,10 +32,6 @@ impl QueryUserRepoInfo {
             user_repo_info_state: state,
             ..
         } = ctx.data_unchecked::<AppState>();
-        state
-            .service
-            .list(take, offset)
-            .await
-            .extend()
+        state.service.list(take, offset).await.extend()
     }
 }

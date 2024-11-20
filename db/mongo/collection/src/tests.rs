@@ -1,10 +1,10 @@
 use async_trait::async_trait;
-use bson::Document;
 use bson::oid::ObjectId;
+use bson::Document;
 use mongodb::options::{AggregateOptions, InsertOneOptions};
 use tokio::sync::Mutex;
 
-use crate::{MongoCollection, utils};
+use crate::{utils, MongoCollection};
 
 #[derive(Default)]
 struct TestCollection {

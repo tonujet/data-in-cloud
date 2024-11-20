@@ -10,9 +10,9 @@ use crate::web::error::ApiResult;
 use crate::web::openapi::{ApiResponses, UuidPathParam};
 use crate::web::state::{AppState, RepoState};
 use crate::web::utils::validation::ValidationWrapper;
-use entity::RepositoryType;
 use dto::repo_dto::CreateUpdateRepoDto;
 use dto::{repo_dto::RepoDto, DtoList};
+use entity::RepositoryType;
 
 #[derive(OpenApi)]
 #[openapi(

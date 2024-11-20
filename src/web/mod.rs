@@ -3,13 +3,13 @@ use crate::error::InternalResult;
 use crate::web::state::AppState;
 use axum::Router;
 
+pub mod api;
 mod controller;
 pub mod error;
 mod openapi;
 pub mod service;
 pub mod state;
 pub mod utils;
-pub mod api;
 
 pub async fn start_server(state: AppState) -> InternalResult<()> {
     let listener = tokio::net::TcpListener::bind(&config().SERVER.SOCKET_ADDR).await?;

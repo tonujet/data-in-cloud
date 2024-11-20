@@ -1,5 +1,5 @@
-use mongodb::{Collection, Database, IndexModel};
 use mongodb::options::{CreateCollectionOptions, CreateIndexOptions};
+use mongodb::{Collection, Database, IndexModel};
 
 use collection::user::User;
 use collection::user_repo_info::UserRepoInfo;

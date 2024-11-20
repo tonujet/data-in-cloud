@@ -52,7 +52,7 @@ pub trait UserRepositoryTrait:
 #[async_trait]
 pub trait PersistentRepositoryTrait<C, R, I>: Send + Sync
 where
-    R: async_graphql::OutputType + utoipa::ToSchema
+    R: async_graphql::OutputType + utoipa::ToSchema,
 {
     async fn create(&self, dto: C) -> RepoResult<R>;
     async fn get(&self, id: &I) -> RepoResult<R>;

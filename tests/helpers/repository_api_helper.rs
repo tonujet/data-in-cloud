@@ -18,13 +18,9 @@ pub async fn create_repo(client: &TestServer) -> RepoDto {
     created_dto
 }
 
-
 pub async fn create_some_repos(client: &TestServer) {
     let response_dtos = repository_test_helper::get_response_from_create_dtos();
-    for (i, create_dto) in repository_test_helper::get_create_dtos()
-        .iter()
-        .enumerate()
-    {
+    for (i, create_dto) in repository_test_helper::get_create_dtos().iter().enumerate() {
         let _ = &response_dtos[i];
         let _ = client.post("/api/v1/repos").json(&create_dto).await;
     }

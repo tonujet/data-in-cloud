@@ -22,7 +22,6 @@ where
     serializer.serialize_some(object_id.to_string().as_str())
 }
 
-
 pub fn object_id_schema() -> Object {
     ObjectBuilder::new()
         .schema_type(utoipa::openapi::schema::Type::String)

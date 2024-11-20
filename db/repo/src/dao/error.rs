@@ -27,7 +27,7 @@ pub enum RepoError {
 
     #[error("{} with uuid {0} was deleted", .1.as_ref())]
     DeletedWithObjectId(ObjectId, Entity),
-    
+
     #[error(transparent)]
     SqlExecution(#[from] DbErr),
 

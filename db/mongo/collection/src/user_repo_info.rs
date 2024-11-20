@@ -40,9 +40,9 @@ impl UserRepoInfo {
     }
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Copy, Eq)]
-#[derive(async_graphql::Enum)]
-#[derive(utoipa::ToSchema)]
+#[derive(
+    Serialize, Deserialize, Debug, Clone, PartialEq, Copy, Eq, async_graphql::Enum, utoipa::ToSchema,
+)]
 pub enum UserRepoInfoOperation {
     CreateLink,
     DeleteLink,

@@ -7,9 +7,7 @@ use serde::{Deserialize, Serialize};
 use strum::AsRefStr;
 use thiserror::Error;
 
-
 pub type ApiResult<T> = Result<T, ApiError>;
-
 
 #[derive(Debug, AsRefStr, Error)]
 pub enum ApiError {

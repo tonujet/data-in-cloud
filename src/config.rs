@@ -54,7 +54,7 @@ impl ConfigLoader for ReserveConfig {
         Self: Sized,
     {
         Ok(Self {
-            LOCAL_STORE: get_env("RESERVE_LOCAL_STORE")?
+            LOCAL_STORE: get_env("RESERVE_LOCAL_STORE")?,
         })
     }
 }

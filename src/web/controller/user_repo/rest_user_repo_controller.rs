@@ -1,20 +1,18 @@
 use crate::web::controller::PaginationParams;
 use crate::web::error::ApiResult;
-use crate::web::openapi::{
-    ApiResponses, ObjectIdPathParam,
-};
+use crate::web::openapi::{ApiResponses, ObjectIdPathParam};
 use crate::web::state::{AppState, UserRepoState};
 
 use super::super::EntityApi;
 use axum::extract::{Path, Query, State};
 use axum::routing::{get, post};
 use axum::{Json, Router};
-use mongodb::bson::oid::ObjectId;
 use dto::repo_dto::RepoDto;
 use dto::user_dto::UserDto;
+use dto::{OneToManyDto, OneToOneDto};
+use mongodb::bson::oid::ObjectId;
 use utoipa::OpenApi;
 use uuid::Uuid;
-use dto::{OneToManyDto, OneToOneDto};
 
 #[derive(OpenApi)]
 #[openapi(

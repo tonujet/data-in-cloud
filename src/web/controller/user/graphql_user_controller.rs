@@ -3,10 +3,12 @@ use crate::web::utils::validation::GraphQLValidator;
 use async_graphql::{Context, MergedObject, Object, ResultExt};
 use dto::user_dto::{CreateUserDto, UpdateUserDto, UserDto};
 
-use mongodb::bson::oid::ObjectId;
-use dto::DtoList;
+use crate::web::controller::user_repo::graphql_user_repo_controller::{
+    UserRepoMutation, UserRepoQuery,
+};
 use dto::user_repo_info_dto::UserRepoInfoDto;
-use crate::web::controller::user_repo::graphql_user_repo_controller::{UserRepoMutation, UserRepoQuery};
+use dto::DtoList;
+use mongodb::bson::oid::ObjectId;
 
 #[derive(MergedObject, Default)]
 pub struct QueryUser(QueryUserToMerge, UserRepoQuery);
@@ -35,11 +37,7 @@ impl QueryUserToMerge {
         let AppState {
             user_state: state, ..
         } = ctx.data_unchecked::<AppState>();
-        state
-            .service
-            .list(take, offset)
-            .await
-            .extend()
+        state.service.list(take, offset).await.extend()
     }
 
     async fn list_repo_infos<'a>(
@@ -59,7 +57,6 @@ impl QueryUserToMerge {
             .extend()
     }
 }
-
 
 #[derive(Default)]
 struct MutationUserToMerge;

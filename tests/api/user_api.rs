@@ -1,10 +1,10 @@
 use axum::http::StatusCode;
-use serial_test::serial;
 use dto::OneToManyDto;
+use serial_test::serial;
 
-use dto::DtoList;
 use dto::user_dto::UserDto;
 use dto::user_repo_info_dto::UserRepoInfoDto;
+use dto::DtoList;
 use repo::utils::user::user_test_helper;
 
 use crate::common::Setup;
@@ -181,8 +181,10 @@ async fn list_users_using_take_and_skip_success() {
 #[serial]
 async fn get_all_user_repo_info_for_user_success() {
     let setup = Setup::new().await;
-    let OneToManyDto { one: user, many: repos } =
-        user_repo_api_helper::create_connected_user_and_repos(&setup.client).await;
+    let OneToManyDto {
+        one: user,
+        many: repos,
+    } = user_repo_api_helper::create_connected_user_and_repos(&setup.client).await;
     let expected_code = StatusCode::OK;
 
     let res = setup

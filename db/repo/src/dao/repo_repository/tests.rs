@@ -1,8 +1,8 @@
 use sea_orm::DatabaseBackend;
 use serial_test::serial;
 
-use crate::utils::repository::repository_test_helper;
 use crate::dao::RepositoryTrait;
+use crate::utils::repository::repository_test_helper;
 
 use super::RepoRepository;
 use super::RepoRepositoryTrait;

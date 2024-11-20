@@ -5,9 +5,9 @@ use uuid::Uuid;
 
 use repo::dao::RepoRepositoryTrait;
 
-use super::{ApiResult, RepoServiceTrait};
 use super::DtoList;
 use super::ServiceTrait;
+use super::{ApiResult, RepoServiceTrait};
 use super::{CreateUpdateRepoDto, RepoDto};
 
 #[derive(Clone)]
@@ -33,17 +33,12 @@ impl ServiceTrait<CreateUpdateRepoDto, CreateUpdateRepoDto, RepoDto, Uuid> for R
         Ok(self.repo.get(id).await?)
     }
 
-    async fn list(
-        &self,
-        take: Option<u64>,
-        offset: Option<u64>,
-    ) -> ApiResult<DtoList<RepoDto>> {
+    async fn list(&self, take: Option<u64>, offset: Option<u64>) -> ApiResult<DtoList<RepoDto>> {
         Ok(self.repo.list(take, offset).await?)
     }
 }
 
-impl RepoServiceTrait for RepositoryService{}
-
+impl RepoServiceTrait for RepositoryService {}
 
 impl RepositoryService {
     pub fn new(repo: Arc<dyn RepoRepositoryTrait>) -> Self {

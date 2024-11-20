@@ -10,6 +10,7 @@ use collection::user::{TestUserCollection, User, UserCollection};
 use collection::user_repo_info::{
     TestUserRepoInfoCollection, UserRepoInfo, UserRepoInfoCollection,
 };
+use dto::user_repo_info_dto::{CreateUserRepoInfoDto, UserRepoInfoDto};
 use message_broker::error::MBrokerResult;
 use message_broker::rabbitmq::{RabbitMQOptions, RabbitMQPublisher, RabbitMQReceiver};
 use message_broker::Subscriber;
@@ -20,7 +21,6 @@ use repo::dao::user_repo_repository::UserRepoRepository;
 use repo::dao::{
     RepoRepositoryTrait, UserRepoInfoRepositoryTrait, UserRepoRepositoryTrait, UserRepositoryTrait,
 };
-use dto::user_repo_info_dto::{CreateUserRepoInfoDto, UserRepoInfoDto};
 
 use crate::config::config;
 use crate::error::InternalResult;

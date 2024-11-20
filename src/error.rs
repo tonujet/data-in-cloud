@@ -7,11 +7,11 @@ pub type InternalResult<T> = Result<T, InternalError>;
 #[derive(Debug, Error)]
 pub enum InternalError {
     #[error(transparent)]
-    SqlDbConnectionIssue(#[from]  sea_orm::DbErr),
+    SqlDbConnectionIssue(#[from] sea_orm::DbErr),
 
     #[error(transparent)]
     MongoDbConnectionIssue(#[from] mongodb::error::Error),
-    
+
     #[error(transparent)]
     StartServerIssue(#[from] Error),
 

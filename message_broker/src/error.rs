@@ -6,7 +6,7 @@ pub type MBrokerResult<T> = Result<T, MBrokerError>;
 pub enum MBrokerError {
     #[error(transparent)]
     RabbitMQ(#[from] amqprs::error::Error),
-    
+
     #[error("Can't read message. {0}")]
     CantReadMessage(String),
 }

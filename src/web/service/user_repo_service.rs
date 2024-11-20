@@ -5,18 +5,16 @@ use mongodb::bson::oid::ObjectId;
 use uuid::Uuid;
 
 use collection::user_repo_info::UserRepoInfoOperation;
-use repo::dao::UserRepoRepositoryTrait;
-use dto::{DtoList, OneToManyDto, OneToOneDto};
 use dto::repo_dto::RepoDto;
 use dto::user_dto::UserDto;
 use dto::user_repo_info_dto::CreateUserRepoInfoDto;
-
+use dto::{DtoList, OneToManyDto, OneToOneDto};
+use repo::dao::UserRepoRepositoryTrait;
 
 use crate::web::error::ApiResult;
 use crate::web::service::{
     BlobConnServiceTrait, RepoServiceTrait, UserRepoServiceTrait, UserServiceTrait,
 };
-
 
 #[derive(Clone)]
 pub struct UserRepoService {
@@ -45,8 +43,19 @@ impl UserRepoService {
 impl UserRepoServiceTrait for UserRepoService {}
 
 #[async_trait]
-impl BlobConnServiceTrait<ObjectId, Uuid, OneToOneDto<UserDto, RepoDto>, OneToManyDto<UserDto, RepoDto>> for UserRepoService {
-    async fn add_pair(&self, key_id: &ObjectId, val_id: &Uuid) -> ApiResult<OneToOneDto<UserDto, RepoDto>> {
+impl
+    BlobConnServiceTrait<
+        ObjectId,
+        Uuid,
+        OneToOneDto<UserDto, RepoDto>,
+        OneToManyDto<UserDto, RepoDto>,
+    > for UserRepoService
+{
+    async fn add_pair(
+        &self,
+        key_id: &ObjectId,
+        val_id: &Uuid,
+    ) -> ApiResult<OneToOneDto<UserDto, RepoDto>> {
         let user = self.user_service.get(key_id).await?;
         let repo = self.repo_service.get(val_id).await?;
         self.repo.add_pair(key_id, val_id).await?;
@@ -92,7 +101,11 @@ impl BlobConnServiceTrait<ObjectId, Uuid, OneToOneDto<UserDto, RepoDto>, OneToMa
         ))
     }
 
-    async fn delete_pair(&self, key_id: &ObjectId, val_id: &Uuid) -> ApiResult<OneToOneDto<UserDto, RepoDto>> {
+    async fn delete_pair(
+        &self,
+        key_id: &ObjectId,
+        val_id: &Uuid,
+    ) -> ApiResult<OneToOneDto<UserDto, RepoDto>> {
         let user = self.user_service.get(key_id).await?;
         let repo = self.repo_service.get(val_id).await?;
         self.repo.delete_pair(key_id, val_id).await?;

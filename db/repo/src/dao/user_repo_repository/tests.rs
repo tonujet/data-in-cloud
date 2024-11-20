@@ -49,13 +49,11 @@ async fn list_repos_success() {
     let expected_ids = vec![repo_id1, repo_id2, repo_id3];
     let repo_ids = expected_ids.iter().rev().collect();
 
-
     let _ = repo.add_pairs(&user_id, repo_ids).await;
     let res = repo.list_pairs(&user_id).await;
 
     assert!(res.is_ok());
     assert_eq!(res.unwrap(), expected_ids);
-
 }
 
 #[tokio::test]

@@ -1,16 +1,15 @@
-use amqprs::BasicProperties;
+use crate::error::{MBrokerError, MBrokerResult};
 use amqprs::callbacks::DefaultChannelCallback;
 use amqprs::channel::{
     BasicAckArguments, BasicConsumeArguments, BasicPublishArguments, Channel, ConsumerMessage,
     QueueDeclareArguments,
 };
 use amqprs::connection::Connection;
+use amqprs::BasicProperties;
 use async_trait::async_trait;
 use tokio::sync::mpsc::UnboundedReceiver;
 use tokio::sync::Mutex;
 use uuid::Uuid;
-use crate::error::{MBrokerError, MBrokerResult};
-
 
 use super::{Publisher, Receiver, Subscriber};
 

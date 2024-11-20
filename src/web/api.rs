@@ -44,7 +44,7 @@ impl OpenApi {
 
         match self {
             Swagger => "/swagger-ui",
-            File => "/openapi.json"
+            File => "/openapi.json",
         }
     }
 }
@@ -76,4 +76,3 @@ impl EntityApi {
         }
     }
 }
-

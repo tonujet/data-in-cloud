@@ -1,8 +1,8 @@
-use mongodb::bson::oid::ObjectId;
 use super::error::ApiErrorResponse;
+use dto::utils::object_id_schema;
+use mongodb::bson::oid::ObjectId;
 use utoipa::{IntoParams, IntoResponses, ToSchema};
 use uuid::Uuid;
-use dto::utils::object_id_schema;
 
 #[derive(IntoResponses)]
 #[allow(dead_code)]
@@ -29,6 +29,5 @@ pub struct UuidPathParam {
 pub struct ObjectIdPathParam {
     #[param(schema_with = object_id_schema)]
     /// Id of the entity.
-    id: ObjectId
+    id: ObjectId,
 }
-
