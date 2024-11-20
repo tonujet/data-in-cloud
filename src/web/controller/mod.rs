@@ -99,7 +99,7 @@ pub fn api_routes(state: AppState) -> Router {
         .build()
         .nest(&API::prefix(), ApiDoc::openapi());
     let swagger_router = SwaggerUi::new(OpenApi::Swagger.to_endpoint()).url(
-        format!("{}/{}", API::prefix(), OpenApi::File.to_endpoint()),
+        API::OpenApi(OpenApi::File).to_full_endpoint(),
         api_version_doc,
     );
 
