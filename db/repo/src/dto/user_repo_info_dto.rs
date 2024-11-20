@@ -5,18 +5,22 @@ use uuid::Uuid;
 
 use collection::user_repo_info::{UserRepoInfo, UserRepoInfoOperation};
 
-use crate::utils::dto::{serialize_object_id, serialize_option_object_id};
+use crate::utils::dto::{serialize_object_id, serialize_option_object_id, object_id_schema};
 
 #[derive(Serialize, Deserialize, Debug)]
 #[derive(async_graphql::SimpleObject)]
+#[derive(utoipa::ToSchema)]
+#[serde(deny_unknown_fields)]
 pub struct UserRepoInfoDto {
     #[serde(
         skip_serializing_if = "Option::is_none",
         serialize_with = "serialize_option_object_id"
     )]
+    #[schema(schema_with = object_id_schema)]
     pub id: Option<ObjectId>,
 
     #[serde(serialize_with = "serialize_object_id")]
+    #[schema(schema_with = object_id_schema)]
     pub user_id: ObjectId,
     pub repo_id: Uuid,
     pub operation: UserRepoInfoOperation,
@@ -31,7 +35,9 @@ impl PartialEq for UserRepoInfoDto {
 }
 
 #[derive(Serialize, Deserialize, Debug)]
+#[derive(utoipa::ToSchema)]
 pub struct CreateUserRepoInfoDto {
+    #[schema(schema_with = object_id_schema)]
     pub user_id: ObjectId,
     pub repo_id: Uuid,
     pub operation: UserRepoInfoOperation,
