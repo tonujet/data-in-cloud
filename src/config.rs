@@ -88,7 +88,6 @@ impl ConfigLoader for SqlDbConfig {
 pub struct MongoDbConfig {
     pub URL: String,
     pub NAME: String,
-    pub TEST_URL: String,
 }
 
 impl ConfigLoader for MongoDbConfig {
@@ -104,7 +103,6 @@ impl ConfigLoader for MongoDbConfig {
         Ok(MongoDbConfig {
             URL: url,
             NAME: get_env("MONGO_DB_NAME")?,
-            TEST_URL: "".to_string(),
         })
     }
 }
@@ -152,7 +150,7 @@ impl ConfigLoader for RabbitMQConfig {
     }
 }
 
-#[allow(non_snake_case)]
+#[allow(non_snake_case, dead_code)]
 pub struct ServerConfig {
     pub HOST: String,
     pub PORT: u16,

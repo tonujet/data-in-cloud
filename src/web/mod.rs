@@ -2,7 +2,6 @@ use crate::config::config;
 use crate::error::InternalResult;
 use crate::web::state::AppState;
 use axum::Router;
-use utoipa::OpenApi;
 
 mod controller;
 pub mod error;
