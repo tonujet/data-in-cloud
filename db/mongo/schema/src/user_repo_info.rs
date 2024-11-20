@@ -16,31 +16,31 @@ impl Scheme for UserRepoInfoScheme {
 
     fn get_validation_options(&self) -> CreateCollectionOptions {
         let validator = doc! {
-              "$jsonSchema": doc! {
-                  "bsonType": "object",
-                  "title": "User object validation",
-                  "required": vec!["user_id", "repo_id", "operation", "executed_at"],
-                  "properties": doc! {
-                      "user_id": doc! {
-                          "bsonType": "objectId",
-                          "description": "'user_id' must be a unique object ID and is required"
-                      },
-                      "repo_id": doc! {
-                          "bsonType": "binData",
-                          "description": "'repo_id' must be stored as UUIDv4 in the format xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-                      },
-                      "operation": doc! {
-                          "bsonType": "string",
-                          "pattern": "^.{3,200}$",
-                          "description": "'operation' must be a string in (3, 200) character limit and is required"
-                      },
-                      "executed_at": doc! {
-                          "bsonType": "string",
-                          "description": "'executed_at' must be an ISO representation of date and is required"
-                      },
-                  },
-              },
-          };
+            "$jsonSchema": doc! {
+                "bsonType": "object",
+                "title": "User object validation",
+                "required": vec!["user_id", "repo_id", "operation", "executed_at"],
+                "properties": doc! {
+                    "user_id": doc! {
+                        "bsonType": "objectId",
+                        "description": "'user_id' must be a unique object ID and is required"
+                    },
+                    "repo_id": doc! {
+                        "bsonType": "binData",
+                        "description": "'repo_id' must be stored as UUIDv4 in the format xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+                    },
+                    "operation": doc! {
+                        "bsonType": "string",
+                        "pattern": "^.{3,200}$",
+                        "description": "'operation' must be a string in (3, 200) character limit and is required"
+                    },
+                    "executed_at": doc! {
+                        "bsonType": "string",
+                        "description": "'executed_at' must be an ISO representation of date and is required"
+                    },
+                },
+            },
+        };
         CreateCollectionOptions::builder()
             .validator(validator)
             .validation_action(Some(ValidationAction::Error))

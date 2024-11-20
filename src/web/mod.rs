@@ -3,9 +3,10 @@ use crate::error::InternalResult;
 use crate::web::state::AppState;
 use axum::Router;
 
+pub mod api;
 mod controller;
-pub mod dto;
 pub mod error;
+mod openapi;
 pub mod service;
 pub mod state;
 pub mod utils;

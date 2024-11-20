@@ -1,5 +1,5 @@
-use sea_orm_migration::prelude::*;
 use sea_orm_migration::prelude::sea_query::extension::postgres::Type;
+use sea_orm_migration::prelude::*;
 
 use crate::sea_orm::{EnumIter, Iterable};
 

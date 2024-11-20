@@ -2,7 +2,7 @@ use axum::http::StatusCode;
 use serde_json::Value;
 use serial_test::serial;
 
-use repo::dto::{DtoList, repo_dto::RepoDto};
+use dto::{repo_dto::RepoDto, DtoList};
 use repo::utils::repository::repository_test_helper;
 
 use super::common::Setup;
@@ -180,8 +180,7 @@ async fn update_deleted_repo_failure() {
         "Wrong update response status code doesn't correspond to the desired"
     );
     assert_eq!(
-        error_name,
-        expected_error_name,
+        error_name, expected_error_name,
         "Wrong update response body of list doesn't correspond to the desired"
     );
 }

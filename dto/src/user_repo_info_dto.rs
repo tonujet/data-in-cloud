@@ -5,33 +5,37 @@ use uuid::Uuid;
 
 use collection::user_repo_info::{UserRepoInfo, UserRepoInfoOperation};
 
-use crate::utils::dto::{serialize_object_id, serialize_option_object_id};
+use crate::utils::{object_id_schema, serialize_object_id, serialize_option_object_id};
 
-#[derive(Serialize, Deserialize, Debug)]
-#[derive(async_graphql::SimpleObject)]
+#[derive(Serialize, Deserialize, Debug, async_graphql::SimpleObject, utoipa::ToSchema)]
+#[serde(deny_unknown_fields)]
 pub struct UserRepoInfoDto {
     #[serde(
         skip_serializing_if = "Option::is_none",
         serialize_with = "serialize_option_object_id"
     )]
+    #[schema(schema_with = object_id_schema)]
     pub id: Option<ObjectId>,
 
     #[serde(serialize_with = "serialize_object_id")]
+    #[schema(schema_with = object_id_schema)]
     pub user_id: ObjectId,
     pub repo_id: Uuid,
     pub operation: UserRepoInfoOperation,
     pub executed_at: DateTime<Utc>,
 }
 
-
 impl PartialEq for UserRepoInfoDto {
     fn eq(&self, other: &Self) -> bool {
-        self.user_id == other.user_id && self.repo_id == other.repo_id &&  self.operation == other.operation
+        self.user_id == other.user_id
+            && self.repo_id == other.repo_id
+            && self.operation == other.operation
     }
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, utoipa::ToSchema)]
 pub struct CreateUserRepoInfoDto {
+    #[schema(schema_with = object_id_schema)]
     pub user_id: ObjectId,
     pub repo_id: Uuid,
     pub operation: UserRepoInfoOperation,
@@ -76,7 +80,6 @@ impl From<Vec<u8>> for CreateUserRepoInfoDto {
         dto
     }
 }
-
 
 impl From<CreateUserRepoInfoDto> for Vec<u8> {
     fn from(val: CreateUserRepoInfoDto) -> Self {

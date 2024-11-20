@@ -2,23 +2,21 @@ use std::sync::Arc;
 
 use async_trait::async_trait;
 use chrono::Utc;
-use mongodb::bson::{doc, Document};
 use mongodb::bson::oid::ObjectId;
+use mongodb::bson::{doc, Document};
 
-use collection::MongoCollection;
 use collection::user::User;
+use collection::MongoCollection;
 
-use crate::dto::{
-    DtoList,
-    user_dto::UpdateUserDto
-};
+use dto::{user_dto::UpdateUserDto, DtoList};
 
-use super::{RepositoryTrait, UserRepositoryTrait};
-use super::{CreateUserDto, UserDto};
 use super::error::{
     Entity,
-    RepoError::{DeletedWithObjectId, Internal, Uniqueness}, RepoResult
+    RepoError::{DeletedWithObjectId, Internal, Uniqueness},
+    RepoResult,
 };
+use super::{CreateUserDto, UserDto};
+use super::{RepositoryTrait, UserRepositoryTrait};
 
 #[cfg(test)]
 mod tests;
@@ -30,12 +28,9 @@ pub struct UserRepository {
 
 impl UserRepository {
     pub fn new(collection: Arc<dyn MongoCollection<User>>) -> Self {
-        Self {
-            collection
-        }
+        Self { collection }
     }
 }
-
 
 impl UserRepositoryTrait for UserRepository {}
 
@@ -147,9 +142,7 @@ impl RepositoryTrait<CreateUserDto, UpdateUserDto, UserDto, ObjectId> for UserRe
     }
 
     async fn list(&self, take: Option<u64>, offset: Option<u64>) -> RepoResult<DtoList<UserDto>> {
-        let pipeline = vec![
-            doc! {"$match": doc!{"deleted": false}},
-        ];
+        let pipeline = vec![doc! {"$match": doc!{"deleted": false}}];
 
         let dtos = self
             .collection

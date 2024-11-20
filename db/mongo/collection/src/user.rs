@@ -2,17 +2,16 @@ use std::sync::{Arc, Mutex};
 
 use async_trait::async_trait;
 use chrono::{DateTime, Utc};
-use mongodb::{Collection, Cursor};
-use mongodb::bson::Document;
 use mongodb::bson::oid::ObjectId;
+use mongodb::bson::Document;
 use mongodb::options::{
     AggregateOptions, CountOptions, FindOneOptions, InsertOneOptions, UpdateModifications,
     UpdateOptions,
 };
+use mongodb::{Collection, Cursor};
 use serde::{Deserialize, Serialize};
 
-use crate::{MongoCollection, utils};
-
+use crate::{utils, MongoCollection};
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct User {

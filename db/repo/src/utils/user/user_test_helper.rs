@@ -1,11 +1,11 @@
-use std::sync::Arc;
 use mongodb::bson::oid::ObjectId;
+use std::sync::Arc;
 
 use collection::user::{TestUserCollection, User};
 use collection::MongoCollection;
 
 use crate::dao::user_repo::UserRepository;
-use crate::dto::user_dto::{CreateUserDto, UpdateUserDto, UserDto};
+use dto::user_dto::{CreateUserDto, UpdateUserDto, UserDto};
 
 pub fn get_mock_repo() -> UserRepository {
     let collection: Arc<dyn MongoCollection<User>> = Arc::new(TestUserCollection::default());
@@ -32,7 +32,6 @@ pub fn get_create_dto2() -> CreateUserDto {
     }
 }
 
-
 pub fn get_created1() -> User {
     User {
         id: Some(ObjectId::new()),
@@ -46,7 +45,6 @@ pub fn get_created1() -> User {
         updated: Default::default(),
     }
 }
-
 
 pub fn get_created2() -> User {
     User {
@@ -119,7 +117,6 @@ pub fn get_updated() -> User {
     created.is_public = update_dto.is_public;
     created
 }
-
 
 pub fn get_updated_dto() -> UserDto {
     get_updated().into()

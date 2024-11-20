@@ -1,8 +1,9 @@
-use mongodb::bson::doc;
-use mongodb::options::{CreateCollectionOptions, CreateIndexOptions, IndexOptions, ValidationAction, ValidationLevel};
-use mongodb::IndexModel;
 use collection::user::User;
-
+use mongodb::bson::doc;
+use mongodb::options::{
+    CreateCollectionOptions, CreateIndexOptions, IndexOptions, ValidationAction, ValidationLevel,
+};
+use mongodb::IndexModel;
 
 use crate::Scheme;
 
@@ -79,10 +80,8 @@ impl Scheme for UserScheme {
 
         vec![(email_index, None), (username_index, None)]
     }
-    
+
     fn new() -> Self {
         UserScheme {}
     }
 }
-
-

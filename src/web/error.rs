@@ -1,13 +1,11 @@
 use axum::extract::rejection::JsonRejection;
 use axum::http::StatusCode;
-use axum::Json;
 use axum::response::{IntoResponse, Response};
-use serde::Serialize;
-use serde_json::json;
+use axum::Json;
+use repo::dao::error::RepoError;
+use serde::{Deserialize, Serialize};
 use strum::AsRefStr;
 use thiserror::Error;
-
-use repo::dao::error::RepoError;
 
 pub type ApiResult<T> = Result<T, ApiError>;
 
@@ -31,7 +29,7 @@ pub enum ApiError {
 
 impl IntoResponse for ApiError {
     fn into_response(self) -> Response {
-        return match self {
+        match self {
             Self::Validation(ref errs) => self.to_response(StatusCode::UNPROCESSABLE_ENTITY, errs),
 
             Self::Serialization(_) => {
@@ -52,32 +50,44 @@ impl IntoResponse for ApiError {
                 _ => self.to_response(StatusCode::CONFLICT, self.to_string()),
             },
             Self::MessageBroker(_) => self.to_internal_error(),
-        };
+        }
     }
+}
+
+#[derive(Serialize, Deserialize, utoipa::ToSchema)]
+pub struct ApiErrorResponse<'a, T: Serialize> {
+    #[schema(example = 400)]
+    status_code: u16,
+
+    #[schema(example = "BAD REQUEST")]
+    status_code_message: &'a str,
+
+    message: T,
+
+    #[schema(example = "ClientError")]
+    error_name: &'a str,
 }
 
 impl ApiError {
     fn to_response<T: Serialize>(&self, code: StatusCode, message: T) -> Response {
-        let json = json!({
-            "status_code": code.as_str(),
-            "status_code_message": code.canonical_reason().unwrap_or("Unknown"),
-            "message": message,
-            "error_name": format!("{}Error", self.as_ref())
-        });
+        let response = ApiErrorResponse {
+            message,
+            status_code: code.as_u16(),
+            status_code_message: code.canonical_reason().unwrap_or("Unknown"),
+            error_name: &format!("{}Error", self.as_ref()),
+        };
 
-        (code, Json(json)).into_response()
+        (code, Json(response)).into_response()
     }
 
     fn to_internal_error(&self) -> Response {
-        (StatusCode::INTERNAL_SERVER_ERROR, "Something went wrong").into_response()
+        self.to_response(StatusCode::INTERNAL_SERVER_ERROR, "Something went wrong")
     }
-    
 }
 
 impl async_graphql::ErrorExtensions for ApiError {
     fn extend(&self) -> async_graphql::Error {
-        async_graphql::Error::new(self.to_string()).extend_with(|_, e|
-            e.set("error_name", format!("{}Error", self.as_ref()))
-        )
+        async_graphql::Error::new(self.to_string())
+            .extend_with(|_, e| e.set("error_name", format!("{}Error", self.as_ref())))
     }
 }

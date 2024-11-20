@@ -1,9 +1,8 @@
 use serde_json::{json, Value};
 use uuid::Uuid;
 
+use dto::repo_dto::{CreateUpdateRepoDto, RepoDto};
 use entity::{repository, RepositoryType};
-use crate::dto::repo_dto::{CreateUpdateRepoDto, RepoDto};
-
 
 pub fn get_create_dto() -> CreateUpdateRepoDto {
     CreateUpdateRepoDto {
@@ -48,7 +47,7 @@ pub fn get_response_from_invalid_dto() -> Value {
                 }
             ]
         },
-        "status_code": "422",
+        "status_code": 422,
         "status_code_message": "Unprocessable Entity"
     })
 }
@@ -180,7 +179,7 @@ pub fn get_update_dto() -> CreateUpdateRepoDto {
     }
 }
 
-pub fn get_model() -> repository::Model{
+pub fn get_model() -> repository::Model {
     repository::Model {
         id: Uuid::new_v4(),
         title: "CreateTest".to_string(),

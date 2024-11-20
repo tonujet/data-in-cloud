@@ -4,10 +4,8 @@ use validator::Validate;
 
 use entity::{repository, RepositoryType};
 
-
-#[derive(Deserialize, Debug, Validate, Serialize)]
+#[derive(Deserialize, Debug, Validate, Serialize, async_graphql::InputObject, utoipa::ToSchema)]
 #[serde(deny_unknown_fields)]
-#[derive(async_graphql::InputObject)]
 pub struct CreateUpdateRepoDto {
     #[validate(length(min = 3, max = 30, message = "Must be between 3 and 30 characters"))]
     pub title: String,
@@ -17,8 +15,9 @@ pub struct CreateUpdateRepoDto {
     pub repo_type: RepositoryType,
 }
 
-#[derive(Serialize, Deserialize, Debug, Eq, Clone)]
-#[derive(async_graphql::SimpleObject)]
+#[derive(
+    Serialize, Deserialize, Debug, Eq, Clone, async_graphql::SimpleObject, utoipa::ToSchema,
+)]
 pub struct RepoDto {
     pub id: Uuid,
     pub title: String,

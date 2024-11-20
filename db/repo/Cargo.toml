@@ -4,12 +4,12 @@ version = "0.1.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [dependencies]
 entity = {path = "../postgres/entity"}
 collection = {path = "../mongo/collection"}
+dto = {path = "../../dto"}
 
-serde = { version = "1.0.197", features = ["derive"] }
+
 serde_json = "1.0.114"
 async-trait = "0.1.77"
 uuid = { version = "1.7.0", features = ["v4"] }
@@ -17,13 +17,13 @@ sea-orm = { version = "0.12", features = ["sqlx-postgres", "runtime-tokio-rustls
 tokio = { version = "1.36.0", features = ["full"] }
 strum = { version = "0.26.1", features = ["derive"] }
 thiserror = "1.0.29"
-validator = { version = "0.16.1", features = ["derive"] }
 chrono = { version = "0.4.34", features = ["serde"] }
 mongodb = { version = "2.8.2"}
 futures-util = "0.3.30"
 object_store = { version = "0.9.1", features = ["aws"] }
 bytes = "1.6.0"
 async-graphql = { version = "7.0.11", features = ["uuid", "chrono", "bson"] }
+utoipa = { version = "5.2.0", features = ["chrono", "uuid"] }
 
 [dev-dependencies]
 sea-orm = {version = "0.12", features = ["mock"]}

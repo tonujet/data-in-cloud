@@ -5,9 +5,9 @@ use serial_test::serial;
 use uuid::Uuid;
 
 use collection::user_repo_info::UserRepoInfoOperation;
-use ia_11_vorobei_ant::web::dto::user_repo_dto::{UserMultipleRepo, UserSingleRepo};
-use repo::dto::DtoList;
-use repo::dto::user_repo_info_dto::UserRepoInfoDto;
+use dto::user_repo_info_dto::UserRepoInfoDto;
+use dto::DtoList;
+use dto::{OneToManyDto, OneToOneDto};
 
 use crate::common::Setup;
 use crate::helpers::user_repo_api_helper;
@@ -16,7 +16,10 @@ use crate::helpers::user_repo_api_helper;
 #[serial]
 async fn get_user_repo_info_success() {
     let setup = Setup::new().await;
-    let UserSingleRepo{ user, repo } = user_repo_api_helper::create_user_and_repo(&setup.client).await;
+    let OneToOneDto {
+        left: user,
+        right: repo,
+    } = user_repo_api_helper::create_user_and_repo(&setup.client).await;
     let expected_code = StatusCode::OK;
 
     let endpoint = format!("/api/v1/users/{}/repos/{}", user.id.unwrap(), repo.id);
@@ -24,8 +27,12 @@ async fn get_user_repo_info_success() {
     let info_res = setup.client.get("/api/v1/user-repo-infos").await;
     let info_dto_list: DtoList<UserRepoInfoDto> = info_res.json();
     let info_id = info_dto_list.dtos[0].id.unwrap();
-    let expected_dto =
-        create_info_dto(info_id, user.id.unwrap(), repo.id, UserRepoInfoOperation::CreateLink);
+    let expected_dto = create_info_dto(
+        info_id,
+        user.id.unwrap(),
+        repo.id,
+        UserRepoInfoOperation::CreateLink,
+    );
     let info_res = setup
         .client
         .get(&format!("/api/v1/user-repo-infos/{}", info_id))
@@ -50,7 +57,7 @@ async fn get_non_existent_user_repo_info_failure() {
     let info_id = ObjectId::new();
     let expected_code = StatusCode::CONFLICT;
     let expected_body = json!({
-        "status_code": "409",
+        "status_code": 409,
         "status_code_message": "Conflict",
         "message": format!("UserRepoInfo with id {info_id} not found"),
         "error_name": "RepositoryError"
@@ -77,8 +84,10 @@ async fn get_non_existent_user_repo_info_failure() {
 #[serial]
 async fn list_two_user_repo_info_success() {
     let setup = Setup::new().await;
-    let UserMultipleRepo { user, repos } =
-        user_repo_api_helper::create_connected_user_and_repos(&setup.client).await;
+    let OneToManyDto {
+        one: user,
+        many: repos,
+    } = user_repo_api_helper::create_connected_user_and_repos(&setup.client).await;
     let expected_code = StatusCode::OK;
     let take: usize = 2;
     let offset = 2;
@@ -102,7 +111,14 @@ async fn list_two_user_repo_info_success() {
         "Entity length doesn't correspond to the desired"
     );
 
-    for repo_id in repos.dtos.into_iter().map(|d| d.id).rev().skip(offset).take(take) {
+    for repo_id in repos
+        .dtos
+        .into_iter()
+        .map(|d| d.id)
+        .rev()
+        .skip(offset)
+        .take(take)
+    {
         let info_dto = info_dto_list.dtos.remove(0);
 
         let expected_dto = UserRepoInfoDto {

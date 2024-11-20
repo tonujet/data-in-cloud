@@ -1,8 +1,8 @@
 use crate::web::state::AppState;
 use crate::web::utils::validation::GraphQLValidator;
 use async_graphql::{Context, Object, ResultExt};
-use repo::dto::repo_dto::{CreateUpdateRepoDto, RepoDto};
-use repo::dto::GraphqlDtoList;
+use dto::repo_dto::{CreateUpdateRepoDto, RepoDto};
+use dto::DtoList;
 use uuid::Uuid;
 
 #[derive(Default)]
@@ -23,17 +23,12 @@ impl QueryRepo {
         ctx: &Context<'a>,
         take: Option<u64>,
         offset: Option<u64>,
-    ) -> async_graphql::Result<GraphqlDtoList<RepoDto>> {
+    ) -> async_graphql::Result<DtoList<RepoDto>> {
         let AppState {
             repo_state: state, ..
         } = ctx.data_unchecked::<AppState>();
         ctx.data_unchecked::<AppState>();
-        state
-            .service
-            .list(take, offset)
-            .await
-            .map(|dto_list| dto_list.into())
-            .extend()
+        state.service.list(take, offset).await.extend()
     }
 }
 

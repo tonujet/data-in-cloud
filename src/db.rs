@@ -1,5 +1,5 @@
-use mongodb::bson::doc;
 use migration::{Migrator, MigratorTrait};
+use mongodb::bson::doc;
 
 use crate::config::config;
 use crate::error::InternalResult;
@@ -23,9 +23,10 @@ pub async fn init_nosql_database() -> InternalResult<mongodb::Database> {
     Ok(conn)
 }
 
-
 pub async fn init_test_sql_database() -> sea_orm::DbConn {
-    let conn = sea_orm::Database::connect(&config().SQL_DB.TEST_URL).await.unwrap();
+    let conn = sea_orm::Database::connect(&config().SQL_DB.TEST_URL)
+        .await
+        .unwrap();
     Migrator::up(&conn, None).await.unwrap();
     conn
 }

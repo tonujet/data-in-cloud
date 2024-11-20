@@ -2,8 +2,7 @@ use std::sync::Arc;
 
 use async_trait::async_trait;
 
-use repo::dto::user_repo_info_dto::{CreateUserRepoInfoDto, UserRepoInfoDto};
-
+use dto::user_repo_info_dto::{CreateUserRepoInfoDto, UserRepoInfoDto};
 
 use crate::web::error::ApiResult;
 use crate::web::service::UserRepoInfoServiceTrait;
@@ -26,7 +25,9 @@ impl UserRepoInfoReceiver {
 }
 
 #[async_trait]
-impl message_broker::Receiver<UserRepoInfoDto, ApiResult<UserRepoInfoDto>> for UserRepoInfoReceiver {
+impl message_broker::Receiver<UserRepoInfoDto, ApiResult<UserRepoInfoDto>>
+    for UserRepoInfoReceiver
+{
     async fn receive(&self) -> ApiResult<UserRepoInfoDto> {
         let info = self.broker_receiver.receive().await?;
         let dto = self.service.create(info).await?;

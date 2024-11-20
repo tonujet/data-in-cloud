@@ -1,10 +1,10 @@
-use mongodb::bson::doc;
-use collection::user::User;
 use crate::dao::error::RepoResult;
-use crate::dao::RepositoryTrait;
 use crate::dao::user_repo::UserRepository;
-use crate::dto::user_dto::UserDto;
+use crate::dao::RepositoryTrait;
 use crate::utils::user::user_test_helper;
+use collection::user::User;
+use dto::user_dto::UserDto;
+use mongodb::bson::doc;
 
 #[tokio::test]
 async fn list_all_not_deleted_users_success() {
@@ -42,9 +42,7 @@ async fn get_deleted_user_failure() {
     let deleted_dto = deleted_dto.unwrap();
     assert_eq!(deleted_dto, created_dto);
 
-    let doc = repo
-        .get_user(doc! {"_id": deleted_dto.id.unwrap()})
-        .await;
+    let doc = repo.get_user(doc! {"_id": deleted_dto.id.unwrap()}).await;
 
     assert!(doc.is_err())
 }
@@ -130,7 +128,6 @@ async fn validate_update_uniqueness_failure() {
 
     assert!(validated.is_err())
 }
-
 
 async fn run_create_dto1(repo: &UserRepository) -> UserDto {
     let create_dto = user_test_helper::get_create_dto1();

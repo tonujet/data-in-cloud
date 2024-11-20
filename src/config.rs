@@ -26,6 +26,7 @@ pub struct Config {
     pub MONGO_DB: MongoDbConfig,
     pub AWS: AwsConfig,
     pub RABBITMQ: RabbitMQConfig,
+    pub RESERVE: ReserveConfig,
 }
 
 impl ConfigLoader for Config {
@@ -37,6 +38,23 @@ impl ConfigLoader for Config {
             SERVER: ServerConfig::load()?,
             AWS: AwsConfig::load()?,
             RABBITMQ: RabbitMQConfig::load()?,
+            RESERVE: ReserveConfig::load()?,
+        })
+    }
+}
+
+#[allow(non_snake_case)]
+pub struct ReserveConfig {
+    pub LOCAL_STORE: String,
+}
+
+impl ConfigLoader for ReserveConfig {
+    fn load() -> InternalResult<Self>
+    where
+        Self: Sized,
+    {
+        Ok(Self {
+            LOCAL_STORE: get_env("RESERVE_LOCAL_STORE")?,
         })
     }
 }
@@ -70,7 +88,6 @@ impl ConfigLoader for SqlDbConfig {
 pub struct MongoDbConfig {
     pub URL: String,
     pub NAME: String,
-    pub TEST_URL: String,
 }
 
 impl ConfigLoader for MongoDbConfig {
@@ -86,7 +103,6 @@ impl ConfigLoader for MongoDbConfig {
         Ok(MongoDbConfig {
             URL: url,
             NAME: get_env("MONGO_DB_NAME")?,
-            TEST_URL: "".to_string(),
         })
     }
 }
@@ -134,7 +150,7 @@ impl ConfigLoader for RabbitMQConfig {
     }
 }
 
-#[allow(non_snake_case)]
+#[allow(non_snake_case, dead_code)]
 pub struct ServerConfig {
     pub HOST: String,
     pub PORT: u16,

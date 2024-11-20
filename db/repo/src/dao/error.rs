@@ -27,7 +27,7 @@ pub enum RepoError {
 
     #[error("{} with uuid {0} was deleted", .1.as_ref())]
     DeletedWithObjectId(ObjectId, Entity),
-    
+
     #[error(transparent)]
     SqlExecution(#[from] DbErr),
 
@@ -46,7 +46,7 @@ pub enum RepoError {
     #[error("{} already has connection with {}", .0.as_ref(), .1.as_ref())]
     AlreadyConnected(Entity, Entity),
 
-    #[error("{} is not yet connection with {}", .0.as_ref(), .1.as_ref())]
+    #[error("{} is not yet connected with {}", .0.as_ref(), .1.as_ref())]
     NotYetConnected(Entity, Entity),
 
     #[error(transparent)]

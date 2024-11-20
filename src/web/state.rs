@@ -10,6 +10,7 @@ use collection::user::{TestUserCollection, User, UserCollection};
 use collection::user_repo_info::{
     TestUserRepoInfoCollection, UserRepoInfo, UserRepoInfoCollection,
 };
+use dto::user_repo_info_dto::{CreateUserRepoInfoDto, UserRepoInfoDto};
 use message_broker::error::MBrokerResult;
 use message_broker::rabbitmq::{RabbitMQOptions, RabbitMQPublisher, RabbitMQReceiver};
 use message_broker::Subscriber;
@@ -20,7 +21,6 @@ use repo::dao::user_repo_repository::UserRepoRepository;
 use repo::dao::{
     RepoRepositoryTrait, UserRepoInfoRepositoryTrait, UserRepoRepositoryTrait, UserRepositoryTrait,
 };
-use repo::dto::user_repo_info_dto::{CreateUserRepoInfoDto, UserRepoInfoDto};
 
 use crate::config::config;
 use crate::error::InternalResult;
@@ -163,13 +163,16 @@ impl UserRepoState {
         repo_state: &RepoState,
         user_repo_info_state: &UserRepoInfoState,
     ) -> InternalResult<Self> {
-        let store = AmazonS3Builder::new()
+        let _store = AmazonS3Builder::new()
             .with_bucket_name(&config().AWS.BUCKET_NAME)
             .with_region(&config().AWS.BUCKET_REGION)
             .with_access_key_id(&config().AWS.ACCESS_KEY)
             .with_secret_access_key(&config().AWS.SECRET_ACCESS_KEY)
             .build()?;
 
+        println!("AWS S3 bucket is temporarily disabled. Instead the local one is used");
+        let store =
+            object_store::local::LocalFileSystem::new_with_prefix(&config().RESERVE.LOCAL_STORE)?;
         Self::new(store, user_state, repo_state, user_repo_info_state)
     }
 
@@ -284,7 +287,10 @@ impl UserRepoInfoState {
         ));
 
         let publisher: Arc<dyn message_broker::Publisher<CreateUserRepoInfoDto>> =
-            Arc::new(message_broker::tests::PublisherMock::new(Arc::clone(&queue), Arc::clone(&user_repo_info_receiver)));
+            Arc::new(message_broker::tests::PublisherMock::new(
+                Arc::clone(&queue),
+                Arc::clone(&user_repo_info_receiver),
+            ));
 
         Ok(UserRepoInfoState {
             repo: user_repo_info_repository,

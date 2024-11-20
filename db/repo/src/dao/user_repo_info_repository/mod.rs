@@ -9,8 +9,8 @@ use collection::MongoCollection;
 
 use crate::dao::error::{Entity, RepoError, RepoResult};
 use crate::dao::{PersistentRepositoryTrait, UserRepoInfoRepositoryTrait};
-use crate::dto::user_repo_info_dto::{CreateUserRepoInfoDto, UserRepoInfoDto};
-use crate::dto::DtoList;
+use dto::user_repo_info_dto::{CreateUserRepoInfoDto, UserRepoInfoDto};
+use dto::DtoList;
 
 #[cfg(test)]
 mod tests;
@@ -21,9 +21,7 @@ pub struct UserRepoInfoRepository {
 
 impl UserRepoInfoRepository {
     pub fn new(collection: Arc<dyn MongoCollection<UserRepoInfo>>) -> Self {
-        Self {
-            collection
-        }
+        Self { collection }
     }
 }
 
@@ -82,11 +80,8 @@ impl UserRepoInfoRepositoryTrait for UserRepoInfoRepository {
             .map(|u| u.into())
             .collect();
 
-        let count = self
-            .collection
-            .count_documents(None, None)
-            .await?;
-        
+        let count = self.collection.count_documents(None, None).await?;
+
         Ok(DtoList::new(dtos, count, take, offset))
     }
 }

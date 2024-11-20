@@ -4,22 +4,22 @@ use std::sync::Arc;
 use async_trait::async_trait;
 use futures_util::StreamExt;
 use mongodb::bson::oid::ObjectId;
-use object_store::ObjectStore;
 use object_store::path::Path;
+use object_store::ObjectStore;
 use uuid::Uuid;
 
 use error::RepoResult;
 
 use crate::dao::error::Entity;
 use crate::dao::error::RepoError::{AlreadyConnected, InternalConcrete, NotYetConnected};
-use crate::dto::user_dto::UpdateUserDto;
-use crate::dto::user_repo_info_dto::{CreateUserRepoInfoDto, UserRepoInfoDto};
+use dto::user_dto::UpdateUserDto;
+use dto::user_repo_info_dto::{CreateUserRepoInfoDto, UserRepoInfoDto};
 
-use super::dto::{
+use dto::DtoList;
+use dto::{
     repo_dto::{CreateUpdateRepoDto, RepoDto},
     user_dto::{CreateUserDto, UserDto},
 };
-use super::dto::DtoList;
 
 pub mod error;
 pub mod repo_repository;
@@ -28,7 +28,10 @@ pub mod user_repo_info_repository;
 pub mod user_repo_repository;
 
 #[async_trait]
-pub trait RepositoryTrait<C, U, R, I>: Send + Sync {
+pub trait RepositoryTrait<C, U, R, I>: Send + Sync
+where
+    R: async_graphql::OutputType + utoipa::ToSchema,
+{
     async fn create(&self, dto: C) -> RepoResult<R>;
     async fn update(&self, id: &I, dto: U) -> RepoResult<R>;
     async fn delete(&self, id: &I) -> RepoResult<R>;
@@ -37,26 +40,28 @@ pub trait RepositoryTrait<C, U, R, I>: Send + Sync {
 }
 
 pub trait RepoRepositoryTrait:
-RepositoryTrait<CreateUpdateRepoDto, CreateUpdateRepoDto, RepoDto, Uuid>
+    RepositoryTrait<CreateUpdateRepoDto, CreateUpdateRepoDto, RepoDto, Uuid>
 {
 }
 
 pub trait UserRepositoryTrait:
-RepositoryTrait<CreateUserDto, UpdateUserDto, UserDto, ObjectId>
+    RepositoryTrait<CreateUserDto, UpdateUserDto, UserDto, ObjectId>
 {
 }
 
 #[async_trait]
-pub trait PersistentRepositoryTrait<C, R, I>: Send + Sync {
+pub trait PersistentRepositoryTrait<C, R, I>: Send + Sync
+where
+    R: async_graphql::OutputType + utoipa::ToSchema,
+{
     async fn create(&self, dto: C) -> RepoResult<R>;
     async fn get(&self, id: &I) -> RepoResult<R>;
     async fn list(&self, take: Option<u64>, offset: Option<u64>) -> RepoResult<DtoList<R>>;
 }
 
-
 #[async_trait]
 pub trait UserRepoInfoRepositoryTrait:
-PersistentRepositoryTrait<CreateUserRepoInfoDto, UserRepoInfoDto, ObjectId>
+    PersistentRepositoryTrait<CreateUserRepoInfoDto, UserRepoInfoDto, ObjectId>
 {
     async fn list_by_user_id(
         &self,

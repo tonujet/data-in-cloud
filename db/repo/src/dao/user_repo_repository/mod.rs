@@ -1,23 +1,21 @@
 #[cfg(test)]
 mod tests;
 
+use async_trait::async_trait;
 use std::cmp::Reverse;
 use std::str::FromStr;
 use std::sync::Arc;
-use async_trait::async_trait;
 
+use crate::dao::{BlobConnRepositoryTrait, UserRepoRepositoryTrait, DELIMITER};
 use bytes::Bytes;
 use futures_util::StreamExt;
 use mongodb::bson::oid::ObjectId;
 use object_store::path::Path;
 use object_store::ObjectStore;
 use uuid::Uuid;
-use crate::dao::{BlobConnRepositoryTrait, DELIMITER, UserRepoRepositoryTrait};
 
 use crate::dao::error::RepoError::{Internal, InternalConcrete};
 use crate::dao::error::{Entity, RepoResult};
-
-
 
 #[derive(Clone)]
 pub struct UserRepoRepository {
@@ -74,11 +72,7 @@ impl BlobConnRepositoryTrait<ObjectId, Uuid> for UserRepoRepository {
         Ok(())
     }
 
-    async fn delete_pair(
-        &self,
-        user_id: &ObjectId,
-        repo_id: &Uuid,
-    ) -> RepoResult<()> {
+    async fn delete_pair(&self, user_id: &ObjectId, repo_id: &Uuid) -> RepoResult<()> {
         self.are_connected(user_id, repo_id).await?;
         let path = Path::from(format!("{user_id}{DELIMITER}{repo_id}"));
         self.store.delete(&path).await?;
