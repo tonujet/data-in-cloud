@@ -1,14 +1,37 @@
 use axum::extract::{Path, Query, State};
 use axum::routing::{post, put};
 use axum::{Json, Router};
+use utoipa::OpenApi;
 use uuid::Uuid;
 
+use super::super::EntityApi;
 use crate::web::controller::PaginationParams;
 use crate::web::error::ApiResult;
+use crate::web::openapi::{ApiResponses, OpenApiDtoList, UuidPathParam};
 use crate::web::state::{AppState, RepoState};
 use crate::web::utils::validation::ValidationWrapper;
+use entity::RepositoryType;
 use repo::dto::repo_dto::CreateUpdateRepoDto;
 use repo::dto::{repo_dto::RepoDto, DtoList};
+
+#[derive(OpenApi)]
+#[openapi(
+    paths(
+        get_repo, delete_repo,
+        list_repos, create_repo,
+        update_repo,
+    ),
+    components(
+        schemas(
+            RepoDto, RepositoryType,
+            CreateUpdateRepoDto, OpenApiDtoList::<RepoDto>
+        )
+    ),
+    tags(
+        (name = EntityApi::Repos.to_tag())
+    ),
+)]
+pub struct RepoOpenApi;
 
 pub fn routes(state: AppState) -> Router {
     Router::new()
@@ -17,6 +40,13 @@ pub fn routes(state: AppState) -> Router {
         .with_state(state)
 }
 
+#[utoipa::path(
+    post,
+    path = "",
+    request_body = CreateUpdateRepoDto,
+    responses (ApiResponses<RepoDto>),
+    tag = EntityApi::Repos.to_tag(),
+)]
 async fn create_repo(
     State(state): State<RepoState>,
     repo_dto: ValidationWrapper<CreateUpdateRepoDto>,
@@ -25,6 +55,14 @@ async fn create_repo(
     Ok(Json(repo))
 }
 
+#[utoipa::path(
+    put,
+    path = "/{id}",
+    params(UuidPathParam),
+    request_body = CreateUpdateRepoDto,
+    responses (ApiResponses<RepoDto>),
+    tag = EntityApi::Repos.to_tag(),
+)]
 async fn update_repo(
     State(state): State<RepoState>,
     Path(id): Path<Uuid>,
@@ -34,6 +72,13 @@ async fn update_repo(
     Ok(Json(repo))
 }
 
+#[utoipa::path(
+    get,
+    path = "",
+    params(PaginationParams),
+    responses (ApiResponses<OpenApiDtoList<RepoDto>>),
+    tag = EntityApi::Repos.to_tag(),
+)]
 async fn list_repos(
     State(state): State<RepoState>,
     Query(PaginationParams { take, offset }): Query<PaginationParams>,
@@ -42,6 +87,13 @@ async fn list_repos(
     Ok(Json(repos))
 }
 
+#[utoipa::path(
+    get,
+    path = "/{id}",
+    params(UuidPathParam),
+    responses (ApiResponses<RepoDto>),
+    tag = EntityApi::Repos.to_tag(),
+)]
 async fn get_repo(
     State(state): State<RepoState>,
     Path(id): Path<Uuid>,
@@ -50,6 +102,13 @@ async fn get_repo(
     Ok(Json(repo))
 }
 
+#[utoipa::path(
+    delete,
+    path = "/{id}",
+    params(UuidPathParam),
+    responses (ApiResponses<RepoDto>),
+    tag = EntityApi::Repos.to_tag(),
+)]
 async fn delete_repo(
     State(state): State<RepoState>,
     Path(id): Path<Uuid>,

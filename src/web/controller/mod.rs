@@ -1,11 +1,14 @@
 use axum::Router;
 use repo::graphql_repo_controller::{MutationRepo, QueryRepo};
-use repo::rest_repo_controller;
+use repo::rest_repo_controller::{self, RepoOpenApi};
 use serde::Deserialize;
 use user::graphql_user_controller::{MutationUser, QueryUser};
-use user::rest_user_controller;
+use user::rest_user_controller::{self, UserOpenApi};
 use user_repo_info::graphql_user_repo_info_controller::QueryUserRepoInfo;
-use user_repo_info::rest_user_repo_info_controller;
+use user_repo_info::rest_user_repo_info_controller::{self, UserRepoInfoOpenApi};
+use user_repo_controller::UserRepoOpenApi;
+use crate::web::error::ApiErrorResponse;
+
 
 mod repo;
 mod user;
@@ -17,11 +20,19 @@ use async_graphql::{http::GraphiQLSource, EmptySubscription, Schema, SimpleObjec
 use async_graphql_axum::GraphQL;
 use axum::response::{self, IntoResponse};
 use axum::routing::get;
+use utoipa::openapi::{Info, OpenApiBuilder};
+use once_cell::sync::Lazy;
+use utoipa::OpenApi;
+use utoipa_swagger_ui::SwaggerUi;
+use crate::web::EntityApi;
 
-const API_PREFIX: &str = "/api/v1";
+const API_VERSION: u8 = 1;
+
+static API_PREFIX: Lazy<String> = Lazy::new(|| format!("/api/v{}", API_VERSION));
+
 
 pub async fn graphiql() -> impl IntoResponse {
-    let endpoint = format!("{API_PREFIX}/graphql");
+    let endpoint = format!("{}/graphql", *API_PREFIX);
     response::Html(GraphiQLSource::build().endpoint(&endpoint).finish())
 }
 
@@ -48,23 +59,56 @@ fn schema(state: AppState) -> Schema<QueryRoot, MutationRoot, EmptySubscription>
     .finish()
 }
 
+#[derive(OpenApi)]
+#[openapi(
+    nest(
+        (path = EntityApi::Repos.to_endpoint(), api = RepoOpenApi),
+        (path = EntityApi::Users.to_endpoint(), api = UserOpenApi),
+        (path = EntityApi::Users.to_endpoint(), api = UserRepoOpenApi),
+        (path = EntityApi::UserRepoInfos.to_endpoint(), api = UserRepoInfoOpenApi),
+    ),
+    components(
+        schemas(ApiErrorResponse<String>)
+    )
+)]
+struct ApiDoc;
+
+
+
 pub fn api_routes(state: AppState) -> Router {
-    let router: Router<()> = Router::new();
     let schema = schema(state.clone());
     let api_router = Router::new()
         .route("/graphql", get(graphiql).post_service(GraphQL::new(schema)))
-        .nest("/repos", rest_repo_controller::routes(state.clone()))
-        .nest("/users", rest_user_controller::routes(state.clone()))
-        .nest("/users", user_repo_controller::routes(state.clone()))
+        .nest(EntityApi::Repos.to_endpoint(), rest_repo_controller::routes(state.clone()))
+        .nest(EntityApi::Users.to_endpoint(), rest_user_controller::routes(state.clone()))
+        .nest(EntityApi::Users.to_endpoint(), user_repo_controller::routes(state.clone()))
         .nest(
-            "/user-repo-infos",
+            EntityApi::UserRepoInfos.to_endpoint(),
             rest_user_repo_info_controller::routes(state.clone()),
         );
-    router.nest(API_PREFIX, api_router)
+
+
+    let api_version_doc = OpenApiBuilder::new()
+        .info(Info::new("Data in cloud API", API_VERSION.to_string().as_str()))
+        .build()
+        .nest(API_PREFIX.as_str(), ApiDoc::openapi());
+    let swagger_router = SwaggerUi::new("/swagger-ui")
+        .url(format!("{}/openapi.json", *API_PREFIX), api_version_doc);
+
+
+    Router::new()
+        .nest(API_PREFIX.as_str(), api_router)
+        .merge(swagger_router)
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, utoipa::IntoParams)]
+#[into_params(parameter_in = Query)]
 struct PaginationParams {
+    /// How many items to take
+    // #[param(required = false)]
     take: Option<u64>,
+
+    /// Offset before taking items
+    // #[param(required = false)]
     offset: Option<u64>,
 }

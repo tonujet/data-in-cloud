@@ -1,15 +1,38 @@
+use crate::web::controller::PaginationParams;
+use crate::web::error::ApiResult;
+use crate::web::openapi::{ApiResponses, ObjectIdPathParam, OpenApiDtoList};
+use crate::web::state::{AppState, UserState};
+use crate::web::utils::validation::ValidationWrapper;
 use axum::extract::{Path, Query, State};
 use axum::routing::{get, post, put};
 use axum::{Json, Router};
 use mongodb::bson::oid::ObjectId;
+use utoipa::OpenApi;
 
-use crate::web::controller::PaginationParams;
-use crate::web::error::ApiResult;
-use crate::web::state::{AppState, UserState};
-use crate::web::utils::validation::ValidationWrapper;
+use super::super::EntityApi;
 use repo::dto::user_dto::{CreateUserDto, UpdateUserDto, UserDto};
 use repo::dto::user_repo_info_dto::UserRepoInfoDto;
 use repo::dto::DtoList;
+
+#[derive(OpenApi)]
+#[openapi(
+    paths(
+        get_user, delete_user,
+        list_users, create_user,
+        update_user, list_user_repos_info,
+    ),
+    components(
+        schemas(
+            UserDto, CreateUserDto,
+            UpdateUserDto, OpenApiDtoList::<UserDto>,
+            OpenApiDtoList::<UserRepoInfoDto>,
+        )
+    ),
+    tags(
+        (name = EntityApi::Users.to_tag())
+    ),
+)]
+pub struct UserOpenApi;
 
 pub fn routes(state: AppState) -> Router {
     Router::new()
@@ -19,6 +42,13 @@ pub fn routes(state: AppState) -> Router {
         .with_state(state)
 }
 
+#[utoipa::path(
+    post,
+    path = "",
+    request_body = CreateUserDto,
+    responses (ApiResponses<UserDto>),
+    tag = EntityApi::Users.to_tag(),
+)]
 async fn create_user(
     State(state): State<UserState>,
     user_dto: ValidationWrapper<CreateUserDto>,
@@ -27,6 +57,14 @@ async fn create_user(
     Ok(Json(user))
 }
 
+#[utoipa::path(
+    put,
+    path = "/{id}",
+    params(ObjectIdPathParam),
+    request_body = UpdateUserDto,
+    responses (ApiResponses<UserDto>),
+    tag = EntityApi::Users.to_tag(),
+)]
 async fn update_user(
     State(state): State<UserState>,
     Path(id): Path<ObjectId>,
@@ -36,6 +74,13 @@ async fn update_user(
     Ok(Json(user))
 }
 
+#[utoipa::path(
+    get,
+    path = "",
+    params(PaginationParams),
+    responses (ApiResponses<OpenApiDtoList<UserDto>>),
+    tag = EntityApi::Users.to_tag(),
+)]
 async fn list_users(
     State(state): State<UserState>,
     Query(PaginationParams { take, offset }): Query<PaginationParams>,
@@ -44,6 +89,13 @@ async fn list_users(
     Ok(Json(users))
 }
 
+#[utoipa::path(
+    get,
+    path = "/{id}/repo-infos",
+    params(ObjectIdPathParam, PaginationParams),
+    responses (ApiResponses<OpenApiDtoList<UserRepoInfoDto>>),
+    tag = EntityApi::Users.to_tag(),
+)]
 async fn list_user_repos_info(
     State(state): State<UserState>,
     Path(id): Path<ObjectId>,
@@ -53,6 +105,13 @@ async fn list_user_repos_info(
     Ok(Json(users))
 }
 
+#[utoipa::path(
+    get,
+    path = "/{id}",
+    params(ObjectIdPathParam),
+    responses (ApiResponses<UserDto>),
+    tag = EntityApi::Users.to_tag(),
+)]
 async fn get_user(
     State(state): State<UserState>,
     Path(id): Path<ObjectId>,
@@ -61,6 +120,13 @@ async fn get_user(
     Ok(Json(user))
 }
 
+#[utoipa::path(
+    delete,
+    path = "/{id}",
+    params(ObjectIdPathParam),
+    responses (ApiResponses<UserDto>),
+    tag = EntityApi::Users.to_tag(),
+)]
 async fn delete_user(
     State(state): State<UserState>,
     Path(id): Path<ObjectId>,
